@@ -1,0 +1,2 @@
+default - Arcon (Zarthwork, SIL OFL v1.10 http://scripts.sil.org/OFL)
+mono - Lekton (Accademia di Belle Arti di Urbino, SIL OFL v1.10 http://scripts.sil.org/OFL)
