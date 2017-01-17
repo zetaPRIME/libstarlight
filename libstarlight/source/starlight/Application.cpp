@@ -40,7 +40,7 @@ void Application::Run() {
     _init();
     while (!_appQuit && aptMainLoop()) _mainLoop();
     _end();
-    
+
     _currentApp = nullptr;
 }
 
@@ -48,16 +48,16 @@ void Application::_init() {
     srand(time(NULL));
     romfsInit();
     RenderCore::Open();
-    
+
     touchScreen = std::make_shared<TouchScreenCanvas>();
     topScreen = std::make_shared<TopScreenCanvas>();
-    
+
     Init();
 }
 
 void Application::_end() {
     End();
-    
+
     RenderCore::Close();
 }
 
@@ -68,13 +68,13 @@ void Application::_mainLoop() {
     touchScreen->Update();
     topScreen->Update();
     PostUpdate();
-    
+
     // draw step
     RenderCore::BeginFrame();
     RenderCore::targetBottom->Clear(clearColor);
     RenderCore::targetTopLeft->Clear(clearColor);
     RenderCore::targetTopRight->Clear(clearColor);
-    
+
     Draw();
     touchScreen->PreDraw();
     topScreen->PreDraw();
@@ -83,4 +83,3 @@ void Application::_mainLoop() {
     PostDraw();
     RenderCore::EndFrame();
 }
-
