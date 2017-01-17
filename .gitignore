@@ -1,0 +1,4 @@
+libstarlight/build/
+libstarlight/lib/
+libstarlight/include/
+libstarlight/lib*.tar.bz2
