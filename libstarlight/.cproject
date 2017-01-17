@@ -25,18 +25,31 @@
 							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.936572278" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1610283054" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
 								<option id="gnu.cpp.compiler.option.include.paths.900392937" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}/arm-none-eabi/include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}/arm-none-eabi/include/c++/6.2.0/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${DEVKITPROWIN}/libctru/include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITPROWIN}\libctru\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\arm-none-eabi\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\lib\gcc\arm-none-eabi\6.3.0\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\arm-none-eabi\include\c++\6.3.0\arm-none-eabi\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\arm-none-eabi\include\c++\6.3.0\&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.1262408793" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.dialect.flags.1059767281" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=gnu++14" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.1262408793" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.flags.1059767281" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=gnu++14" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.1868758853" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="__GNUC__=1"/>
+									<listOptionValue builtIn="false" value="__arm__=1"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.195970917" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.2110920989" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
 								<option id="gnu.c.compiler.option.include.paths.1732311949" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}/arm-none-eabi/include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${DEVKITPROWIN}/libctru/include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITPROWIN}\libctru\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\arm-none-eabi\include\&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${DEVKITARMWIN}\lib\gcc\arm-none-eabi\6.3.0\include\&quot;"/>
+								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1316052772" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="__GNUC__=1"/>
+									<listOptionValue builtIn="false" value="__arm__=1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1374490010" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -49,6 +62,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<sourceEntries>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="source"/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -73,4 +89,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
