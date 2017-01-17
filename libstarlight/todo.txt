@@ -1,0 +1,84 @@
+
+
+
+today's agenda {
+    app:/ prefix for local ("local") assets
+    cfg?
+} then {
+    change Label to move the rect instead of resizing to accomodate drops (add an offset thing to Font)
+    figure out how I want to do separate forms???
+    kill scroll velocity when hitting the edge (or rapid decel)
+    make scrollfield autofit a flag
+    make le scrollfield check threshold itself and only count directions it can actually scroll
+    visual sugar such as "bump glow" for scrollfields
+}
+
+unordered_roadmap {
+    moar UI elements {
+        checkbox
+        radio box
+        tabs?
+        auto-layout/list boxes
+        text/combo box
+        slider
+        progress bar
+        
+    }
+    maybe switch drawoffset system from a stack to a pass-in
+    moar utility stuff in Vector2 and VRect {
+        -
+    }
+    tween system
+    figure out theme layout and fallback system
+    maybe a few further refinements to bitmap fonts
+    ...
+    use ctrulib sync features for WorkerThread instead of spinlocks at some point
+    - http://smealum.github.io/ctrulib/synchronization_8h.html#a9fe83ca3ec3c6ae269203acf367ad5a9
+    duck l'orange
+    
+    ... tweenable drawable format?
+    figure out the whole font y offset deal
+}
+
+theme layout {
+    sdmc:/.starlight/themes/<name>/ {
+        fonts {
+            default.12.json/png/border.png
+            default.16
+            mono.12/16
+        }
+        controls {
+            button.idle/pressed
+            ...
+        }
+    }
+}
+
+
+drawable, drawcontext, gfxmanager (pushContext, popContext) (done mostly)
+ThemeRef (done) {
+    theme-asset-specific reference so themes can be reloaded
+    -> operator overloaded etc.
+}
+T H E M E S
+
+configurator for ui elements? maybe crtp after all
+noap, macro/include shenanigans
+new Button().at(40, 40).within(container).ofSize(64, 32).withText("Popsicles!");
+shelved for now because shared_from_this is kind of dumb for what I need it for :D :D :D
+(though maybe some trickery with putting the last-created-element in a static, combined with static factory pattern...)
+
+maybe LoosePtr (wraps weak_ptr for expired check but references by raw pointer)
+implement this to replace weak_ptr parent if it ends up impacting performance too much
+
+maybe implement this: https://probablydance.com/2013/01/13/a-faster-implementation-of-stdfunction/
+
+split stuff into libstarlight {
+    namespaces (done except for a couple manager classes)
+    actual lib split once everything's working I guess
+    "" to <> (???)
+}
+
+// notes {
+    bitmap font converter - https://github.com/playcanvas/fonts/blob/master/fnt_to_json.py
+}
