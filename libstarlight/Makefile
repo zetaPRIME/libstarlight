@@ -100,19 +100,20 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 all: $(BUILD)
 
 dist-bin: all
-	rm -rf include/
-	rsync -a --include '*/' --include '*.h' --include '*.hpp' --exclude '*' source/ include/
+	@rm -rf include/
+	@rsync -a --include '*/' --include '*.h' --include '*.hpp' --exclude '*' source/ include/
 	@tar --exclude=*~ -cjf libstarlight-$(VERSION).tar.bz2 include lib
 
 dist-src:
-	rm -rf include/
-	rsync -a --include '*/' --include '*.h' --include '*.hpp' --exclude '*' source/ include/
+	@rm -rf include/
+	@rsync -a --include '*/' --include '*.h' --include '*.hpp' --exclude '*' source/ include/
 	@tar --exclude=*~ -cjf libstarlight-src-$(VERSION).tar.bz2 include source data Makefile Doxyfile Doxyfile.internal
 
 dist: dist-src dist-bin
 
 install: dist-bin
-	mkdir -p $(DEVKITPRO)/libstarlight
+	@rm -rf $(DEVKITPRO)/libstarlight
+	@mkdir -p $(DEVKITPRO)/libstarlight
 	bzip2 -cd libstarlight-$(VERSION).tar.bz2 | tar -xf - -C $(DEVKITPRO)/libstarlight
 
 dox:
@@ -129,7 +130,7 @@ $(BUILD): lib
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) lib docs internal_docs
+	@rm -fr $(BUILD) lib include docs internal_docs
 
 #---------------------------------------------------------------------------------
 else
