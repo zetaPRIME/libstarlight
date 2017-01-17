@@ -73,12 +73,6 @@ implement this to replace weak_ptr parent if it ends up impacting performance to
 
 maybe implement this: https://probablydance.com/2013/01/13/a-faster-implementation-of-stdfunction/
 
-split stuff into libstarlight {
-    namespaces (done except for a couple manager classes)
-    actual lib split once everything's working I guess
-    "" to <> (???)
-}
-
 // notes {
     bitmap font converter - https://github.com/playcanvas/fonts/blob/master/fnt_to_json.py
 }

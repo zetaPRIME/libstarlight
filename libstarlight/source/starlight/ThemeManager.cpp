@@ -203,6 +203,16 @@ void ThemeManager::LoadProc() {
 string ThemeManager::ResolveAssetPath(const string& id) {
     struct stat buf;
     string path(id.length() + 64, ' '); // preallocate buffer space
+    
+    static const string pfxLocal = "app:/";
+    if (id.compare(0, pfxLocal.length(), pfxLocal)) {
+        // app-local asset
+        // check if present in theme/app/[appname]/, else check in romfs
+    }
+    else {
+        // theme asset; check in each theme from selected to most-fallback
+    }
+    
     path.clear(); path.append("romfs:/"); path.append(id); path.append(".json");
     printf("attempt: %s\n", path.c_str());
     if (stat(path.c_str(), &buf) == 0) return path;
@@ -225,4 +235,3 @@ string ThemeManager::ResolveFontPath(const string& id) { // this needs redone, b
     
     return string();
 }
-
