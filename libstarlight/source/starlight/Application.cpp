@@ -3,11 +3,16 @@
 #include <3ds.h>
 
 #include "starlight/GFXManager.h"
+#include "starlight/ConfigManager.h"
 #include "starlight/ThemeManager.h"
 #include "starlight/InputManager.h"
 #include "starlight/gfx/RenderCore.h"
 
+using std::string;
+
 using starlight::GFXManager;
+using starlight::ConfigManager;
+using starlight::Config;
 using starlight::ThemeManager;
 using starlight::InputManager;
 using starlight::gfx::RenderCore;
@@ -29,6 +34,18 @@ bool Application::Quit() {
     return _currentApp->_appQuit;
 }
 
+Config& Application::GetConfig(const string& path) {
+    const string& appId = (_currentApp != nullptr) ? _currentApp->appId : "null";
+    string np(path.length() + appId.length() + 4 + 1, ' ');
+    np.clear();
+    np.append("app/"); np.append(appId); np.append("/"); np.append(path);
+    return ConfigManager::Get(np);
+}
+
+string Application::AppName() {
+    return (_currentApp != nullptr) ? _currentApp->appId : "null";
+}
+
   //////////////////////
  // INSTANCE MEMBERS //
 //////////////////////
@@ -47,6 +64,7 @@ void Application::Run() {
 void Application::_init() {
     srand(time(NULL));
     romfsInit();
+    ConfigManager::Init();
     RenderCore::Open();
     
     touchScreen = std::make_shared<TouchScreenCanvas>();
@@ -59,6 +77,7 @@ void Application::_end() {
     End();
     
     RenderCore::Close();
+    ConfigManager::End();
 }
 
 void Application::_mainLoop() {

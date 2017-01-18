@@ -1,6 +1,6 @@
 #!/bin/bash
 function abort {
-    echo Make failed
+    echo Make or send failed
     exit
 }
 cd libstarlight

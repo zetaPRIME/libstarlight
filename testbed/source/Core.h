@@ -6,7 +6,7 @@ using starlight::Application;
 
 class Core : public Application {
 public:
-    Core() : Application("starlauncher") { }
+    Core() : Application("testbed") { }
     ~Core() override = default;
     
     void Init() override;
@@ -14,4 +14,3 @@ public:
     void Update() override;
 
 };
-

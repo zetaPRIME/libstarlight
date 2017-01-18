@@ -2,7 +2,10 @@
 
 #include <3ds.h>
 
+#include "starlight/_incLib/json.hpp"
+
 #include "starlight/InputManager.h"
+#include "starlight/ConfigManager.h"
 #include "starlight/ThemeManager.h"
 #include "starlight/GFXManager.h"
 #include "starlight/gfx/RenderCore.h"
@@ -16,8 +19,9 @@ using starlight::Vector2;
 using starlight::VRect;
 using starlight::Color;
 using starlight::InputManager;
-using starlight::GFXManager;
+using starlight::ConfigManager;
 using starlight::ThemeManager;
+using starlight::GFXManager;
 using starlight::gfx::RenderCore;
 
 using starlight::Application;
@@ -67,6 +71,11 @@ void Core::Init() {
     
     clearColor = Color(0.0f, 0.5f, 0.5f);
     
+    // test config
+    auto& cc = Application::GetConfig("test");
+    cc.Json()["panini"] = "yes please!";
+    cc.Save();
+    
     //
 }
 
@@ -77,4 +86,3 @@ void Core::End() {
 void Core::Update() {
     if (InputManager::Held(KEY_Y) || InputManager::Pressed(KEY_START)) Application::Quit();
 }
-

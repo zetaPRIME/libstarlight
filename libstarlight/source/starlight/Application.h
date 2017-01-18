@@ -11,6 +11,8 @@
 #include "starlight/ui/TouchScreenCanvas.h"
 #include "starlight/ui/TopScreenCanvas.h"
 
+#include "starlight/ConfigManager.h"
+
 namespace starlight {
     class Application {
           ////////////////////
@@ -21,6 +23,8 @@ namespace starlight {
         
     public:
         static bool Quit();
+        static Config& GetConfig(const std::string& path);
+        static std::string AppName();
         
           //////////////////////
          // INSTANCE MEMBERS //
@@ -53,4 +57,3 @@ namespace starlight {
         virtual void End() { }
     };
 }
-
