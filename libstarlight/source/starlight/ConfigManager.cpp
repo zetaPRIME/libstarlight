@@ -10,11 +10,15 @@
 
 #include "starlight/Application.h"
 
+#include "starlight/util/FSHelper.h"
+
 using std::string;
 using std::ifstream;
 using std::ofstream;
 
 using starlight::Application;
+
+using starlight::util::FSHelper;
 
 using starlight::Config;
 using starlight::ConfigManager;
@@ -70,10 +74,7 @@ void Config::Save() {
 std::unordered_map<std::string, std::shared_ptr<Config>> ConfigManager::cfg;
 
 void ConfigManager::Init() {
-    ensureDirectory("sdmc:/.starlight/");
-    ensureDirectory("sdmc:/.starlight/config/");
-    ensureDirectory("sdmc:/.starlight/config/app/");
-    ensureDirectory("sdmc:/.starlight/config/app/" + Application::AppName());
+    FSHelper::AssertDirPath("sdmc:/.starlight/config/app/" + Application::AppName());
 }
 
 void ConfigManager::End() {

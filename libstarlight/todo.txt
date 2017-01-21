@@ -2,8 +2,7 @@
 
 
 today's agenda {
-    app:/ prefix for local ("local") assets
-    cfg?
+    FSHelper, recursive directory assertion etc.
 } then {
     change Label to move the rect instead of resizing to accomodate drops (add an offset thing to Font)
     figure out how I want to do separate forms???

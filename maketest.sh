@@ -3,9 +3,13 @@ function abort {
     echo Make or send failed
     exit
 }
+mode=send
+if [ "$1" = "c" ]; then
+    mode=run
+fi
 cd libstarlight
 make install || abort
 cd ../testbed
 make clean
-make send || abort
+make $mode || abort
 cd ..
