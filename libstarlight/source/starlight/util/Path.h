@@ -13,13 +13,18 @@ namespace starlight {
             
         public:
             // vars...
+            static std::string destructed;
             
             Path(const std::string& path, bool noverify = false);
             Path(const Path& path);
-            ~Path() = default;
+            ~Path();
             
+            // navigation
             Path Up(int levels = 1);
             Path Combine(const std::string& token);
+            
+            // operation
+            Path& CreateDirectory();
             
             // semi-obsolete but whatever, it can stay for now
             inline bool IsDirPath() const { return strpath.back() == '/'; }

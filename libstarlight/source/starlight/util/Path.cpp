@@ -11,6 +11,8 @@ using std::getline;
 
 using starlight::util::Path;
 
+string Path::destructed = "";
+
 Path::Path(const string& path, bool noverify) {
     if (noverify) { strpath = path; return; }
     size_t sls = path.find('/');
@@ -22,6 +24,11 @@ Path::Path(const string& path, bool noverify) {
 
 Path::Path(const Path& path) {
     strpath = path.strpath; // no need to check here!
+}
+
+Path::~Path() {
+    destructed.append(strpath);
+    destructed.append("\n");
 }
 
 Path Path::Up(int levels) {
@@ -57,4 +64,10 @@ Path Path::Combine(const string& token) {
         }
     }
     return Path(path, true);
+}
+
+Path& Path::CreateDirectory() {
+    // todo: actually create the directory :D
+    
+    return *this;
 }
