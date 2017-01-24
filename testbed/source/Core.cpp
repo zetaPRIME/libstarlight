@@ -71,9 +71,13 @@ void Core::Init() {
     auto pipf = std::make_shared<sl::ui::Label>(VRect(0,0,400,240));
     pipf->SetFont("default.16"); pipf->borderColor = Color::black;
     //pipf->SetText("I am the very model of something on the top screen. :D\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-    Path("sdmc:/banana/algorithm/").Combine("porcupine/kumquat/romfs:/annual/sdmc:/puffin/pie").CreateDirectory().CreateDirectory().Combine("farticus").Combine("platypus").CreateDirectory().Up();
-    pipf->SetText(Path::destructed);
+    std::stringstream st;
+    //st << "dir: " << Path("sdmc:/.starlight").IsDirectory() << "\nfile: " << Path("sdmc:/arm9loaderhax.bin").IsFile();
+    st << "dir: " << Path("sdmc:/arm9loaderhax.bin").IsDirectory() << "\nfile: " << Path("sdmc:/arm9loaderhax.bin").IsFile() << "\nroot: " << Path("sdmc:/").IsDirectory();
+    pipf->SetText(st.str());
     parallax->Add(pipf);
+    
+    Path("sdmc:/all/your/base").CreateDirectory();
     
     clearColor = Color(0.0f, 0.5f, 0.5f);
     

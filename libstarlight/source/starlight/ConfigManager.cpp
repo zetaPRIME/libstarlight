@@ -19,23 +19,14 @@ using std::ofstream;
 using starlight::Application;
 
 using starlight::util::FSHelper;
+using starlight::util::Path;
 
 using starlight::Config;
 using starlight::ConfigManager;
 
 // helper stuff
 namespace {
-    void ensureDirectory(const char* path, bool hidden = false) {
-        struct stat st;
-        if (stat(path, &st) != 0) {
-            mkdir(path, 0);
-            if (hidden) {
-                // NYI; no idea how to do this, actually :(
-            }
-        }
-    }
-    void ensureDirectory(const string& path, bool hidden = false) { ensureDirectory(path.c_str(), hidden); }
-    
+    //
 }
 
   ////////////
@@ -43,12 +34,14 @@ namespace {
 ////////////
 
 Config::Config(const string& path) : path(path) {
-    static const constexpr char* cpfx = "sdmc:/.starlight/config/";
+    /*static const constexpr char* cpfx = "sdmc:/.starlight/config/";
     constexpr std::size_t cpfx_s = std::strlen(cpfx);
     // reserve string size
-    fsPath = string(path.length() + cpfx_s + 5, ' '); fsPath.clear();
+    string xfsPath(path.length() + cpfx_s + 5, ' '); xfsPath.clear();
     // and build
-    fsPath.append(cpfx); fsPath.append(path); fsPath.append(".json");
+    xfsPath.append(cpfx); xfsPath.append(path); xfsPath.append(".json");
+    fsPath = Path(xfsPath);*/
+    fsPath = Path("sdmc:/.starlight/config", true).Combine(path + ".json");
     
     // init json
     this->json = std::make_shared<nlohmann::json>();
@@ -58,12 +51,12 @@ Config::Config(const string& path) : path(path) {
 Config::~Config() { }
 
 void Config::Reload() {
-    ifstream load(fsPath);
+    ifstream load = fsPath.OpenI();
     if (load.good()) load >> *json;
 }
 
 void Config::Save() {
-    ofstream save(fsPath);
+    ofstream save = fsPath.OpenO();
     if (save.good()) save << *json;
 }
 
@@ -74,7 +67,7 @@ void Config::Save() {
 std::unordered_map<std::string, std::shared_ptr<Config>> ConfigManager::cfg;
 
 void ConfigManager::Init() {
-    FSHelper::AssertDirPath("sdmc:/.starlight/config/app/" + Application::AppName());
+    //FSHelper::AssertDirPath("sdmc:/.starlight/config/app/" + Application::AppName());
 }
 
 void ConfigManager::End() {

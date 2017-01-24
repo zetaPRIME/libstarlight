@@ -6,12 +6,14 @@
 
 #include "starlight/_incLib/json_fwd.hpp"
 
+#include "starlight/util/Path.h"
+
 //#include "starlight/gfx/DrawContext.h"
 
 namespace starlight {
     class Config {
     private:
-        std::string fsPath;
+        util::Path fsPath;
         std::shared_ptr<nlohmann::json> json;
     public:
         const std::string path;

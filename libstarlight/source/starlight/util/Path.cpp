@@ -1,6 +1,7 @@
 #include "Path.h"
 
 #include <sstream>
+#include <fstream>
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -9,9 +10,15 @@ using std::string;
 using std::stringstream;
 using std::getline;
 
+using std::fstream;
+using std::ifstream;
+using std::ofstream;
+
 using starlight::util::Path;
 
-string Path::destructed = "";
+Path::Path() {
+    strpath = "sdmc:";
+}
 
 Path::Path(const string& path, bool noverify) {
     if (noverify) { strpath = path; return; }
@@ -27,8 +34,7 @@ Path::Path(const Path& path) {
 }
 
 Path::~Path() {
-    destructed.append(strpath);
-    destructed.append("\n");
+    
 }
 
 Path Path::Up(int levels) {
@@ -66,8 +72,43 @@ Path Path::Combine(const string& token) {
     return Path(path, true);
 }
 
+bool Path::Exists() {
+    struct stat st;
+    return stat(strpath.c_str(), &st) == 0;
+}
+
+bool Path::IsFile() {
+    struct stat st;
+    if (stat(strpath.c_str(), &st) != 0) return false;
+    return S_ISREG(st.st_mode);
+}
+
+bool Path::IsDirectory() {
+    struct stat st;
+    if (stat(strpath.c_str(), &st) != 0) return false;
+    return S_ISDIR(st.st_mode);
+}
+
 Path& Path::CreateDirectory() {
-    // todo: actually create the directory :D
+    if (IsDirectory()) return *this;
+    if (mkdir(strpath.c_str(), 0) != 0) { // try creating in place, else...
+        Up().CreateDirectory(); // create parent recursively
+        mkdir(strpath.c_str(), 0);
+    }
     
     return *this;
+}
+
+fstream Path::Open(std::ios_base::openmode mode) {
+    if (mode & std::ios_base::out) Up().CreateDirectory(); // make sure path exists if writing
+    return fstream(strpath, mode);
+}
+
+ifstream Path::OpenI() {
+    return ifstream(strpath);
+}
+
+ofstream Path::OpenO() {
+    Up().CreateDirectory(); // assert path beforehand
+    return ofstream(strpath);
 }
