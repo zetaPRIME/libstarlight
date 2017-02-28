@@ -94,7 +94,7 @@ void Application::_mainLoop() {
             forms.sort(Form::OrderedCompare);
             
             // reconstruct ui container heirarchy
-            bool otouch, otop;
+            bool otouch = false, otop = false;
             formTouchScreen->RemoveAll();
             formTopScreen->RemoveAll();
             

@@ -24,7 +24,7 @@ namespace starlight {
             
             open                = 1 << 30
         };
-        typedef std::underlying_type<FormFlags>::type FormFlags_t;
+        //typedef std::underlying_type<FormFlags>::type FormFlags_t;
         
         class Form;
         template<class F>
@@ -52,19 +52,20 @@ namespace starlight {
              // INSTANCE MEMBERS //
             //////////////////////
         private:
-            unsigned int showCounter;
+            unsigned int showCounter = 0;
             
         protected:
             //
             
         public:
-            int priority;
-            unsigned int flags;
+            int priority = 0;
+            unsigned int flags = 0;
             
             std::shared_ptr<UIContainer> touchScreen = nullptr;
             std::shared_ptr<UIContainer> topScreen = nullptr;
             
             Form() { }
+            Form(bool useDefaults);
             virtual ~Form() { }
             
             void Open();

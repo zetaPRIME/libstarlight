@@ -57,6 +57,15 @@ void Core::Init() {
                 label->SetFont("default.12");
                 btn.SetText("Clicked again!\nBunch of lines!\nNow testing scrollarea fling with some extra size!\n\n\nPotato.\nCalamari sandwich on rye with a side of octagonal pimento; a jar of butter?");
                 btn.rect.size.y = 573;
+                
+                auto form = std::make_shared<sl::ui::Form>(true);
+                auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
+                label->autoSizeV = true;
+                label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
+                form->topScreen->Add(label);
+                form->Open();
+                form->Show();
+                if (!form->GetFlag(sl::ui::FormFlags::open)) btn.SetText("fuck.");
             };
         };
     };

@@ -30,6 +30,8 @@ using starlight::ui::Form;
  // STATIC MEMBERS //
 ////////////////////
 
+unsigned int Form::nextShowCounter = 0;
+
 bool Form::OrderedCompare(std::shared_ptr<Form>& f1, std::shared_ptr<Form>& f2) { // acts as < operator
     if (!f1->IsVisible()) return true;
     if (f1->priority < f2->priority) return true;
@@ -40,6 +42,13 @@ bool Form::OrderedCompare(std::shared_ptr<Form>& f1, std::shared_ptr<Form>& f2) 
   //////////////////////
  // INSTANCE MEMBERS //
 //////////////////////
+
+Form::Form(bool useDefaults) {
+    if (useDefaults) {
+        touchScreen = std::make_shared<UIContainer>(VRect(0, 0, 320, 240));
+        topScreen = std::make_shared<UIContainer>(VRect(0, 0, 400, 240));
+    }
+}
 
 void Form::Open() {
     auto app = Application::Current();
