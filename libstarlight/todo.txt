@@ -1,6 +1,20 @@
 
 
 
+form system {
+    capabilities {
+        updates, recieves events etc. as if it were a stackable Application
+        priority level (modals etc.)
+        can be stacked, reordered etc. via order shown
+        can occlude independently on top and bottom screen, causing lower-ordered things on that screen to not even render
+        can tell if it's the focused (topmost) form and use that to determine whether to accept button input
+        
+    }
+    hmm. implement as direct replacement of Application UI contents, or implement as its own container...?
+    meaningful state change signals current Application to resort and rebuild draw list during next update
+}
+
+
 today's agenda {
     FSHelper, recursive directory assertion etc.
 } then {

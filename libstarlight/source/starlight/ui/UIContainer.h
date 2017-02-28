@@ -34,9 +34,10 @@ namespace starlight {
             void Dive(std::function<bool(UIElement*)> check, std::function<bool(UIElement*)> func, bool consumable = true, bool frontFirst = true);
             void Dive(std::function<bool(UIElement*)> func, bool consumable = true, bool frontFirst = true);
             
-            void Add(std::shared_ptr<UIElement> elem);
+            void Add(std::shared_ptr<UIElement> elem, bool front = false);
             //void Add(UIElement* elem);
             void Remove(std::shared_ptr<UIElement> elem);
+            void RemoveAll();
             
             void Update() override;
             void PreDraw() override;

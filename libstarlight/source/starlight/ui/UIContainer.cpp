@@ -47,8 +47,9 @@ void UIContainer::_Dive(std::function<bool(UIElement*)>& func, bool consumable, 
     finished = func(this) && consumable;
 }
 
-void UIContainer::Add(std::shared_ptr<UIElement> elem) {
-    children.push_back(elem);
+void UIContainer::Add(std::shared_ptr<UIElement> elem, bool front) {
+    if (front) children.push_front(elem);
+    else children.push_back(elem);
     elem->parent = std::weak_ptr<UIContainer>(std::static_pointer_cast<UIContainer>(this->shared_from_this()));
     MarkForRedraw();
 }
@@ -66,6 +67,13 @@ void UIContainer::Remove(std::shared_ptr<UIElement> elem) {
     MarkForRedraw();
 }
 
+void UIContainer::RemoveAll() {
+    for (auto it : children) {
+        it->parent = std::weak_ptr<UIContainer>(); // clear parent
+    }
+    children.clear();
+}
+
 void UIContainer::Update() {
     for (auto& it : children) { it->Update(); }
 }
@@ -81,5 +89,3 @@ void UIContainer::Draw() {
     for (auto& it : children) { if (it->rect.Overlaps(vr)) it->Draw(); }
     GFXManager::PopOffset();
 }
-
-

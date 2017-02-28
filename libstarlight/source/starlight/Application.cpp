@@ -20,6 +20,9 @@ using starlight::gfx::RenderCore;
 using starlight::ui::TouchScreenCanvas;
 using starlight::ui::TopScreenCanvas;
 
+using starlight::ui::Form;
+using starlight::ui::FormFlags;
+
 using starlight::Application;
 
   ////////////////////
@@ -69,6 +72,8 @@ void Application::_init() {
     
     touchScreen = std::make_shared<TouchScreenCanvas>();
     topScreen = std::make_shared<TopScreenCanvas>();
+    formTouchScreen = touchScreen.get();
+    formTopScreen = topScreen.get();
     
     Init();
 }
@@ -81,9 +86,38 @@ void Application::_end() {
 }
 
 void Application::_mainLoop() {
+    if (!forms.empty()) {
+        if (_sFormState) {
+            _sFormState = false;
+            
+            // sort open forms
+            forms.sort(Form::OrderedCompare);
+            
+            // reconstruct ui container heirarchy
+            bool otouch, otop;
+            formTouchScreen->RemoveAll();
+            formTopScreen->RemoveAll();
+            
+            for (auto it = forms.rbegin(); it != forms.rend(); ++it) {
+                if ((*it)->IsVisible()) {
+                    if (!otouch) formTouchScreen->Add((*it)->touchScreen, true);
+                    if (!otop) formTopScreen->Add((*it)->topScreen, true);
+                    if ((*it)->GetFlag(FormFlags::canOcclude)) {
+                        if ((*it)->GetFlag(FormFlags::occludeTouch)) otouch = true;
+                        if ((*it)->GetFlag(FormFlags::occludeTop)) otop = true;
+                    }
+                }
+            }
+            //
+        }
+    }
+    
     // update step
     InputManager::Update();
     Update();
+    for (auto it : forms) { // update loop for forms
+        it->Update(it == forms.back());
+    }
     touchScreen->Update();
     topScreen->Update();
     PostUpdate();

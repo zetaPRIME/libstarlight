@@ -11,6 +11,8 @@
 #include "starlight/ui/TouchScreenCanvas.h"
 #include "starlight/ui/TopScreenCanvas.h"
 
+#include "starlight/ui/Form.h"
+
 #include "starlight/ConfigManager.h"
 
 namespace starlight {
@@ -25,12 +27,14 @@ namespace starlight {
         static bool Quit();
         static Config& GetConfig(const std::string& path);
         static std::string AppName();
+        static inline Application* Current() { return _currentApp; }
         
           //////////////////////
          // INSTANCE MEMBERS //
         //////////////////////
     private:
         bool _appQuit = false;
+        bool _sFormState = false;
         void _init();
         void _mainLoop();
         void _end();
@@ -42,6 +46,10 @@ namespace starlight {
         
         std::shared_ptr<ui::TouchScreenCanvas> touchScreen = nullptr;
         std::shared_ptr<ui::TopScreenCanvas> topScreen = nullptr;
+        
+        std::list<std::shared_ptr<ui::Form>> forms;
+        ui::UIContainer* formTouchScreen = nullptr;
+        ui::UIContainer* formTopScreen = nullptr;
         
         Application() = delete;
         Application(std::string id) : appId(id) { }
@@ -55,5 +63,7 @@ namespace starlight {
         virtual void Draw() { }
         virtual void PostDraw() { }
         virtual void End() { }
+        
+        inline void SignalFormState() { _sFormState = true; }
     };
 }
