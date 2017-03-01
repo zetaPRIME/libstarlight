@@ -47,16 +47,18 @@ Form::Form(bool useDefaults) {
     if (useDefaults) {
         touchScreen = std::make_shared<UIContainer>(VRect(0, 0, 320, 240));
         topScreen = std::make_shared<UIContainer>(VRect(0, 0, 400, 240));
+        SetFlag(FormFlags::canOcclude, true);
     }
 }
 
-void Form::Open() {
+void Form::Open(bool showImmediately) {
     auto app = Application::Current();
     if (app == nullptr) return;
     if (GetFlag(FormFlags::open)) return;
     app->forms.push_back(shared_from_this());
     SetFlag(FormFlags::open, true);
     app->SignalFormState();
+    if (showImmediately) Show();
 }
 
 void Form::Close() {

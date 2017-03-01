@@ -13,7 +13,7 @@ namespace starlight {
             //
             
         public:
-            std::string label;
+            std::string label = "";
             std::function<void(Button&)> eOnTap;
             
             Button(VRect rect) { this->rect = rect; }
@@ -35,4 +35,3 @@ namespace starlight {
         };
     }
 }
-

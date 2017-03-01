@@ -10,38 +10,38 @@
 // borrow this from ctrulib
 #ifndef BIT
 #define BIT(n) (1U<<(n))
-enum {
-    KEY_A       = BIT(0),       ///< A
-    KEY_B       = BIT(1),       ///< B
-    KEY_SELECT  = BIT(2),       ///< Select
-    KEY_START   = BIT(3),       ///< Start
-    KEY_DRIGHT  = BIT(4),       ///< D-Pad Right
-    KEY_DLEFT   = BIT(5),       ///< D-Pad Left
-    KEY_DUP     = BIT(6),       ///< D-Pad Up
-    KEY_DDOWN   = BIT(7),       ///< D-Pad Down
-    KEY_R       = BIT(8),       ///< R
-    KEY_L       = BIT(9),       ///< L
-    KEY_X       = BIT(10),      ///< X
-    KEY_Y       = BIT(11),      ///< Y
-    KEY_ZL      = BIT(14),      ///< ZL (New 3DS only)
-    KEY_ZR      = BIT(15),      ///< ZR (New 3DS only)
-    KEY_TOUCH   = BIT(20),      ///< Touch (Not actually provided by HID)
-    KEY_CSTICK_RIGHT = BIT(24), ///< C-Stick Right (New 3DS only)
-    KEY_CSTICK_LEFT  = BIT(25), ///< C-Stick Left (New 3DS only)
-    KEY_CSTICK_UP    = BIT(26), ///< C-Stick Up (New 3DS only)
-    KEY_CSTICK_DOWN  = BIT(27), ///< C-Stick Down (New 3DS only)
-    KEY_CPAD_RIGHT = BIT(28),   ///< Circle Pad Right
-    KEY_CPAD_LEFT  = BIT(29),   ///< Circle Pad Left
-    KEY_CPAD_UP    = BIT(30),   ///< Circle Pad Up
-    KEY_CPAD_DOWN  = BIT(31),   ///< Circle Pad Down
+#endif
+enum class Keys : unsigned int {
+    A       = BIT(0),       ///< A
+    B       = BIT(1),       ///< B
+    SELECT  = BIT(2),       ///< Select
+    START   = BIT(3),       ///< Start
+    DRIGHT  = BIT(4),       ///< D-Pad Right
+    DLEFT   = BIT(5),       ///< D-Pad Left
+    DUP     = BIT(6),       ///< D-Pad Up
+    DDOWN   = BIT(7),       ///< D-Pad Down
+    R       = BIT(8),       ///< R
+    L       = BIT(9),       ///< L
+    X       = BIT(10),      ///< X
+    Y       = BIT(11),      ///< Y
+    ZL      = BIT(14),      ///< ZL (New 3DS only)
+    ZR      = BIT(15),      ///< ZR (New 3DS only)
+    TOUCH   = BIT(20),      ///< Touch (Not actually provided by HID)
+    CSTICK_RIGHT = BIT(24), ///< C-Stick Right (New 3DS only)
+    CSTICK_LEFT  = BIT(25), ///< C-Stick Left (New 3DS only)
+    CSTICK_UP    = BIT(26), ///< C-Stick Up (New 3DS only)
+    CSTICK_DOWN  = BIT(27), ///< C-Stick Down (New 3DS only)
+    CPAD_RIGHT = BIT(28),   ///< Circle Pad Right
+    CPAD_LEFT  = BIT(29),   ///< Circle Pad Left
+    CPAD_UP    = BIT(30),   ///< Circle Pad Up
+    CPAD_DOWN  = BIT(31),   ///< Circle Pad Down
     
     // Generic catch-all directions
-    KEY_UP    = KEY_DUP    | KEY_CPAD_UP,    ///< D-Pad Up or Circle Pad Up
-    KEY_DOWN  = KEY_DDOWN  | KEY_CPAD_DOWN,  ///< D-Pad Down or Circle Pad Down
-    KEY_LEFT  = KEY_DLEFT  | KEY_CPAD_LEFT,  ///< D-Pad Left or Circle Pad Left
-    KEY_RIGHT = KEY_DRIGHT | KEY_CPAD_RIGHT, ///< D-Pad Right or Circle Pad Right
+    UP    = DUP    | CPAD_UP,    ///< D-Pad Up or Circle Pad Up
+    DOWN  = DDOWN  | CPAD_DOWN,  ///< D-Pad Down or Circle Pad Down
+    LEFT  = DLEFT  | CPAD_LEFT,  ///< D-Pad Left or Circle Pad Left
+    RIGHT = DRIGHT | CPAD_RIGHT, ///< D-Pad Right or Circle Pad Right
 };
-#endif
 
 namespace starlight {
     class InputManager;
@@ -87,8 +87,11 @@ namespace starlight {
         static Vector2 CStick();
         
         static bool Held(unsigned int mask);
+        static inline bool Held(Keys mask) { return Held(static_cast<unsigned int>(mask)); }
         static bool Pressed(unsigned int mask);
+        static inline bool Pressed(Keys mask) { return Pressed(static_cast<unsigned int>(mask)); }
         static bool Released(unsigned int mask);
+        static inline bool Released(Keys mask) { return Released(static_cast<unsigned int>(mask)); }
         
         static Vector2 TouchPos();
         static Vector2 TouchDelta();

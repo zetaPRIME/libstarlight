@@ -17,12 +17,14 @@ using starlight::gfx::FontBMF;
 #define err(nth, wat) *((unsigned int*)0x00100000+(nth))=wat;
 #define ded(wat) err(0,wat)
 Vector2 FontBMF::Measure(std::string& text, float scale, float maxWidth) {
+    if (text == "") return Vector2::zero;
     Vector2 v;
     PrintOp(Vector2(), text, scale, Color(), Vector2(), nullptr, maxWidth, &v, static_cast<DisplayList*>(nullptr));
     return v;
 }
 
 void FontBMF::Print(Vector2 position, std::string& text, float scale, Color color, Vector2 justification, OptRef<Color> borderColor) {
+    if (text == "") return;
     if (GFXManager::PrepareForDrawing()) {
         DisplayList dl = DisplayList();
         PrintOp(position, text, scale, color, justification, borderColor, 2147483647, static_cast<Vector2*>(nullptr), &dl);
@@ -36,6 +38,7 @@ void FontBMF::Print(Vector2 position, std::string& text, float scale, Color colo
 }
 
 void FontBMF::Print(VRect rect, std::string& text, float scale, Color color, Vector2 justification, OptRef<Color> borderColor) {
+    if (text == "") return;
     if (GFXManager::PrepareForDrawing()) {
         if (borderColor && borderColor.get() != Color::transparent) rect = rect.Expand(-1, -1);
         Vector2 pos = rect.pos + rect.size * justification;

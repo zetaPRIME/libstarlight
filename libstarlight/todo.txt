@@ -1,7 +1,7 @@
 
 
 
-form system {
+form system { framework done apart from some small api changes
     capabilities {
         updates, recieves events etc. as if it were a stackable Application
         priority level (modals etc.)
@@ -10,7 +10,6 @@ form system {
         can tell if it's the focused (topmost) form and use that to determine whether to accept button input
         
     }
-    hmm. implement as direct replacement of Application UI contents, or implement as its own container...?
     meaningful state change signals current Application to resort and rebuild draw list during next update
 }
 
@@ -19,7 +18,6 @@ today's agenda {
     FSHelper, recursive directory assertion etc.
 } then {
     change Label to move the rect instead of resizing to accomodate drops (add an offset thing to Font)
-    figure out how I want to do separate forms???
     kill scroll velocity when hitting the edge (or rapid decel)
     make scrollfield autofit a flag
     make le scrollfield check threshold itself and only count directions it can actually scroll

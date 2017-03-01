@@ -39,11 +39,11 @@ void ScrollField::Update() {
 }
 
 void ScrollField::OnProcessTouchEvent() { // stop when child element touched
-    if (InputManager::Pressed(KEY_TOUCH)) scrollVel = Vector2::zero;
+    if (InputManager::Pressed(Keys::TOUCH)) scrollVel = Vector2::zero;
 }
 
 void ScrollField::OnTouchOn() {
-    if (InputManager::Pressed(KEY_TOUCH)) {
+    if (InputManager::Pressed(Keys::TOUCH)) {
         InputManager::GetDragHandle().Grab(this);
     }
 }
@@ -67,9 +67,8 @@ void ScrollField::OnDragHold() {
 }
 
 void ScrollField::OnDragRelease() {
-    if (InputManager::Released(KEY_TOUCH)) {
+    if (InputManager::Released(Keys::TOUCH)) {
         if (scrollPreVel.Length() < InputManager::flingThreshold) scrollPreVel = Vector2::zero;
         scrollVel = scrollPreVel;
     }
 }
-

@@ -58,11 +58,11 @@ void InputManager::Update() {
     
     touchLast = touchNow;
     hidTouchRead(&tp);
-    if (Held(KEY_TOUCH)) touchNow = Vector2(tp.px, tp.py);
+    if (Held(Keys::TOUCH)) touchNow = Vector2(tp.px, tp.py);
     
-    if (Pressed(KEY_TOUCH)) touchStart = touchLast = touchNow;
+    if (Pressed(Keys::TOUCH)) touchStart = touchLast = touchNow;
     
-    if (!Held(KEY_TOUCH) && !Released(KEY_TOUCH)) touchTime = 0;
+    if (!Held(Keys::TOUCH) && !Released(Keys::TOUCH)) touchTime = 0;
     else touchTime++;
     
 }

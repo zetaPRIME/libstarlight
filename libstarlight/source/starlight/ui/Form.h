@@ -68,7 +68,7 @@ namespace starlight {
             Form(bool useDefaults);
             virtual ~Form() { }
             
-            void Open();
+            void Open(bool showImmediately = true);
             void Close();
             void Show();
             void Hide();

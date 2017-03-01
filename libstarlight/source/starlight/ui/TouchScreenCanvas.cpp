@@ -33,7 +33,7 @@ void TouchScreenCanvas::Update() {
     // scan input
     Vector2 tpos = InputManager::TouchPos();
     auto& drag = InputManager::GetDragHandle();
-    if (!drag.valid() && InputManager::Held(KEY_TOUCH)) {
+    if (!drag.valid() && InputManager::Held(Keys::TOUCH)) {
         Dive(
             [&tpos](UIElement* e){
                 if (e->ScreenRect().Contains(tpos)) {
@@ -47,7 +47,7 @@ void TouchScreenCanvas::Update() {
             }, true, true);
     } else if (drag.valid()) {
         UIElement* e = drag.get();
-        if (InputManager::Held(KEY_TOUCH) && e != nullptr) {
+        if (InputManager::Held(Keys::TOUCH) && e != nullptr) {
             if (e->ScreenRect().Contains(tpos)) {
                 touchedNow->insert({e, std::weak_ptr<UIElement>(e->shared_from_this())});
             }

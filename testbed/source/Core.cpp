@@ -17,6 +17,8 @@
 #include "starlight/ui/Button.h"
 #include "starlight/ui/Label.h"
 
+#include "starlight/dialog/MessageBox.h"
+
 using starlight::Vector2;
 using starlight::VRect;
 using starlight::Color;
@@ -48,6 +50,18 @@ void Core::Init() {
     auto button = std::make_shared<sl::ui::Button>(VRect(64,80,128,32));
     button->SetText("I'm a button.");
     button->eOnTap = [label](auto& btn){
+        auto form = std::make_shared<sl::ui::Form>(true);
+        auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
+        label->autoSizeV = true;
+        label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
+        form->touchScreen->Add(label);
+        auto xbtn = std::make_shared<sl::ui::Button>(VRect(0,0,32,32));
+        xbtn->SetText(" ");
+        form->touchScreen->Add(xbtn);
+        form->Open();
+        auto msg = sl::dialog::MessageBox::New(sl::dialog::MessageBox::OkCancel, "This is a modal dialog!\n\n\n\nScrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscroll!");
+        msg->Open();
+        
         label->SetFont("default.16");
         btn.SetText("I was pressed!");
         btn.eOnTap = [label](auto& btn){
@@ -62,10 +76,18 @@ void Core::Init() {
                 auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
                 label->autoSizeV = true;
                 label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
-                form->topScreen->Add(label);
+                form->touchScreen->Add(label);
                 form->Open();
-                form->Show();
-                if (!form->GetFlag(sl::ui::FormFlags::open)) btn.SetText("fuck.");
+                
+                form = std::make_shared<sl::ui::Form>(true);
+                auto xbtn = std::make_shared<sl::ui::Button>(VRect(32,32,128,32));
+                form->touchScreen->Add(xbtn);
+                form->Open();
+                xbtn->eOnTap = [form](auto& btn){
+                    //form->Close();
+                    auto msg = sl::dialog::MessageBox::New(sl::dialog::MessageBox::Ok, "This is a modal dialog!\n\n\n\nScrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscroll!");
+                    msg->Open();
+                };
             };
         };
     };
@@ -103,5 +125,5 @@ void Core::End() {
 }
 
 void Core::Update() {
-    if (InputManager::Held(KEY_Y) || InputManager::Pressed(KEY_START)) Application::Quit();
+    if (InputManager::Held(Keys::Y) || InputManager::Pressed(Keys::START)) Application::Quit();
 }

@@ -81,6 +81,8 @@ void Application::_init() {
 void Application::_end() {
     End();
     
+    forms.clear(); // not sure why, but not doing this results in a data abort if any forms are active
+    
     RenderCore::Close();
     ConfigManager::End();
 }
@@ -115,8 +117,13 @@ void Application::_mainLoop() {
     // update step
     InputManager::Update();
     Update();
-    for (auto it : forms) { // update loop for forms
-        it->Update(it == forms.back());
+    { // update loop for forms, guarded from snap-outs
+        auto it = forms.begin();
+        while (it != forms.end()) {
+            auto next = std::next(it);
+            (*it)->Update(*it == forms.back());
+            it = next;
+        }
     }
     touchScreen->Update();
     topScreen->Update();
