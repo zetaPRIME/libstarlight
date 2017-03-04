@@ -22,13 +22,13 @@ MessageBox::MessageBox(Mode m, const std::string& msg, std::function<void(int)> 
     priority = 10;
     eOnSelect = onSelect;
     
-    VRect boxArea = VRect(160, 120, 0, 0).Expand(Vector2(300, 200)*.5);
+    VRect boxArea = VRect(160, 120, 0, 0).Expand(Vector2(240, 160)*.5);
     
     auto bg = std::make_shared<Image>(boxArea, "decorations/panel.bg");
     touchScreen->Add(bg);
-    auto scroll = std::make_shared<ScrollField>(boxArea.Expand(-8, -8).TopEdge(200-16-8-32));
+    auto scroll = std::make_shared<ScrollField>(boxArea.Expand(-8, -8).TopEdge(boxArea.size.y - 16 - 32 - 8));
     touchScreen->Add(scroll);
-    auto label = std::make_shared<Label>(VRect(0, 0, 300-16, 0));
+    auto label = std::make_shared<Label>(VRect(0, 0, scroll->rect.size.x, 0));
     label->autoSizeV = true;
     label->SetFont("default.16");
     label->SetText(msg);

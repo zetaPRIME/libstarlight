@@ -1,5 +1,7 @@
 #include "Button.h"
 
+#include "starlight/_incLib/json.hpp"
+
 #include "starlight/InputManager.h"
 #include "starlight/GFXManager.h"
 #include "starlight/ThemeManager.h"
@@ -21,10 +23,12 @@ void Button::SetText(const std::string& text) {
 }
 
 void Button::Draw() {
-    static auto font = ThemeManager::GetFont("default.12");
+    //static auto font = ThemeManager::GetFont("default.12");
     
     static auto idle = ThemeManager::GetAsset("controls/button.idle");
     static auto press = ThemeManager::GetAsset("controls/button.press");
+    
+    static TextConfig tc = ThemeManager::GetMetric<TextConfig>("/controls/button/text", TextConfig());
     
     auto rect = (this->rect + GFXManager::GetOffset()).IntSnap();
     
@@ -34,11 +38,12 @@ void Button::Draw() {
         idle->Draw(rect);
     }
     
-    font->Print(rect, label, 1, Color::white, Vector2(0.5f, 0.5f), Color::black);
+    //font->Print(rect, label, 1, cl/*Color::white*/, Vector2(0.5f, 0.5f), Color::black);
+    tc.Print(rect, label, Vector2(0.5f, 0.5f));
 }
 
 void Button::OnTouchOn() {
-    if (InputManager::Pressed(Keys::TOUCH)) {
+    if (InputManager::Pressed(Keys::Touch)) {
         InputManager::GetDragHandle().Grab(this);
         MarkForRedraw();
     }
@@ -60,7 +65,7 @@ void Button::OnDragHold() {
 }
 
 void Button::OnDragRelease() {
-    if (InputManager::Released(Keys::TOUCH)) {
+    if (InputManager::Released(Keys::Touch)) {
         if (eOnTap) eOnTap(*this);
     }
     MarkForRedraw();

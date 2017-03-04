@@ -125,5 +125,5 @@ void Core::End() {
 }
 
 void Core::Update() {
-    if (InputManager::Held(Keys::Y) || InputManager::Pressed(Keys::START)) Application::Quit();
+    if (InputManager::Held(Keys::Y) || InputManager::Pressed(Keys::Start)) Application::Quit();
 }

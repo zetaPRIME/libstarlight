@@ -12898,6 +12898,9 @@ basic_json_parser_74:
     }
 
     /// @}
+    
+    // ZP EDIT: JSON EXTENSIONS
+    #include "json_extensions.hpp"
 };
 
 /////////////

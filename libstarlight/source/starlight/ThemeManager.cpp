@@ -1,3 +1,6 @@
+#include "ThemeManager.h"
+#include "starlight/gfx/ThemeRef.h"
+
 #include <cstdlib>
 #include <string>
 #include <fstream>
@@ -8,8 +11,7 @@
 #include "starlight/_incLib/lodepng.h"
 #include "starlight/_incLib/json.hpp"
 
-#include "ThemeManager.h"
-#include "starlight/gfx/ThemeRef.h"
+#include "starlight/ConfigManager.h"
 
 #include "starlight/gfx/DrawableImage.h"
 #include "starlight/gfx/DrawableNinePatch.h"
@@ -19,6 +21,8 @@
 #include "starlight/gfx/RenderCore.h"
 #include "starlight/gfx/BitmapFont.h"
 
+#include "starlight/util/JsonConversions.h"
+
 using std::string;
 using std::shared_ptr;
 using std::make_shared;
@@ -26,8 +30,13 @@ using std::make_shared;
 using nlohmann::json;
 
 using starlight::Vector2;
+using starlight::VRect;
+using starlight::Color;
 
-using starlight::ThemeManager;
+using starlight::util::Path;
+
+using starlight::ConfigManager;
+
 using starlight::gfx::Drawable;
 using starlight::gfx::Font;
 using starlight::gfx::ThemeRef;
@@ -39,6 +48,10 @@ using starlight::gfx::DrawableNinePatch;
 using starlight::gfx::RenderCore;
 using starlight::gfx::CTexture;
 using starlight::gfx::BitmapFont;
+
+using starlight::ThemeInfo;
+using starlight::ThemeManager;
+using starlight::TextConfig;
 
 namespace {
     inline int NextPow2(unsigned int x) {
@@ -118,9 +131,50 @@ namespace {
     }
 }
 
+ThemeInfo::ThemeInfo(const std::string& name) : ThemeInfo(Path(".starlight/themes").Combine(name), name) {
+    //ConfigManager::Get("user").Json()["log"].push_back(basePath);
+}
+
+ThemeInfo::ThemeInfo(const Path& path, const std::string& name) {
+    this->name = name;
+    basePath = path;
+    meta = std::make_shared<nlohmann::json>();
+    metrics = std::make_shared<nlohmann::json>();
+    if (!basePath.IsDirectory()) return; // don't bother trying to load stuff
+    { // using...
+        std::ifstream load = basePath.Combine("meta.json").OpenI();
+        if (load.good()) load >> *meta;
+        load = basePath.Combine("metrics.json").OpenI();
+        if (load.good()) load >> *metrics;
+    }
+}
+
+std::list<ThemeInfo> ThemeManager::themeData;
 std::unordered_map<std::string, ThemeRefContainer<Drawable>> ThemeManager::drawables;
 std::unordered_map<std::string, ThemeRefContainer<Font>> ThemeManager::fonts;
 std::list<std::function<void()>> ThemeManager::tq;
+
+void ThemeManager::Init() {
+    auto& usercfg = ConfigManager::Get("user");
+    
+    auto themeName = usercfg.Get<std::string>("/theme", "default", true);
+    
+    ThemeInfo thm = ThemeInfo(themeName);
+    if (!thm.basePath.IsDirectory()) thm = ThemeInfo("default"); // fall back on default if not found
+    // ...and if "default" doesn't exist, fall back on a standard location in romfs:
+    if (!thm.basePath.IsDirectory()) thm = ThemeInfo(Path("romfs:/.fallback_theme", "FALLBACK"));
+    themeData.push_back(thm);
+    
+    while (!(*thm.meta)["fallback"].is_null()) { // follow fallback chain
+        std::string fbn = (*thm.meta)["fallback"];
+        thm = ThemeInfo(fbn);
+        themeData.push_back(thm);
+    }
+}
+
+void ThemeManager::End() {
+    
+}
 
 ThemeRef<Drawable> ThemeManager::GetAsset(const std::string& name) {
     auto const& itr = drawables.find(name);
@@ -201,37 +255,96 @@ void ThemeManager::LoadProc() {
 }
 
 string ThemeManager::ResolveAssetPath(const string& id) {
-    struct stat buf;
-    string path(id.length() + 64, ' '); // preallocate buffer space
+    //struct stat buf;
+    //string path(id.length() + 64, ' '); // preallocate buffer space
     
     static const string pfxLocal = "app:/";
-    if (id.compare(0, pfxLocal.length(), pfxLocal)) {
+    if (id.compare(0, pfxLocal.length(), pfxLocal) == 0) {
         // app-local asset
         // check if present in theme/app/[appname]/, else check in romfs
     }
     else {
         // theme asset; check in each theme from selected to most-fallback
+        for (auto thm : themeData) {
+            Path p = thm.basePath.Combine(id+".json");
+            if (p.IsFile()) return p;
+            p = thm.basePath.Combine(id+".png");
+            if (p.IsFile()) return p;
+        }
     }
     
-    path.clear(); path.append("romfs:/"); path.append(id); path.append(".json");
+    /*path.clear(); path.append("romfs:/"); path.append(id); path.append(".json");
     printf("attempt: %s\n", path.c_str());
     if (stat(path.c_str(), &buf) == 0) return path;
     path.erase(path.end()-5, path.end()); path.append(".png");
     printf("attempt: %s\n", path.c_str());
-    if (stat(path.c_str(), &buf) == 0) return path;
+    if (stat(path.c_str(), &buf) == 0) return path;//*/
     
     return string();
 }
 
-string ThemeManager::ResolveFontPath(const string& id) { // this needs redone, but whatever
-    struct stat buf;
-    string path(id.length() + 64, ' '); // preallocate buffer space
-    path.clear(); path.append("romfs:/fonts/"); path.append(id); path.append(".json");
-    printf("attempt: %s\n", path.c_str());
-    if (stat(path.c_str(), &buf) == 0) return path;
-    path.erase(path.end()-5, path.end()); path.append(".png");
-    printf("attempt: %s\n", path.c_str());
-    if (stat(path.c_str(), &buf) == 0) return path;
+string ThemeManager::ResolveFontPath(const string& id) { // there we go, nice and simple
+    for (auto thm : themeData) {
+        Path p = thm.basePath.Combine("fonts").Combine(id+".json");
+        if (p.IsFile()) return p;
+    }
     
     return string();
 }
+
+json& ThemeManager::GetMetric(const string& path) {
+    json::json_pointer jp(path);
+    for (auto& t : themeData) {
+        json& j = (*t.metrics)[jp];
+        if (!j.is_null()) {
+            if (j.is_object()) {
+                auto& jr = j["_redir"];
+                if (!jr.is_null()) return GetMetric(jr);
+            }
+            return j;
+        }
+    }
+    static json jx({});
+    return jx; // well, here's a null json
+}
+
+template <typename T>
+T ThemeManager::GetMetric(const std::string& path, const T& defaultValue) {
+    //try {
+        json& j = GetMetric(path);
+        if (j.is_null()) return defaultValue;
+        return j;
+    /*} catch (std::exception& e) {
+        return defaultValue;
+    }//*/
+}
+
+TextConfig::TextConfig(const std::string& fontName, Color text, Color border) {
+    font = ThemeManager::GetFont(fontName);
+    textColor = text; borderColor = border;
+}
+
+void TextConfig::Print(Vector2 position, std::string& text, Vector2 justification)
+    { font->Print(position, text, 1, textColor, justification, borderColor); }
+void TextConfig::Print(VRect rect, std::string& text, Vector2 justification)
+    { font->Print(rect, text, 1, textColor, justification, borderColor); }
+
+namespace starlight { // todo: expose these in the header
+    void to_json(nlohmann::json& j, const TextConfig& tc) {
+        // todo: implement this
+    }
+    void from_json(const nlohmann::json& j, TextConfig& tc) {
+        if (j.is_object()) {
+            tc.font = ThemeManager::GetFont(j.value("font", "default.12"));
+            tc.textColor = j.value("textColor", Color::white);
+            tc.borderColor = j.value("borderColor", Color::transparent);
+        }
+        //
+    }
+}
+
+template Vector2 ThemeManager::GetMetric(const std::string&, const Vector2&);
+template VRect ThemeManager::GetMetric(const std::string&, const VRect&);
+template Color ThemeManager::GetMetric(const std::string&, const Color&);
+
+template starlight::TextConfig ThemeManager::GetMetric(const std::string&, const TextConfig&);

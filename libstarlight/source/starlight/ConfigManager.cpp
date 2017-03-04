@@ -68,6 +68,7 @@ std::unordered_map<std::string, std::shared_ptr<Config>> ConfigManager::cfg;
 
 void ConfigManager::Init() {
     //FSHelper::AssertDirPath("sdmc:/.starlight/config/app/" + Application::AppName());
+    Get("user").autoSave = true;
 }
 
 void ConfigManager::End() {

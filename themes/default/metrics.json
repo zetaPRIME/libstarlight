@@ -1,0 +1,33 @@
+{
+    "textPresets" : {
+        "normal.12.dark" : {
+            "font" : "default.12",
+            "textColor" : "black"
+        },
+        "normal.12.light" : {
+            "font" : "default.12",
+            "textColor" : "white"
+        },
+        "normal.16.dark" : {
+            "font" : "default.16",
+            "textColor" : "black"
+        },
+        "normal.16.light" : {
+            "font" : "default.16",
+            "textColor" : "white"
+        },
+        
+        "normal.12" : { "_redir" : "/textPresets/normal.12.light" },
+        "normal.16" : { "_redir" : "/textPresets/normal.16.light" },
+        
+        "":""
+    },
+    
+    "controls" : {
+        "button" : {
+            "text" : { "_redir" : "/textPresets/normal.12" }
+        }
+    },
+    
+    "":""
+}

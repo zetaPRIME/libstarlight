@@ -4,7 +4,8 @@
 #include <memory>
 #include <unordered_map>
 
-#include "starlight/_incLib/json_fwd.hpp"
+//#include "starlight/_incLib/json_fwd.hpp"
+#include "starlight/_incLib/json.hpp"
 
 #include "starlight/util/Path.h"
 
@@ -26,6 +27,22 @@ namespace starlight {
         void Save();
         
         nlohmann::json& Json() { return *json; }
+        
+        template <typename T>
+        T Get(const std::string& path, T defVal, bool writeDefault = false) {
+            auto jp = nlohmann::json::json_pointer(path);
+            auto& js = (*json)[jp];
+            if (js.is_null()) {
+                if (writeDefault) js = defVal;
+                return defVal;
+            }
+            return js;
+        }
+        
+        template <typename T>
+        void Set(const std::string& path, T val) {
+            (*json)[nlohmann::json::json_pointer(path)] = val;
+        }
     };
     
     class ConfigManager {

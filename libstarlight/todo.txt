@@ -1,6 +1,19 @@
 
 
 
+roadmap to first release, in no particular order {
+    add touch interceptor (and possibly dimming "shroud") to modal box
+    make more stuff use theme metrics (particularly default text configs) {
+        label defaults
+    }
+    implement OSK!
+    
+    add license!! (MIT?)
+} and some lesser priority things {
+    add language config and atlas support
+    maybe implement some way of "knocking out" and replacing metrics during runtime for theme switching
+}
+
 form system { framework done apart from some small api changes
     capabilities {
         updates, recieves events etc. as if it were a stackable Application

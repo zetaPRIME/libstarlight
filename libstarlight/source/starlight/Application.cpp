@@ -69,6 +69,7 @@ void Application::_init() {
     romfsInit();
     ConfigManager::Init();
     RenderCore::Open();
+    ThemeManager::Init();
     
     touchScreen = std::make_shared<TouchScreenCanvas>();
     topScreen = std::make_shared<TopScreenCanvas>();
@@ -83,6 +84,7 @@ void Application::_end() {
     
     forms.clear(); // not sure why, but not doing this results in a data abort if any forms are active
     
+    ThemeManager::End();
     RenderCore::Close();
     ConfigManager::End();
 }
