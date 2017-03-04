@@ -12,10 +12,10 @@ namespace starlight {
         Vector2 pos;
         Vector2 size;
         
-        VRect();
-        VRect(float x, float y, float w, float h);
-        VRect(Vector2 pos, Vector2 size);
-        ~VRect();
+        constexpr VRect() = default;
+        constexpr VRect(float x, float y, float w, float h) : pos(x, y), size(w, h) { }
+        constexpr VRect(Vector2 pos, Vector2 size) : pos(pos), size(size) { }
+        ~VRect() = default;
         
         Vector2 Center() const;
         Vector2 TopLeft() const;
@@ -54,6 +54,9 @@ namespace starlight {
         inline VRect & operator += (const Vector2 & vec) { pos += vec; return *this; }
         inline VRect & operator -= (const Vector2 & vec) { pos -= vec; return *this; }
         
+        inline explicit operator bool() { return pos && size; }
+        
+        static const VRect invalid;
         static const VRect zero;
     };
 }

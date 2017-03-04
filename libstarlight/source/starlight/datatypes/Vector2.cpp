@@ -1,16 +1,11 @@
 #include <cstdlib>
 #include <cmath>
 #include <fastmath.h>
+#include <limits>
 
 #include "Vector2.h"
 
 using starlight::Vector2;
-
-Vector2::Vector2() : x(0.0f), y(0.0f) { }
-
-Vector2::~Vector2() { }
-
-Vector2::Vector2(float x, float y) : x(x), y(y) { }
 
 // maths
 float Vector2::Length() const { return sqrtf(x * x + y * y); }
@@ -35,6 +30,8 @@ Vector2 Vector2::RotateAround(const Vector2& anchor, float angle) const { return
 //inline Vector2 operator *(const Vector2* vec, const float scalar) { return Vector2(vec.x * scalar, vec.y * scalar); }
 
 // constants
+const Vector2 Vector2::invalid = Vector2(std::numeric_limits<double>::quiet_NaN());
+
 const Vector2 Vector2::zero = Vector2(0.0f, 0.0f);
 const Vector2 Vector2::one = Vector2(1.0f, 1.0f);
 const Vector2 Vector2::half = Vector2(0.5f, 0.5f);

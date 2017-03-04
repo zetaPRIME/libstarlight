@@ -10,9 +10,10 @@ namespace starlight {
         float x = 0.0f;
         float y = 0.0f;
         
-        Vector2();
-        Vector2(float x, float y);
-        ~Vector2();
+        constexpr Vector2() = default;
+        constexpr Vector2(float x, float y) : x(x), y(y) { }
+        constexpr Vector2(float mag) : x(mag), y(mag) { }
+        ~Vector2() = default;
 
         float Length() const;
         Vector2 Normalized() const;
@@ -47,6 +48,9 @@ namespace starlight {
         inline Vector2 & operator -= (const Vector2 & o) { x -= o.x; y -= o.y; return *this; }
         inline Vector2 & operator *= (const Vector2 & o) { x *= o.x; y *= o.y; return *this; }
         
+        inline explicit operator bool() const { return x == x && y == y; }
+        
+        static const Vector2 invalid;
         static const Vector2 zero;
         static const Vector2 one;
         static const Vector2 half;

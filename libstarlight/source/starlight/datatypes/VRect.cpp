@@ -8,13 +8,6 @@
 using starlight::Vector2;
 using starlight::VRect;
 
-VRect::VRect() : pos(Vector2()), size(Vector2()) { }
-
-VRect::~VRect() { }
-
-VRect::VRect(float x, float y, float w, float h) : pos(x, y), size(w, h) { }
-VRect::VRect(Vector2 pos, Vector2 size) : pos(pos), size(size) { }
-
 Vector2 VRect::Center() const { return pos + (size * 0.5f); }
 Vector2 VRect::TopLeft() const { return pos; }
 Vector2 VRect::TopRight() const { return Vector2(pos.x + size.x, pos.y); }
@@ -62,4 +55,6 @@ VRect VRect::LeftEdge(float width) const    { return VRect(pos.x, pos.y, width, 
 VRect VRect::RightEdge(float width) const   { return VRect(pos.x + size.x - width, pos.y, width, size.y); }
 
 // constants
+const VRect VRect::invalid = VRect(Vector2::invalid, Vector2::invalid);
+
 const VRect VRect::zero = VRect(); // should initialize to 0,0,0,0
