@@ -58,5 +58,8 @@ namespace starlight {
         
         static const VRect invalid;
         static const VRect zero;
+        
+        static const VRect touchScreen;
+        static const VRect topScreen;
     };
 }

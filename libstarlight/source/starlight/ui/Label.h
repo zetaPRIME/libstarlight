@@ -19,12 +19,9 @@ namespace starlight {
             
         public:
             std::string text = "";
-            gfx::ThemeRef<gfx::Font> font;
+            TextConfig textConfig;
             
             std::unique_ptr<gfx::DrawContextCanvas> buffer;
-            
-            Color color = Color::white;
-            Color borderColor = Color::transparent;
             
             bool autoSizeV = false;
             Vector2 justification = Vector2::half;
@@ -34,6 +31,9 @@ namespace starlight {
             
             void SetText(const std::string& text);
             void SetFont(const std::string& fontName);
+            void SetPreset(const std::string& name);
+            
+            void Refresh();
             
             void PreDrawOffscreen() override;
             void PreDraw() override;

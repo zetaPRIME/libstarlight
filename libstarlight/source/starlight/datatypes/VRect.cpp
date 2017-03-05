@@ -58,3 +58,6 @@ VRect VRect::RightEdge(float width) const   { return VRect(pos.x + size.x - widt
 const VRect VRect::invalid = VRect(Vector2::invalid, Vector2::invalid);
 
 const VRect VRect::zero = VRect(); // should initialize to 0,0,0,0
+
+const VRect VRect::touchScreen = VRect(0, 0, 320, 240);
+const VRect VRect::topScreen = VRect(0, 0, 400, 240);

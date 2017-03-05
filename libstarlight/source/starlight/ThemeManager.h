@@ -66,6 +66,7 @@ namespace starlight {
         static inline std::string GetThemeName() { return themeData.front().name; }
         static nlohmann::json& GetMetric(const std::string& path);
         template <typename T> static T GetMetric(const std::string& path, const T& defaultValue);
+        template <typename T> static T GetMetric(const std::string& path);
     };
 }
 

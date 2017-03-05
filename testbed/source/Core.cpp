@@ -18,6 +18,7 @@
 #include "starlight/ui/Label.h"
 
 #include "starlight/dialog/MessageBox.h"
+#include "starlight/dialog/OSK.h"
 
 using starlight::Vector2;
 using starlight::VRect;
@@ -49,20 +50,32 @@ void Core::Init() {
     
     auto button = std::make_shared<sl::ui::Button>(VRect(64,80,128,32));
     button->SetText("I'm a button.");
-    button->eOnTap = [label](auto& btn){
+    button->eOnTap = [](auto& btn){
         auto form = std::make_shared<sl::ui::Form>(true);
         auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
         label->autoSizeV = true;
         label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
         form->touchScreen->Add(label);
-        auto xbtn = std::make_shared<sl::ui::Button>(VRect(0,0,32,32));
-        xbtn->SetText(" ");
+        auto xbtn = std::make_shared<sl::ui::Button>(VRect(4,24,32,32));
+        //xbtn->SetText(" ");
+        xbtn->eOnTap = [](auto& btn){
+            Application::Quit();
+        };
         form->touchScreen->Add(xbtn);
         form->Open();
-        auto msg = sl::dialog::MessageBox::New(sl::dialog::MessageBox::OkCancel, "This is a modal dialog!\n\n\n\nScrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscroll!");
-        msg->Open();
+        //auto msg = sl::dialog::MessageBox::New(sl::dialog::MessageBox::OkCancel, "This is a modal dialog!\n\n\n\nScrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscroll!");
+        //msg->Open();
+        auto tlbl = std::make_shared<sl::ui::Label>(VRect(2, 2, 396, 0));
+        tlbl->autoSizeV = true;
+        tlbl->SetPreset("normal.16");
+        tlbl->justification = Vector2::zero;
+        tlbl->textConfig.borderColor = Color::black;
+        tlbl->SetText("3DS:~# ");
+        form->topScreen->Add(tlbl);
+        auto kb = sl::dialog::OSK::New(&(tlbl->text), [tlbl](){tlbl->Refresh();});
+        kb->Open();
         
-        label->SetFont("default.16");
+        /*label->SetFont("default.16");
         btn.SetText("I was pressed!");
         btn.eOnTap = [label](auto& btn){
             label->borderColor = Color::black;
@@ -89,7 +102,7 @@ void Core::Init() {
                     msg->Open();
                 };
             };
-        };
+        };*/
     };
     container->Add(button);
     
@@ -100,7 +113,7 @@ void Core::Init() {
     topScreen->Add(parallax);
     
     auto pipf = std::make_shared<sl::ui::Label>(VRect(0,0,400,240));
-    pipf->SetFont("default.16"); pipf->borderColor = Color::black;
+    pipf->SetPreset("normal.16"); pipf->textConfig.borderColor = Color::black;
     //pipf->SetText("I am the very model of something on the top screen. :D\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     std::stringstream st;
     //st << "dir: " << Path("sdmc:/.starlight").IsDirectory() << "\nfile: " << Path("sdmc:/arm9loaderhax.bin").IsFile();

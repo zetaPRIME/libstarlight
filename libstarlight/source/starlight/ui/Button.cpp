@@ -39,7 +39,7 @@ void Button::Draw() {
     }
     
     //font->Print(rect, label, 1, cl/*Color::white*/, Vector2(0.5f, 0.5f), Color::black);
-    tc.Print(rect, label, Vector2(0.5f, 0.5f));
+    tc.Print(rect, label, Vector2::half);
 }
 
 void Button::OnTouchOn() {

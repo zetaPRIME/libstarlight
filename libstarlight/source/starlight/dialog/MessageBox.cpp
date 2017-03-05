@@ -1,5 +1,6 @@
 #include "MessageBox.h"
 
+#include "starlight/ThemeManager.h"
 #include "starlight/InputManager.h"
 
 #include "starlight/ui/Image.h"
@@ -22,7 +23,11 @@ MessageBox::MessageBox(Mode m, const std::string& msg, std::function<void(int)> 
     priority = 10;
     eOnSelect = onSelect;
     
-    VRect boxArea = VRect(160, 120, 0, 0).Expand(Vector2(240, 160)*.5);
+    VRect boxArea = VRect(160, 120, 0, 0).Expand(ThemeManager::GetMetric<Vector2>("/dialogs/messageBox/size")*.5);
+    
+    auto cover = std::make_shared<Image>(touchScreen->rect.Expand(4), "decorations/dialog.modal-cover");
+    cover->blockTouch = true;
+    touchScreen->Add(cover);
     
     auto bg = std::make_shared<Image>(boxArea, "decorations/panel.bg");
     touchScreen->Add(bg);
@@ -30,7 +35,7 @@ MessageBox::MessageBox(Mode m, const std::string& msg, std::function<void(int)> 
     touchScreen->Add(scroll);
     auto label = std::make_shared<Label>(VRect(0, 0, scroll->rect.size.x, 0));
     label->autoSizeV = true;
-    label->SetFont("default.16");
+    label->SetPreset("normal.16");
     label->SetText(msg);
     scroll->Add(label);
     

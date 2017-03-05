@@ -140,7 +140,7 @@ ThemeInfo::ThemeInfo(const Path& path, const std::string& name) {
     basePath = path;
     meta = std::make_shared<nlohmann::json>();
     metrics = std::make_shared<nlohmann::json>();
-    if (!basePath.IsDirectory()) return; // don't bother trying to load stuff
+    //if (!basePath.IsDirectory() && std::string(basePath).find("romfs:") != std::string::npos) return; // don't bother trying to load stuff
     { // using...
         std::ifstream load = basePath.Combine("meta.json").OpenI();
         if (load.good()) load >> *meta;
@@ -163,6 +163,7 @@ void ThemeManager::Init() {
     if (!thm.basePath.IsDirectory()) thm = ThemeInfo("default"); // fall back on default if not found
     // ...and if "default" doesn't exist, fall back on a standard location in romfs:
     if (!thm.basePath.IsDirectory()) thm = ThemeInfo(Path("romfs:/.fallback_theme", "FALLBACK"));
+    if (!thm.basePath.IsDirectory()) thm = ThemeInfo(Path("romfs:/", "FALLBACK")); // fall back on root of romfs for testbed I guess
     themeData.push_back(thm);
     
     while (!(*thm.meta)["fallback"].is_null()) { // follow fallback chain
@@ -319,6 +320,13 @@ T ThemeManager::GetMetric(const std::string& path, const T& defaultValue) {
     }//*/
 }
 
+template <typename T>
+T ThemeManager::GetMetric(const std::string& path) {
+    json& j = GetMetric(path);
+    if (j.is_null()) return T();
+    return j;
+}
+
 TextConfig::TextConfig(const std::string& fontName, Color text, Color border) {
     font = ThemeManager::GetFont(fontName);
     textColor = text; borderColor = border;
@@ -343,8 +351,13 @@ namespace starlight { // todo: expose these in the header
     }
 }
 
-template Vector2 ThemeManager::GetMetric(const std::string&, const Vector2&);
-template VRect ThemeManager::GetMetric(const std::string&, const VRect&);
-template Color ThemeManager::GetMetric(const std::string&, const Color&);
+// explicit type conversions for metrics
+#define typeconv(t) \
+    template t ThemeManager::GetMetric(const std::string&, const t &); \
+    template t ThemeManager::GetMetric(const std::string&);
 
-template starlight::TextConfig ThemeManager::GetMetric(const std::string&, const TextConfig&);
+typeconv(Vector2);
+typeconv(VRect);
+typeconv(Color);
+
+typeconv(TextConfig);

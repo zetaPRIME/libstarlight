@@ -19,6 +19,7 @@ namespace starlight {
         public:
             gfx::ThemeRef<gfx::Drawable> image;
             Color tint = Color::white;
+            bool blockTouch = false;
             
             Image(VRect rect, const std::string& imgPath);
             Image(Vector2 pos, const std::string& imgPath);
@@ -27,6 +28,8 @@ namespace starlight {
             void SetImage(const std::string& imgPath, bool resize = true);
             
             void Draw() override;
+            
+            bool InterceptsTouch(Vector2 where) override { return blockTouch; }
         };
     }
 }

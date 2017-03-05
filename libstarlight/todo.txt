@@ -2,13 +2,18 @@
 
 
 roadmap to first release, in no particular order {
-    add touch interceptor (and possibly dimming "shroud") to modal box
-    make more stuff use theme metrics (particularly default text configs) {
-        label defaults
+    make more stuff use theme metrics {
+        dialog layouts(...?)
     }
-    implement OSK!
+    finish implementing OSK! {
+        make backspace and enter actually do something
+        abstract osk input actions into a separate object/class heirarchy
+        polish!
+        InputManager::OpenKeyboard
+    }
     
     add license!! (MIT?)
+    ADD README.MD PLS
 } and some lesser priority things {
     add language config and atlas support
     maybe implement some way of "knocking out" and replacing metrics during runtime for theme switching
@@ -28,7 +33,7 @@ form system { framework done apart from some small api changes
 
 
 today's agenda {
-    FSHelper, recursive directory assertion etc.
+    ...
 } then {
     change Label to move the rect instead of resizing to accomodate drops (add an offset thing to Font)
     kill scroll velocity when hitting the edge (or rapid decel)
