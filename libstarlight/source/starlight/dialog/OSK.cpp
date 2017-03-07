@@ -23,10 +23,9 @@ using starlight::ui::Form;
 
 using starlight::dialog::OSK;
 
-OSK::OSK(std::string* textptr, std::function<void()> onModify) : Form(true) {
+OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     priority = 1000; // probably don't want all that much displaying above the keyboard
-    eOnModify = onModify;
-    pText = textptr;
+    handler->parent = this;
     
     auto cover = std::make_shared<Image>(touchScreen->rect.Expand(4), "decorations/dialog.modal-cover");
     cover->blockTouch = true;
@@ -38,7 +37,7 @@ OSK::OSK(std::string* textptr, std::function<void()> onModify) : Form(true) {
     touchScreen->Add(setContainer);
     
     auto actSym = [this](Button& key){
-        this->OnSymKey(key.label);
+        this->handler->InputSymbol(key.label);
     };
     
     Vector2 bs(24, 32);
@@ -80,19 +79,21 @@ OSK::OSK(std::string* textptr, std::function<void()> onModify) : Form(true) {
     auto key = std::make_shared<Button>(VRect(bpen, bs));
     key->rect.size.x *= 1.25;
     key->SetText("< <");
+    key->eOnTap = [this](auto& btn){ this->handler->Backspace(); };
     touchScreen->Add(key);
     
     bpen = bpstart + bs * Vector2(linestart[4] + 8, 4);
     key = std::make_shared<Button>(VRect(bpen, bs));
     key->rect.size.x *= 2.5;
     key->SetText("Enter");
+    key->eOnTap = [this](auto& btn){ this->handler->Enter(); };
     touchScreen->Add(key);
     
 }
 
 void OSK::Update(bool focused) {
     if (focused) {
-        if (InputManager::Pressed(Keys::B)) Close();
+        if (InputManager::Pressed(Keys::B)) handler->Done();
         
         float& s = setContainer->scrollOffset.y;
         float ts = 0;
@@ -107,10 +108,10 @@ void OSK::Update(bool focused) {
 }
 
 void OSK::OnSymKey(const string& chr) {
-    pText->append(chr);
+    //pText->append(chr);
     //pText->append("sackboy ");
     //auto& tx = *pText;
     //ConfigManager::Get("user").Json()["log"].push_back(*pText);
     //tx.assign("shickaxe");
-    if (eOnModify) eOnModify();
+    //if (eOnModify) eOnModify();
 }

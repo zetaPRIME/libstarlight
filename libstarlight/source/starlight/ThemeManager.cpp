@@ -13,6 +13,8 @@
 
 #include "starlight/ConfigManager.h"
 
+#include "starlight/Application.h"
+
 #include "starlight/gfx/DrawableImage.h"
 #include "starlight/gfx/DrawableNinePatch.h"
 #include "starlight/gfx/DrawableTest.h"
@@ -263,6 +265,19 @@ string ThemeManager::ResolveAssetPath(const string& id) {
     if (id.compare(0, pfxLocal.length(), pfxLocal) == 0) {
         // app-local asset
         // check if present in theme/app/[appname]/, else check in romfs
+        for (auto thm : themeData) {
+            Path bp = thm.basePath.Combine("app").Combine(Application::AppName());
+            Path p = bp.Combine(id+".json");
+            if (p.IsFile()) return p;
+            p = bp.Combine(id+".png");
+            if (p.IsFile()) return p;
+        }
+        // TBD - directly in romfs, or in an assets folder?
+        Path bp = Path("romfs:");
+        Path p = bp.Combine(id+".json");
+        if (p.IsFile()) return p;
+        p = bp.Combine(id+".png");
+        if (p.IsFile()) return p;
     }
     else {
         // theme asset; check in each theme from selected to most-fallback

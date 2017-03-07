@@ -72,7 +72,8 @@ void Core::Init() {
         tlbl->textConfig.borderColor = Color::black;
         tlbl->SetText("3DS:~# ");
         form->topScreen->Add(tlbl);
-        auto kb = sl::dialog::OSK::New(&(tlbl->text), [tlbl](){tlbl->Refresh();});
+        auto kb = sl::dialog::OSK::New(new sl::dialog::osk::InputHandlerDirectEdit(&(tlbl->text), true, 7, [tlbl](){tlbl->Refresh();}));
+            //&(tlbl->text), [tlbl](){tlbl->Refresh();});
         kb->Open();
         
         /*label->SetFont("default.16");

@@ -3,8 +3,11 @@
 
 #include <string>
 #include <functional>
+#include <memory>
 
 #include "starlight/ui/Form.h"
+
+#include "starlight/dialog/osk/InputHandler.h"
 
 namespace starlight {
     namespace dialog {
@@ -13,11 +16,9 @@ namespace starlight {
             std::shared_ptr<ui::UIContainer> setContainer;
         
         public:
-            std::string* pText = nullptr;
+            std::unique_ptr<osk::InputHandler> handler;
             
-            std::function<void()> eOnModify;
-            
-            OSK(std::string* textptr, std::function<void()> onModify = {});
+            OSK(osk::InputHandler* handler);
             ~OSK() override { };
             
             void Update(bool focused) override;
