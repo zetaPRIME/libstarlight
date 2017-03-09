@@ -21,6 +21,11 @@ namespace starlight {
                 InputHandler() = default;
                 virtual ~InputHandler() = default;
                 
+                virtual std::string& GetPreviewText() { static std::string p = ""; return p; }
+                
+                virtual unsigned int GetCursor() { return 0; }
+                virtual void SetCursor(unsigned int index) { }
+                
                 virtual void InputSymbol(const std::string& sym) { }
                 virtual void Backspace() { }
                 virtual void Enter() { }
@@ -42,6 +47,11 @@ namespace starlight {
                     : multiLine(multiLine), pText(textptr), minIndex(minIndex), eOnModify(onModify), eOnFinalize(onFinalize) { }
                 ~InputHandlerDirectEdit() override { }
                 
+                std::string& GetPreviewText() override;
+                
+                unsigned int GetCursor() override;
+                void SetCursor(unsigned int index) override;
+                
                 void InputSymbol(const std::string& sym) override;
                 void Backspace() override;
                 void Enter() override;
@@ -57,8 +67,13 @@ namespace starlight {
                 std::function<void(const std::string&)> eOnFinalize = { };
                 
                 InputHandlerBuffered(const std::string& text = "", bool multiLine = false, std::function<void(const std::string&)> onFinalize = {})
-                    : showPreview(true), buffer(text), multiLine(multiLine), eOnFinalize(onFinalize) { }
+                    : buffer(text), multiLine(multiLine), eOnFinalize(onFinalize) { this->showPreview = true; }
                 ~InputHandlerBuffered() override { }
+                
+                std::string& GetPreviewText() override;
+                
+                unsigned int GetCursor() override;
+                void SetCursor(unsigned int index) override;
                 
                 void InputSymbol(const std::string& sym) override;
                 void Backspace() override;

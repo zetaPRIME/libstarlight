@@ -10,6 +10,11 @@ using starlight::dialog::osk::InputHandlerBuffered;
 
 // DirectEdit
 
+std::string& InputHandlerDirectEdit::GetPreviewText() { return *pText; }
+
+unsigned int InputHandlerDirectEdit::GetCursor() { return pText->length(); }
+void InputHandlerDirectEdit::SetCursor(unsigned int index) { }
+
 void InputHandlerDirectEdit::InputSymbol(const string& sym) {
     pText->append(sym);
     if (eOnModify) eOnModify();
@@ -33,6 +38,11 @@ void InputHandlerDirectEdit::Done() {
 }
 
 // Buffered
+
+std::string& InputHandlerBuffered::GetPreviewText() { return buffer; }
+
+unsigned int InputHandlerBuffered::GetCursor() { return buffer.length(); }
+void InputHandlerBuffered::SetCursor(unsigned int index) { }
 
 void InputHandlerBuffered::InputSymbol(const string& sym) {
     buffer.append(sym);

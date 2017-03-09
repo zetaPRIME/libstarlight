@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "starlight/ui/Form.h"
+#include "starlight/ui/DrawLayerProxy.h"
 
 #include "starlight/dialog/osk/InputHandler.h"
 
@@ -14,6 +15,7 @@ namespace starlight {
         class OSK : public ui::Form, public ui::FormCreator<OSK> {
         private:
             std::shared_ptr<ui::UIContainer> setContainer;
+            std::shared_ptr<ui::DrawLayerProxy> preview;
         
         public:
             std::unique_ptr<osk::InputHandler> handler;
@@ -23,7 +25,9 @@ namespace starlight {
             
             void Update(bool focused) override;
             
-            void OnSymKey(const std::string& chr);
+            void OnKey();
+            
+            void DrawPreview(ui::DrawLayerProxy& layer);
         };
     }
 }

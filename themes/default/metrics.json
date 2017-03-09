@@ -32,6 +32,13 @@
     "dialogs" : {
         "messageBox" : {
             "size" : [240, 160]
+        },
+        "OSK" : {
+            "preview" : {
+                "font" : "default.16",
+                "textColor" : "white",
+                "borderColor" : "black"
+            }
         }
     },
     

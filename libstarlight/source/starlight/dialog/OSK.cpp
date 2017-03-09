@@ -2,6 +2,9 @@
 
 #include "starlight/ThemeManager.h"
 #include "starlight/InputManager.h"
+#include "starlight/GFXManager.h"
+
+#include "starlight/gfx/Font.h"
 
 #include "starlight/ui/Image.h"
 #include "starlight/ui/Button.h"
@@ -12,12 +15,17 @@
 
 using std::string;
 
+using starlight::ThemeManager;
 using starlight::InputManager;
+using starlight::GFXManager;
+
+using starlight::gfx::Font;
 
 using starlight::ui::Image;
 using starlight::ui::Button;
 using starlight::ui::Label;
 using starlight::ui::ScrollField;
+using starlight::ui::DrawLayerProxy;
 
 using starlight::ui::Form;
 
@@ -38,6 +46,7 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     
     auto actSym = [this](Button& key){
         this->handler->InputSymbol(key.label);
+        this->OnKey();
     };
     
     Vector2 bs(24, 32);
@@ -79,16 +88,19 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     auto key = std::make_shared<Button>(VRect(bpen, bs));
     key->rect.size.x *= 1.25;
     key->SetText("< <");
-    key->eOnTap = [this](auto& btn){ this->handler->Backspace(); };
+    key->eOnTap = [this](auto& btn){ this->handler->Backspace(); this->OnKey(); };
     touchScreen->Add(key);
     
+    // enter
     bpen = bpstart + bs * Vector2(linestart[4] + 8, 4);
     key = std::make_shared<Button>(VRect(bpen, bs));
     key->rect.size.x *= 2.5;
     key->SetText("Enter");
-    key->eOnTap = [this](auto& btn){ this->handler->Enter(); };
+    key->eOnTap = [this](auto& btn){ this->handler->Enter(); this->OnKey(); };
     touchScreen->Add(key);
     
+    preview = std::make_shared<DrawLayerProxy>(VRect::touchScreen.TopEdge(68).Expand(-2), [this](auto& layer){ this->DrawPreview(layer); }, true);
+    touchScreen->Add(preview);
 }
 
 void OSK::Update(bool focused) {
@@ -107,11 +119,13 @@ void OSK::Update(bool focused) {
     }
 }
 
-void OSK::OnSymKey(const string& chr) {
-    //pText->append(chr);
-    //pText->append("sackboy ");
-    //auto& tx = *pText;
-    //ConfigManager::Get("user").Json()["log"].push_back(*pText);
-    //tx.assign("shickaxe");
-    //if (eOnModify) eOnModify();
+void OSK::OnKey() {
+    preview->Refresh();
+}
+
+void OSK::DrawPreview(DrawLayerProxy& layer) {
+    if (true || handler->showPreview) {
+        static auto tc = ThemeManager::GetMetric<TextConfig>("/dialogs/OSK/preview");
+        tc.Print(layer.rect, handler->GetPreviewText(), Vector2::zero);
+    }
 }
