@@ -28,6 +28,7 @@ namespace starlight {
             void OnKey();
             
             void DrawPreview(ui::DrawLayerProxy& layer);
+            void OnPreviewTap(ui::DrawLayerProxy& layer);
         };
     }
 }

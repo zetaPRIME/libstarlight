@@ -24,6 +24,7 @@ namespace starlight {
             std::unique_ptr<gfx::DrawContextCanvas> canvas;
             
             std::function<void(DrawLayerProxy&)> eDraw;
+            std::function<void(DrawLayerProxy&)> eOnTap;
             
             DrawLayerProxy(VRect rect, std::function<void(DrawLayerProxy&)> drawFunc, bool useCanvas = false) : useCanvas(useCanvas), eDraw(drawFunc) { this->rect = rect; }
             ~DrawLayerProxy() override { }
@@ -33,6 +34,11 @@ namespace starlight {
             //void Update() override;
             void PreDraw() override;
             void Draw() override;
+            
+            void OnTouchOn() override;
+            void OnTouchOff() override;
+            void OnDragHold() override;
+            void OnDragRelease() override;
             
             //
         };

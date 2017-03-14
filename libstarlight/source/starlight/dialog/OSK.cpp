@@ -100,12 +100,39 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     touchScreen->Add(key);
     
     preview = std::make_shared<DrawLayerProxy>(VRect::touchScreen.TopEdge(68).Expand(-2), [this](auto& layer){ this->DrawPreview(layer); }, true);
+    preview->eOnTap = [this](auto& layer){ this->OnPreviewTap(layer); };
     touchScreen->Add(preview);
 }
 
 void OSK::Update(bool focused) {
     if (focused) {
         if (InputManager::Pressed(Keys::B)) handler->Done();
+        if (true || handler->showPreview) {
+            if (InputManager::Pressed(Keys::DPadLeft)) {
+                handler->SetCursor(handler->GetCursor() - 1);
+                preview->Refresh();
+            }
+            if (InputManager::Pressed(Keys::DPadRight)) {
+                handler->SetCursor(handler->GetCursor() + 1);
+                preview->Refresh();
+            }
+            
+            static auto tc = ThemeManager::GetMetric<TextConfig>("/dialogs/OSK/preview");
+            if (InputManager::Pressed(Keys::DPadUp)) {
+                Vector2 pt = tc.font->GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
+                string msr = "|";
+                pt.y -= tc.font->Measure(msr).y * 0.5f;
+                handler->SetCursor(tc.font->GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
+                preview->Refresh();
+            }
+            if (InputManager::Pressed(Keys::DPadDown)) {
+                Vector2 pt = tc.font->GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
+                string msr = "|";
+                pt.y += tc.font->Measure(msr).y;
+                handler->SetCursor(tc.font->GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
+                preview->Refresh();
+            }
+        }
         
         float& s = setContainer->scrollOffset.y;
         float ts = 0;
@@ -127,5 +154,16 @@ void OSK::DrawPreview(DrawLayerProxy& layer) {
     if (true || handler->showPreview) {
         static auto tc = ThemeManager::GetMetric<TextConfig>("/dialogs/OSK/preview");
         tc.Print(layer.rect, handler->GetPreviewText(), Vector2::zero);
+        
+        Vector2 cp = tc.font->GetCursorPosition(layer.rect, handler->GetPreviewText(), handler->GetCursor());
+        string cc = "|";
+        tc.Print(cp, cc, Vector2::zero);
     }
+}
+
+void OSK::OnPreviewTap(DrawLayerProxy& layer) {
+    Vector2 tpos = InputManager::TouchPos() - layer.ScreenRect().pos;
+    static auto tc = ThemeManager::GetMetric<TextConfig>("/dialogs/OSK/preview");
+    handler->SetCursor(tc.font->GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos + layer.rect.pos));
+    preview->Refresh();
 }

@@ -86,6 +86,118 @@ float BitmapFont::DrawText(const Vector2& penStart, std::string& msg, float scal
     return pen.x - penStart.x;
 }
 
+Vector2 BitmapFont::MeasureTo(std::string& msg, bool total, unsigned int end, float maxWidth) {
+    auto len = msg.length();
+    if (end > len) end = len;
+    
+    Vector2 pen = Vector2::zero;
+    Vector2 oPen = pen;
+    float longest = 0;
+    float wordlen = 0;
+    float plen = 0;
+    
+    float space = Char(' ').advX;
+    
+    for (unsigned int i = 0; i < len; i++) {
+        char& c = msg[i];
+        if (c == ' ' || c == '\n') {
+            bool alb = false; // already linebreak
+            oPen = pen;
+            if (pen.x > longest) longest = pen.x;
+            if (pen.x + wordlen > maxWidth) {
+                pen.x = 0; pen.y += lineHeight;
+                alb = true;
+            }
+            pen.x += wordlen;
+            pen.x += space;
+            
+            if (c == '\n' && !alb) {
+                if (pen.x > longest) longest = pen.x;
+                pen.x = 0; pen.y += lineHeight;
+            }
+            
+            if (!total && i >= end) {
+                //if (c == ' ') pen.x -= space; // I think this needs to be undone too?
+                return Vector2(oPen.x + plen, oPen.y); // return cursor position
+            }
+            wordlen = plen = 0;
+        } else {
+            float adv = Char(c).advX; 
+            wordlen += adv;
+            if (i < end) plen += adv;
+        }
+    }
+    
+    {   // oh right, this check kind of needs to happen at the end too
+        if (pen.x > longest) longest = pen.x;
+        if (pen.x + wordlen > maxWidth) {
+            pen.x = 0; pen.y += lineHeight;
+        }
+        pen.x += wordlen;
+        
+        if (!total) {
+            //if (c == ' ') pen.x -= space; // I think this needs to be undone too?
+            return Vector2(pen.x - (wordlen - plen), pen.y); // return cursor position
+        }
+    }
+    
+    //if (msg.back() != '\n') pen.y += lineHeight; // trim trailing newline (todo: make this recursive...?)
+    pen.y += lineHeight;
+    return Vector2(longest, pen.y); // total size
+}
+
+unsigned int BitmapFont::PointToIndex(std::string& msg, Vector2 pt, float maxWidth) {
+    if (pt.y < 0) return 0;
+    auto len = msg.length();
+    
+    unsigned int line = 0;
+    unsigned int tLine = std::max(0.0f, std::floor(pt.y / lineHeight));
+    
+    unsigned int le = 0; // line end
+    unsigned int ti = 4294967295; // target index
+    
+    Vector2 pen = Vector2::zero;
+    float wordlen = 0;
+    
+    float space = Char(' ').advX;
+    
+    for (unsigned int i = 0; i < len; i++) {
+        char& c = msg[i];
+        if (c == ' ' || c == '\n') {
+            // linebreak on newline or wrap needed
+            bool lb = (c == '\n' || pen.x + space + wordlen > maxWidth);
+            
+            if (lb) {
+                if (c == '\n') le = i; // not wrapped
+                if (line == tLine) return std::min(le, ti);
+                pen.x = (c == ' ') ? wordlen : 0;
+                line++;
+            } else {
+                pen.x += wordlen + space;
+                if (line == tLine && ti == 4294967295 && pen.x - space*0.5f >= pt.x) ti = i;
+                le = i;
+            }
+            
+            wordlen = 0; // HERP DERP.
+        } else {
+            float cw = Char(c).advX;
+            wordlen += cw;
+            if (line == tLine && ti == 4294967295 && pen.x + wordlen - cw*0.5f >= pt.x) ti = i;
+        }
+    }
+    // oh right, process last word
+    if (pen.x + space + wordlen > maxWidth) {
+        if (line == tLine) return std::min(le, ti);
+        pen.x = wordlen;
+        line++;
+    } else {
+        le = len;
+    }
+    
+    if (line == tLine) return std::min(le, ti);
+    
+    return len;
+}
 
 
 
@@ -107,10 +219,4 @@ float BitmapFont::DrawText(const Vector2& penStart, std::string& msg, float scal
 
 
 
-
-
-
-
-
-
-
+//

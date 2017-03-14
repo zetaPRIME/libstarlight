@@ -23,6 +23,9 @@ namespace starlight {
             void Print(VRect rect, std::string& text, float scale = 1, Color color = Color::white, Vector2 justification = Vector2::zero, OptRef<Color> borderColor = nullptr) override;
             void PrintDisplayList(DisplayList* dl, Vector2 position, std::string& text, float scale = 1, Color color = Color::white, Vector2 justification = Vector2::zero, OptRef<Color> borderColor = nullptr) override;
             void PrintDisplayList(DisplayList* dl, VRect rect, std::string& text, float scale = 1, Color color = Color::white, Vector2 justification = Vector2::zero, OptRef<Color> borderColor = nullptr) override;
+            
+            Vector2 GetCursorPosition(VRect rect, std::string& text, unsigned int end, float scale) override;
+            unsigned int GetCursorFromPoint(VRect rect, std::string& text, Vector2 pt, float scale) override;
         };
     }
 }

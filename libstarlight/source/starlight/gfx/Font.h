@@ -24,6 +24,9 @@ namespace starlight {
             virtual void Print(VRect rect, std::string& text, float scale = 1, Color color = Color::white, Vector2 justification = Vector2::zero, OptRef<Color> borderColor = nullptr) = 0;
             virtual void PrintDisplayList(DisplayList* dl, Vector2 position, std::string& text, float scale = 1, Color color = Color::white, Vector2 justification = Vector2::zero, OptRef<Color> borderColor = nullptr) = 0;
             virtual void PrintDisplayList(DisplayList* dl, VRect rect, std::string& text, float scale = 1, Color color = Color::white, Vector2 justification = Vector2::zero, OptRef<Color> borderColor = nullptr) = 0;
+            
+            virtual Vector2 GetCursorPosition(VRect rect, std::string& text, unsigned int end, float scale = 1) = 0;
+            virtual unsigned int GetCursorFromPoint(VRect rect, std::string& text, Vector2 pt, float scale = 1) = 0;
         };
         
     }

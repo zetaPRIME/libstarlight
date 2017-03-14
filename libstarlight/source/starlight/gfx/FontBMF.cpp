@@ -18,9 +18,10 @@ using starlight::gfx::FontBMF;
 #define ded(wat) err(0,wat)
 Vector2 FontBMF::Measure(std::string& text, float scale, float maxWidth) {
     if (text == "") return Vector2::zero;
-    Vector2 v;
+    /*Vector2 v;
     PrintOp(Vector2(), text, scale, Color(), Vector2(), nullptr, maxWidth, &v, static_cast<DisplayList*>(nullptr));
-    return v;
+    return v;*/
+    return font->MeasureTo(text, true, text.length(), maxWidth) * scale;
 }
 
 void FontBMF::Print(Vector2 position, std::string& text, float scale, Color color, Vector2 justification, OptRef<Color> borderColor) {
@@ -138,4 +139,12 @@ void FontBMF::PrintOp(Vector2 position, std::string& text, float scale, const Co
         lp += Vector2(0, lineHeight);
         li++;
     }
+}
+
+Vector2 FontBMF::GetCursorPosition(VRect rect, std::string& text, unsigned int end, float scale) {
+    return rect.pos + (font->MeasureTo(text, false, end, rect.size.x / scale)* scale);
+}
+
+unsigned int FontBMF::GetCursorFromPoint(VRect rect, std::string& text, Vector2 pt, float scale) {
+    return font->PointToIndex(text, pt*scale - rect.pos, rect.size.x / scale);
 }

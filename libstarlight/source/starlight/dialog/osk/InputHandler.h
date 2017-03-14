@@ -39,12 +39,13 @@ namespace starlight {
                 
                 std::string* pText;
                 unsigned int minIndex = 0;
+                unsigned int cursor = 0;
                 
                 std::function<void()> eOnModify = {};
                 std::function<void()> eOnFinalize = {};
                 
                 InputHandlerDirectEdit(std::string* textptr, bool multiLine = false, unsigned int minIndex = 0, std::function<void()> onModify = {}, std::function<void()> onFinalize = {})
-                    : multiLine(multiLine), pText(textptr), minIndex(minIndex), eOnModify(onModify), eOnFinalize(onFinalize) { }
+                    : multiLine(multiLine), pText(textptr), minIndex(minIndex), cursor(textptr->length()), eOnModify(onModify), eOnFinalize(onFinalize) { }
                 ~InputHandlerDirectEdit() override { }
                 
                 std::string& GetPreviewText() override;

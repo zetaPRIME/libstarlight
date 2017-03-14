@@ -12,17 +12,21 @@ using starlight::dialog::osk::InputHandlerBuffered;
 
 std::string& InputHandlerDirectEdit::GetPreviewText() { return *pText; }
 
-unsigned int InputHandlerDirectEdit::GetCursor() { return pText->length(); }
-void InputHandlerDirectEdit::SetCursor(unsigned int index) { }
+unsigned int InputHandlerDirectEdit::GetCursor() { return cursor; }
+void InputHandlerDirectEdit::SetCursor(unsigned int index) { cursor = index; if (cursor < minIndex) cursor = minIndex; auto len = pText->length(); if (cursor > len) cursor = len; }
 
 void InputHandlerDirectEdit::InputSymbol(const string& sym) {
-    pText->append(sym);
+    //pText->append(sym);
+    pText->insert(cursor, sym);
+    cursor += sym.length();
     if (eOnModify) eOnModify();
 }
 
 void InputHandlerDirectEdit::Backspace() {
-    if (pText->length() > minIndex) {
-        pText->pop_back();
+    if (cursor > minIndex) {
+        //pText->pop_back();
+        pText->erase(cursor-1, 1);
+        cursor -= 1;
         if (eOnModify) eOnModify();
     }
 }
