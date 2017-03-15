@@ -171,6 +171,6 @@ void OSK::DrawPreview(DrawLayerProxy& layer) {
 void OSK::OnPreviewTap(DrawLayerProxy& layer) {
     Vector2 tpos = InputManager::TouchPos() - layer.ScreenRect().pos;
     auto& tc = PreviewTC();
-    handler->SetCursor(tc.font->GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos + layer.rect.pos));
+    handler->SetCursor(tc.font->GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos));
     preview->Refresh();
 }

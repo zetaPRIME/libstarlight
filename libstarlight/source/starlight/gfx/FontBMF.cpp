@@ -34,7 +34,7 @@ void FontBMF::Print(Vector2 position, std::string& text, float scale, Color colo
             Vector2 uvScale = Vector2::one / font->txMain->txSize;
             Vector2 ppen = Vector2(-font->padX, -font->padY /*- (font->lineHeight - font->baseY)*/);
             font->ForChar(text, [&, this, ppen, justification, qn, scale, uvScale](auto& s){
-                if (s.c == ' ') return false; // skip spaces
+                if (s.c == ' ' || s.c == '\n') return false; // skip spaces/newlines
                 Vector2 pen = (ppen + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
                 auto& ci = *s.cc;
                 VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
@@ -64,7 +64,7 @@ void FontBMF::Print(VRect rect, std::string& text, float scale, Color color, Vec
             Vector2 uvScale = Vector2::one / font->txMain->txSize;
             Vector2 ppen = Vector2(-font->padX, -font->padY /*- (font->lineHeight - font->baseY)*/);
             font->ForChar(text, [&, this, ppen, justification, qn, scale, uvScale](auto& s){
-                if (s.c == ' ') return false; // skip spaces
+                if (s.c == ' ' || s.c == '\n') return false; // skip spaces/newlines
                 Vector2 pen = (ppen + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
                 auto& ci = *s.cc;
                 VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);

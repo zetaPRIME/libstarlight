@@ -7,13 +7,7 @@ roadmap to first release, in no particular order {
         - make backspace and enter actually do something
         - abstract osk input actions into a separate object/class heirarchy
         - preview where applicable
-        fix desync between cursor position, tap-cursor and display when a single word overflows a line
-            (cursor doesn't wrap until the next word!?)
         fix font glyph padding to eliminate slight "crosstalk" in bordered variants
-        ... reimplement as a per-character lambda-"loop" {
-            status object with stuff
-            precalculate line stats, then loop through each
-        }
         polish!
         InputManager::OpenKeyboard
     }

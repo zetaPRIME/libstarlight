@@ -87,111 +87,73 @@ float BitmapFont::DrawText(const Vector2& penStart, std::string& msg, float scal
 }
 
 Vector2 BitmapFont::MeasureTo(std::string& msg, bool total, unsigned int end, float maxWidth) {
-    auto len = msg.length();
-    if (end > len) end = len;
+    if (total) {
+        Vector2 measure = Vector2::zero;
+        
+        ForChar(msg, [&, this](auto& s){
+            if (s.i > end) return true;
+            if (s.iline > 0) return false;
+            measure.x = std::max(measure.x, s.lineWidth);
+            measure.y += lineHeight;
+            return false;
+        }, maxWidth);
+        
+        return measure;
+    }
     
-    Vector2 pen = Vector2::zero;
-    Vector2 oPen = pen;
-    float longest = 0;
-    float wordlen = 0;
-    float plen = 0;
+    Vector2 measure;
+    bool found = false;
     
-    float space = Char(' ').advX;
-    
-    for (unsigned int i = 0; i < len; i++) {
-        char& c = msg[i];
-        if (c == ' ' || c == '\n') {
-            bool lb = (c == '\n' || pen.x + wordlen > maxWidth);
-            oPen = pen;
-            
-            if (lb) {
-                if (c == '\n') pen.x += space + wordlen; // previous word
-                longest = std::max(pen.x - space, longest);
-                pen.x = (c == ' ') ? (space + wordlen) : 0;
-                pen.y += lineHeight;
-            } else {
-                pen.x += space + wordlen;
-            }
-            
-            if (!total && i >= end) {
-                return Vector2(pen.x - (wordlen - plen) - space, pen.y);
-            }
-            
-            wordlen = plen = 0;
-        } else {
-            float adv = Char(c).advX; 
-            wordlen += adv;
-            if (i < end) plen += adv;
+    ForChar(msg, [&, this, total, end](auto& s){
+        measure = Vector2(s.lineAcc + s.cc->advX, lineHeight * s.lineNum);
+        if (s.i == end-1) { 
+            found = true;
+            if (s.i == s.lineEnd) measure = Vector2(0, lineHeight * (s.lineNum + 1)); // linebreak == next line
+            return true;
         }
-    }
-    longest = std::max(pen.x - space, longest);
+        
+        return false;
+    }, maxWidth);
     
-    if (pen.x + space + wordlen > maxWidth) {
-        pen.x = wordlen;
-        pen.y += lineHeight;
-    } else {
-        pen.x += wordlen + space;
-    }
-    longest = std::max(pen.x - space, longest); // do I need two of these?
-    
-    if (!total) {
-        return Vector2(pen.x - (wordlen - plen) - space, pen.y); // return cursor position
+    if (!found) { // catch newline-at-end
+        measure.x = 0;
+        measure.y += lineHeight;
     }
     
-    return Vector2(longest, pen.y + lineHeight); // total size
+    return measure;
 }
 
 unsigned int BitmapFont::PointToIndex(std::string& msg, Vector2 pt, float maxWidth) {
+    //pt -= Vector2(padX, 0*padY);
     if (pt.y < 0) return 0;
-    auto len = msg.length();
+    unsigned int tl = std::floor(pt.y / lineHeight);
     
-    unsigned int line = 0;
-    unsigned int tLine = std::max(0.0f, std::floor(pt.y / lineHeight));
+    unsigned int idx;
     
-    unsigned int le = 0; // line end
-    unsigned int ti = 4294967295; // target index
-    
-    Vector2 pen = Vector2::zero;
-    float wordlen = 0;
-    
-    float space = Char(' ').advX;
-    
-    for (unsigned int i = 0; i < len; i++) {
-        char& c = msg[i];
-        if (c == ' ' || c == '\n') {
-            // linebreak on newline or wrap needed
-            bool lb = (c == '\n' || pen.x + space + wordlen > maxWidth);
-            
-            if (lb) {
-                if (c == '\n') le = i; // not wrapped
-                if (line == tLine) return std::min(le, ti);
-                pen.x = (c == ' ') ? wordlen : 0;
-                line++;
-            } else {
-                pen.x += wordlen + space;
-                if (line == tLine && ti == 4294967295 && pen.x - space*0.5f >= pt.x) ti = i;
-                le = i;
-            }
-            
-            wordlen = 0; // HERP DERP.
-        } else {
-            float cw = Char(c).advX;
-            wordlen += cw;
-            if (line == tLine && ti == 4294967295 && pen.x + wordlen - cw*0.5f >= pt.x) ti = i;
+    ForChar(msg, [&, this, pt, tl](auto& s){
+        if (s.lineNum < tl) return false; // skip
+        if (s.lineNum > tl) { // huh.
+            return true;
         }
-    }
-    // oh right, process last word
-    if (pen.x + space + wordlen > maxWidth) {
-        if (line == tLine) return std::min(le, ti);
-        pen.x = wordlen;
-        line++;
-    } else {
-        le = len;
-    }
+        if (s.i == s.lineEnd) {
+            if (s.i == s.lineStart) { // if blank line...
+                idx = s.i;
+                return true;
+            }
+            return false; // skip newlines on non-blank lines
+        }
+        
+        if ((s.iline == 0 || pt.x >= s.lineAcc) && pt.x < s.lineAcc + s.cc->advX) {
+            idx = s.i;
+            if (pt.x > s.lineAcc + s.cc->advX * 0.5f) idx++;
+            return true;
+        }
+        
+        idx = s.i+1;
+        return false;
+    }, maxWidth);
     
-    if (line == tLine) return std::min(le, ti);
-    
-    return len;
+    return idx;
 }
 
 void BitmapFont::ForChar(const std::string& msg, std::function<bool(CharLoopState&)> func, float maxWidth) {
@@ -201,6 +163,7 @@ void BitmapFont::ForChar(const std::string& msg, std::function<bool(CharLoopStat
         float width;
     };
     
+    unsigned int len = msg.length();
     float space = Char(' ').advX;
     
     std::vector<LineStat> lines;
@@ -209,7 +172,6 @@ void BitmapFont::ForChar(const std::string& msg, std::function<bool(CharLoopStat
         LineStat cl = {0, 0, 0};
         float ww = 0;
         unsigned int ws = 0;
-        unsigned int len = msg.length();
         for (unsigned int i = 0; i <= len; i++) {
             char c = (i == len) ? '\n' : msg[i];
             char pc = (i == 0) ? '\n' : msg[i-1];
@@ -262,9 +224,9 @@ void BitmapFont::ForChar(const std::string& msg, std::function<bool(CharLoopStat
         state.lineAcc = 0;
         state.c = '\n';
         
-        for (unsigned int i = cl.start; i < cl.end; i++) {
+        for (unsigned int i = cl.start; i <= cl.end; i++) {
             char pc = state.c;
-            state.c = msg[i];
+            state.c = (i >= len) ? '\n' : msg[i];
             state.cc = &(Char(state.c));
             
             state.i = i;
