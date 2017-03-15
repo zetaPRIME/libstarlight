@@ -31,6 +31,13 @@ using starlight::ui::Form;
 
 using starlight::dialog::OSK;
 
+namespace {
+    inline starlight::TextConfig& PreviewTC() {
+        static auto tc = ThemeManager::GetMetric<starlight::TextConfig>("/dialogs/OSK/preview");
+        return tc;
+    }
+}
+
 OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     priority = 1000; // probably don't want all that much displaying above the keyboard
     handler->parent = this;
@@ -117,7 +124,7 @@ void OSK::Update(bool focused) {
                 preview->Refresh();
             }
             
-            static auto tc = ThemeManager::GetMetric<TextConfig>("/dialogs/OSK/preview");
+            auto& tc = PreviewTC();
             if (InputManager::Pressed(Keys::DPadUp)) {
                 Vector2 pt = tc.font->GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
                 string msr = "|";
@@ -128,7 +135,7 @@ void OSK::Update(bool focused) {
             if (InputManager::Pressed(Keys::DPadDown)) {
                 Vector2 pt = tc.font->GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
                 string msr = "|";
-                pt.y += tc.font->Measure(msr).y;
+                pt.y += tc.font->Measure(msr).y * 1.5f;
                 handler->SetCursor(tc.font->GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
                 preview->Refresh();
             }
@@ -152,7 +159,7 @@ void OSK::OnKey() {
 
 void OSK::DrawPreview(DrawLayerProxy& layer) {
     if (true || handler->showPreview) {
-        static auto tc = ThemeManager::GetMetric<TextConfig>("/dialogs/OSK/preview");
+        auto& tc = PreviewTC();
         tc.Print(layer.rect, handler->GetPreviewText(), Vector2::zero);
         
         Vector2 cp = tc.font->GetCursorPosition(layer.rect, handler->GetPreviewText(), handler->GetCursor());
@@ -163,7 +170,7 @@ void OSK::DrawPreview(DrawLayerProxy& layer) {
 
 void OSK::OnPreviewTap(DrawLayerProxy& layer) {
     Vector2 tpos = InputManager::TouchPos() - layer.ScreenRect().pos;
-    static auto tc = ThemeManager::GetMetric<TextConfig>("/dialogs/OSK/preview");
+    auto& tc = PreviewTC();
     handler->SetCursor(tc.font->GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos + layer.rect.pos));
     preview->Refresh();
 }

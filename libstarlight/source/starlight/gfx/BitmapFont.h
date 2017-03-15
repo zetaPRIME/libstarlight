@@ -2,6 +2,7 @@
 #include "starlight/_global.h"
 
 #include <memory>
+#include <functional>
 #include <unordered_map>
 #include <string>
 
@@ -29,6 +30,17 @@ namespace starlight {
                 float advX;
             };
             
+            struct CharLoopState {
+                unsigned int lineStart, lineEnd;
+                float lineWidth;
+                unsigned int numLines;
+                unsigned int lineNum;
+                char c;
+                CharInfo* cc;
+                float lineAcc;
+                unsigned int i, iline;
+            };
+            
             float fontSize;
             float lineHeight;
             float baseY;
@@ -51,6 +63,8 @@ namespace starlight {
             // what to put in the bitmapfont class itself?
             Vector2 MeasureTo(std::string& msg, bool total = true, unsigned int end = 4294967295, float maxWidth = 65536*64);
             unsigned int PointToIndex(std::string& msg, Vector2 pt, float maxWidth = 65536*64);
+            
+            void ForChar(const std::string& msg, std::function<bool(CharLoopState&)> func, float maxWidth = 65536*64);
             
             static inline constexpr unsigned int KerningKey(char cl, char cr) {
                 return (static_cast<unsigned int>(cl) | (static_cast<unsigned int>(cr) << 8));

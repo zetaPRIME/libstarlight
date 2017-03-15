@@ -101,25 +101,22 @@ Vector2 BitmapFont::MeasureTo(std::string& msg, bool total, unsigned int end, fl
     for (unsigned int i = 0; i < len; i++) {
         char& c = msg[i];
         if (c == ' ' || c == '\n') {
-            bool alb = false; // already linebreak
+            bool lb = (c == '\n' || pen.x + wordlen > maxWidth);
             oPen = pen;
-            if (pen.x > longest) longest = pen.x;
-            if (pen.x + wordlen > maxWidth) {
-                pen.x = 0; pen.y += lineHeight;
-                alb = true;
-            }
-            pen.x += wordlen;
-            pen.x += space;
             
-            if (c == '\n' && !alb) {
-                if (pen.x > longest) longest = pen.x;
-                pen.x = 0; pen.y += lineHeight;
+            if (lb) {
+                if (c == '\n') pen.x += space + wordlen; // previous word
+                longest = std::max(pen.x - space, longest);
+                pen.x = (c == ' ') ? (space + wordlen) : 0;
+                pen.y += lineHeight;
+            } else {
+                pen.x += space + wordlen;
             }
             
             if (!total && i >= end) {
-                //if (c == ' ') pen.x -= space; // I think this needs to be undone too?
-                return Vector2(oPen.x + plen, oPen.y); // return cursor position
+                return Vector2(pen.x - (wordlen - plen) - space, pen.y);
             }
+            
             wordlen = plen = 0;
         } else {
             float adv = Char(c).advX; 
@@ -127,23 +124,21 @@ Vector2 BitmapFont::MeasureTo(std::string& msg, bool total, unsigned int end, fl
             if (i < end) plen += adv;
         }
     }
+    longest = std::max(pen.x - space, longest);
     
-    {   // oh right, this check kind of needs to happen at the end too
-        if (pen.x > longest) longest = pen.x;
-        if (pen.x + wordlen > maxWidth) {
-            pen.x = 0; pen.y += lineHeight;
-        }
-        pen.x += wordlen;
-        
-        if (!total) {
-            //if (c == ' ') pen.x -= space; // I think this needs to be undone too?
-            return Vector2(pen.x - (wordlen - plen), pen.y); // return cursor position
-        }
+    if (pen.x + space + wordlen > maxWidth) {
+        pen.x = wordlen;
+        pen.y += lineHeight;
+    } else {
+        pen.x += wordlen + space;
+    }
+    longest = std::max(pen.x - space, longest); // do I need two of these?
+    
+    if (!total) {
+        return Vector2(pen.x - (wordlen - plen) - space, pen.y); // return cursor position
     }
     
-    //if (msg.back() != '\n') pen.y += lineHeight; // trim trailing newline (todo: make this recursive...?)
-    pen.y += lineHeight;
-    return Vector2(longest, pen.y); // total size
+    return Vector2(longest, pen.y + lineHeight); // total size
 }
 
 unsigned int BitmapFont::PointToIndex(std::string& msg, Vector2 pt, float maxWidth) {
@@ -199,7 +194,93 @@ unsigned int BitmapFont::PointToIndex(std::string& msg, Vector2 pt, float maxWid
     return len;
 }
 
-
+void BitmapFont::ForChar(const std::string& msg, std::function<bool(CharLoopState&)> func, float maxWidth) {
+    struct LineStat {
+        unsigned int start;
+        unsigned int end;
+        float width;
+    };
+    
+    float space = Char(' ').advX;
+    
+    std::vector<LineStat> lines;
+    
+    {
+        LineStat cl = {0, 0, 0};
+        float ww = 0;
+        unsigned int ws = 0;
+        unsigned int len = msg.length();
+        for (unsigned int i = 0; i <= len; i++) {
+            char c = (i == len) ? '\n' : msg[i];
+            char pc = (i == 0) ? '\n' : msg[i-1];
+            if (c == ' ' || c == '\n') {
+                // handle previously-accumulated word
+                if (cl.start != ws && cl.width + ww > maxWidth) { // don't bother wrapping the first word on a line...
+                    // omit breaking space from the end of the line
+                    if (ws > 0 && msg[ws-1] == ' ') cl.width -= space;
+                    // wrap
+                    lines.push_back(cl);
+                    cl = {ws, i, ww}; // start at start of word, end at < this char, have width of word
+                    ww = 0;
+                    ws = i+1;
+                } else {
+                    // add to length
+                    cl.width += ww;
+                    cl.end = i; // < this char
+                    ww = 0;
+                    ws = i+1;
+                }
+                
+                if (c == ' ') {
+                    // space should be present in spacing when it *is not* the line-terminator (that is, the space before a wrapped word)
+                    // how the fuck do I do that!?
+                    // probably a retroactive decrement on wrap event...
+                    if (true) { // if not... this stuff ^
+                        cl.width += space;
+                    }
+                } else { // newline
+                    // I guess there's no circumstance where a newline *shouldn't* be honored?
+                    cl.end = i;
+                    lines.push_back(cl);
+                    cl = {i+1, i+1, 0};
+                }
+            } else { // non-word-ender! add to accumulated word width
+                ww += Char(c).advX + GetKerning(pc, c);
+            }
+        }
+        // don't need to manually do anything after due to the extra step
+        //lines.push_back(cl);
+    }
+    
+    CharLoopState state;
+    state.numLines = lines.size();
+    state.lineNum = 0;
+    for (auto& cl : lines) {
+        state.lineStart = cl.start;
+        state.lineEnd = cl.end;
+        state.lineWidth = cl.width;
+        state.lineAcc = 0;
+        state.c = '\n';
+        
+        for (unsigned int i = cl.start; i < cl.end; i++) {
+            char pc = state.c;
+            state.c = msg[i];
+            state.cc = &(Char(state.c));
+            
+            state.i = i;
+            state.iline = i - cl.start;
+            
+            state.lineAcc += GetKerning(pc, state.c); // I think this goes before?
+            
+            if (func(state)) return; // return true to break
+            
+            state.lineAcc += state.cc->advX;
+        }
+        
+        state.lineNum++;
+    }
+    
+}
 
 
 

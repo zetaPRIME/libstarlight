@@ -28,7 +28,21 @@ void FontBMF::Print(Vector2 position, std::string& text, float scale, Color colo
     if (text == "") return;
     if (GFXManager::PrepareForDrawing()) {
         DisplayList dl = DisplayList();
-        PrintOp(position, text, scale, color, justification, borderColor, 2147483647, static_cast<Vector2*>(nullptr), &dl);
+        //PrintOp(position, text, scale, color, justification, borderColor, 2147483647, static_cast<Vector2*>(nullptr), &dl);
+        {
+            auto qn = dl.GetLastNode<DLNode_Quads>(true);
+            Vector2 uvScale = Vector2::one / font->txMain->txSize;
+            Vector2 ppen = Vector2(-font->padX, -font->padY /*- (font->lineHeight - font->baseY)*/);
+            font->ForChar(text, [&, this, ppen, justification, qn, scale, uvScale](auto& s){
+                if (s.c == ' ') return false; // skip spaces
+                Vector2 pen = (ppen + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
+                auto& ci = *s.cc;
+                VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
+                qn->Add(VRect(pen, crect.size * scale), crect * uvScale);
+                
+                return false;
+            });
+        }
         if (borderColor && borderColor.get() != Color::transparent && font->txBorder) {
             font->txBorder->Bind(borderColor.get());
             dl.Run(position);
@@ -42,15 +56,30 @@ void FontBMF::Print(VRect rect, std::string& text, float scale, Color color, Vec
     if (text == "") return;
     if (GFXManager::PrepareForDrawing()) {
         if (borderColor && borderColor.get() != Color::transparent) rect = rect.Expand(-1, -1);
-        Vector2 pos = rect.pos + rect.size * justification;
+        Vector2 position = rect.pos + rect.size * justification;
         DisplayList dl = DisplayList();
-        PrintOp(pos, text, scale, color, justification, borderColor, rect.size.x, static_cast<Vector2*>(nullptr), &dl);
+        //PrintOp(pos, text, scale, color, justification, borderColor, rect.size.x, static_cast<Vector2*>(nullptr), &dl);
+        {
+            auto qn = dl.GetLastNode<DLNode_Quads>(true);
+            Vector2 uvScale = Vector2::one / font->txMain->txSize;
+            Vector2 ppen = Vector2(-font->padX, -font->padY /*- (font->lineHeight - font->baseY)*/);
+            font->ForChar(text, [&, this, ppen, justification, qn, scale, uvScale](auto& s){
+                if (s.c == ' ') return false; // skip spaces
+                Vector2 pen = (ppen + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
+                auto& ci = *s.cc;
+                VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
+                qn->Add(VRect(pen, crect.size * scale), crect * uvScale);
+                
+                return false;
+            }, rect.size.x);
+        }
+        
         if (borderColor && borderColor.get() != Color::transparent && font->txBorder) {
             font->txBorder->Bind(borderColor.get());
-            dl.Run(pos);
+            dl.Run(position);
         }
         font->txMain->Bind(color);
-        dl.Run(pos);
+        dl.Run(position);
     }
 }
 

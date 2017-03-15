@@ -1,5 +1,7 @@
 #include "InputHandler.h"
 
+#include <cmath>
+
 #include "starlight/ui/Form.h"
 
 using std::string;
@@ -13,7 +15,7 @@ using starlight::dialog::osk::InputHandlerBuffered;
 std::string& InputHandlerDirectEdit::GetPreviewText() { return *pText; }
 
 unsigned int InputHandlerDirectEdit::GetCursor() { return cursor; }
-void InputHandlerDirectEdit::SetCursor(unsigned int index) { cursor = index; if (cursor < minIndex) cursor = minIndex; auto len = pText->length(); if (cursor > len) cursor = len; }
+void InputHandlerDirectEdit::SetCursor(unsigned int index) { cursor = std::max(minIndex, std::min(index, pText->length())); }
 
 void InputHandlerDirectEdit::InputSymbol(const string& sym) {
     //pText->append(sym);
@@ -45,15 +47,16 @@ void InputHandlerDirectEdit::Done() {
 
 std::string& InputHandlerBuffered::GetPreviewText() { return buffer; }
 
-unsigned int InputHandlerBuffered::GetCursor() { return buffer.length(); }
-void InputHandlerBuffered::SetCursor(unsigned int index) { }
+unsigned int InputHandlerBuffered::GetCursor() { return cursor; }
+void InputHandlerBuffered::SetCursor(unsigned int index) { cursor = std::max(0U, std::min(index, buffer.length())); }
 
 void InputHandlerBuffered::InputSymbol(const string& sym) {
-    buffer.append(sym);
+    buffer.insert(cursor, sym);
+    cursor += sym.length();
 }
 
 void InputHandlerBuffered::Backspace() {
-    buffer.pop_back();
+    if (cursor > 0) buffer.erase(--cursor, 1);
 }
 
 void InputHandlerBuffered::Enter() {

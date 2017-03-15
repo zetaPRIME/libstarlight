@@ -65,10 +65,12 @@ namespace starlight {
             public:
                 bool multiLine = false;
                 
+                unsigned int cursor = 0;
+                
                 std::function<void(const std::string&)> eOnFinalize = { };
                 
                 InputHandlerBuffered(const std::string& text = "", bool multiLine = false, std::function<void(const std::string&)> onFinalize = {})
-                    : buffer(text), multiLine(multiLine), eOnFinalize(onFinalize) { this->showPreview = true; }
+                    : buffer(text), multiLine(multiLine), cursor(text.length()), eOnFinalize(onFinalize) { this->showPreview = true; }
                 ~InputHandlerBuffered() override { }
                 
                 std::string& GetPreviewText() override;
