@@ -3,16 +3,13 @@
 
 roadmap to first release, in no particular order {
     finish implementing OSK! {
-        - MAKE IT NOT CRASH ON BEING CLOSED FROM INPUTHANDLER
         enable scrolling preview (and scroll to cursor where applicable)
         polish!
         InputManager::OpenKeyboard
     }
-    - textbox widget
     
     add generic backdrop assets (and form)
     
-    fix font glyph padding to eliminate slight "crosstalk" in bordered variants
     fix lowercase j running into things
     adjust monospace line height (and maybe offset) to closer match the vwf of the same size
     
@@ -20,8 +17,13 @@ roadmap to first release, in no particular order {
     ADD README.MD PLS
 } then consider these before 1.0 "gold" {
     should form priority be a float?
+    make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
+    add customization for Button (alternate idle/press images, optional glyph drawable)
+    ^ use that to spice up the OSK
+    input prompt dialog
     language config and atlas support
     maybe implement some way of "knocking out" and replacing metrics during runtime for theme switching
+    fix font glyph padding to eliminate slight "crosstalk" in bordered variants
 }
 
 today's agenda {
