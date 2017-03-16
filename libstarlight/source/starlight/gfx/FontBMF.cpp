@@ -32,8 +32,8 @@ void FontBMF::Print(Vector2 position, const std::string& text, float scale, Colo
                 if (s.c == ' ' || s.c == '\n') return false; // skip spaces/newlines
                 auto& ci = *s.cc;
                 Vector2 pen = (Vector2(ci.offX, ci.offY) + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
-                VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
-                qn->Add(VRect(pen, crect.size * scale), crect * uvScale);
+                VRect crect = VRect(ci.imgX, ci.imgY, ci.width, ci.height);//.IntSnap();
+                qn->Add(VRect(pen.IntSnap(), crect.size * scale), crect * uvScale);
                 
                 return false;
             });
@@ -60,8 +60,8 @@ void FontBMF::Print(VRect rect, const std::string& text, float scale, Color colo
                 if (s.c == ' ' || s.c == '\n') return false; // skip spaces/newlines
                 auto& ci = *s.cc;
                 Vector2 pen = (Vector2(ci.offX, ci.offY) + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
-                VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
-                qn->Add(VRect(pen, crect.size * scale), crect * uvScale);
+                VRect crect = VRect(ci.imgX, ci.imgY, ci.width, ci.height);//.IntSnap();
+                qn->Add(VRect(pen.IntSnap(), crect.size * scale), crect * uvScale);
                 
                 return false;
             }, rect.size.x);
