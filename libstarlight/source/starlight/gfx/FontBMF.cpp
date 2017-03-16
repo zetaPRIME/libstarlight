@@ -28,11 +28,10 @@ void FontBMF::Print(Vector2 position, const std::string& text, float scale, Colo
         {
             auto qn = dl.GetLastNode<DLNode_Quads>(true);
             Vector2 uvScale = Vector2::one / font->txMain->txSize;
-            Vector2 ppen = Vector2(-font->padX, -font->padY /*- (font->lineHeight - font->baseY)*/);
-            font->ForChar(text, [&, this, ppen, justification, qn, scale, uvScale](auto& s){
+            font->ForChar(text, [&, this, justification, qn, scale, uvScale](auto& s){
                 if (s.c == ' ' || s.c == '\n') return false; // skip spaces/newlines
-                Vector2 pen = (ppen + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
                 auto& ci = *s.cc;
+                Vector2 pen = (Vector2(ci.offX, ci.offY) + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
                 VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
                 qn->Add(VRect(pen, crect.size * scale), crect * uvScale);
                 
@@ -57,11 +56,10 @@ void FontBMF::Print(VRect rect, const std::string& text, float scale, Color colo
         {
             auto qn = dl.GetLastNode<DLNode_Quads>(true);
             Vector2 uvScale = Vector2::one / font->txMain->txSize;
-            Vector2 ppen = Vector2(-font->padX, -font->padY /*- (font->lineHeight - font->baseY)*/);
-            font->ForChar(text, [&, this, ppen, justification, qn, scale, uvScale](auto& s){
+            font->ForChar(text, [&, this, justification, qn, scale, uvScale](auto& s){
                 if (s.c == ' ' || s.c == '\n') return false; // skip spaces/newlines
-                Vector2 pen = (ppen + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
                 auto& ci = *s.cc;
+                Vector2 pen = (Vector2(ci.offX, ci.offY) + Vector2(s.lineAcc - s.lineWidth * justification.x, font->lineHeight * ((float)s.lineNum - (float)s.numLines * justification.y))) * scale;
                 VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
                 qn->Add(VRect(pen, crect.size * scale), crect * uvScale);
                 
