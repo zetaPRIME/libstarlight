@@ -8,6 +8,9 @@ roadmap to first release, in no particular order {
         - abstract osk input actions into a separate object/class heirarchy
         - preview where applicable
         fix font glyph padding to eliminate slight "crosstalk" in bordered variants
+        fix lowercase j running into things
+        adjust monospace line height (and maybe offset) to closer match the vwf of the same size
+        add justification to TextConfig as a default
         polish!
         InputManager::OpenKeyboard
     }

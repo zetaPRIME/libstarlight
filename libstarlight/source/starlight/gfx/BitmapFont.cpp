@@ -63,29 +63,6 @@ BitmapFont::CharInfo& BitmapFont::Char(char c) {
     return cdefault;
 }
 
-float BitmapFont::DrawText(const Vector2& penStart, std::string& msg, float scale, DisplayList* dl) {
-    Vector2 pen = penStart;
-    Vector2 pad(padX, 0);//-padY); // compensate for padding around glyphs
-    pen -= pad;
-    Vector2 uvScale = Vector2::one / txMain->txSize;
-    
-    auto qn = dl ? dl->GetLastNode<DLNode_Quads>(true) : nullptr;
-    
-    char cl = 0xFF;//' ';
-    for (auto c : msg) {
-        pen.x += GetKerning(cl, c) * scale;
-        auto& ci = Char(c);
-        //printf("%c w %f h %f adv %f sc %f\n", c, ci.width, ci.height, ci.advX, scale);
-        VRect crect(ci.imgX, ci.imgY, ci.width, ci.height);
-        if (dl) qn->Add(VRect(pen, crect.size * scale), crect * uvScale);
-        pen.x += ci.advX * scale;
-        
-        cl = c;
-    }
-    pen += pad;
-    return pen.x - penStart.x;
-}
-
 Vector2 BitmapFont::MeasureTo(std::string& msg, bool total, unsigned int end, float maxWidth) {
     if (total) {
         Vector2 measure = Vector2::zero;
@@ -243,23 +220,3 @@ void BitmapFont::ForChar(const std::string& msg, std::function<bool(CharLoopStat
     }
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//

@@ -59,12 +59,11 @@ namespace starlight {
             
             float GetKerning(char cl, char cr);
             CharInfo& Char(char c);
-            float DrawText(const Vector2& penStart, std::string& msg, float scale = 1, DisplayList* dl = nullptr);
-            // what to put in the bitmapfont class itself?
-            Vector2 MeasureTo(std::string& msg, bool total = true, unsigned int end = 4294967295, float maxWidth = 65536*64);
-            unsigned int PointToIndex(std::string& msg, Vector2 pt, float maxWidth = 65536*64);
             
             void ForChar(const std::string& msg, std::function<bool(CharLoopState&)> func, float maxWidth = 65536*64);
+            
+            Vector2 MeasureTo(std::string& msg, bool total = true, unsigned int end = 4294967295, float maxWidth = 65536*64);
+            unsigned int PointToIndex(std::string& msg, Vector2 pt, float maxWidth = 65536*64);
             
             static inline constexpr unsigned int KerningKey(char cl, char cr) {
                 return (static_cast<unsigned int>(cl) | (static_cast<unsigned int>(cr) << 8));
