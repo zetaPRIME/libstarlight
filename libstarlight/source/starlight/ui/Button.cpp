@@ -28,7 +28,7 @@ void Button::Draw() {
     static auto idle = ThemeManager::GetAsset("controls/button.idle");
     static auto press = ThemeManager::GetAsset("controls/button.press");
     
-    static TextConfig tc = ThemeManager::GetMetric<TextConfig>("/controls/button/text", TextConfig());
+    static TextConfig tc = ThemeManager::GetMetric("/controls/button/text", TextConfig());
     
     auto rect = (this->rect + GFXManager::GetOffset()).IntSnap();
     
@@ -39,7 +39,7 @@ void Button::Draw() {
     }
     
     //font->Print(rect, label, 1, cl/*Color::white*/, Vector2(0.5f, 0.5f), Color::black);
-    tc.Print(rect, label, Vector2::half);
+    tc.Print(rect, label);
 }
 
 void Button::OnTouchOn() {

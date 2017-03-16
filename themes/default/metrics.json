@@ -25,6 +25,13 @@
     
     "controls" : {
         "button" : {
+            "text" : {
+                "_inherit" : "/textPresets/normal.12",
+                "justification" : [0.5, 0.5]
+            }
+        },
+        "textBox" : {
+            "margin" : [2, 2],
             "text" : { "_redir" : "/textPresets/normal.12" }
         }
     },

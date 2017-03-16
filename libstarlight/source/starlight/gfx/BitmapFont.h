@@ -62,8 +62,8 @@ namespace starlight {
             
             void ForChar(const std::string& msg, std::function<bool(CharLoopState&)> func, float maxWidth = 65536*64);
             
-            Vector2 MeasureTo(std::string& msg, bool total = true, unsigned int end = 4294967295, float maxWidth = 65536*64);
-            unsigned int PointToIndex(std::string& msg, Vector2 pt, float maxWidth = 65536*64);
+            Vector2 MeasureTo(const std::string& msg, bool total = true, unsigned int end = 4294967295, float maxWidth = 65536*64);
+            unsigned int PointToIndex(const std::string& msg, Vector2 pt, float maxWidth = 65536*64);
             
             static inline constexpr unsigned int KerningKey(char cl, char cr) {
                 return (static_cast<unsigned int>(cl) | (static_cast<unsigned int>(cr) << 8));

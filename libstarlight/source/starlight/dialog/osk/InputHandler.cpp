@@ -40,7 +40,7 @@ void InputHandlerDirectEdit::Enter() {
 
 void InputHandlerDirectEdit::Done() {
     if (eOnFinalize) eOnFinalize();
-    parent->Close();
+    done = true;
 }
 
 // Buffered
@@ -66,5 +66,5 @@ void InputHandlerBuffered::Enter() {
 
 void InputHandlerBuffered::Done() {
     if (eOnFinalize) eOnFinalize(buffer);
-    parent->Close();
+    done = true;
 }

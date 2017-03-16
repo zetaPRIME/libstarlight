@@ -53,6 +53,7 @@ namespace starlight {
             inline const ThemeRefContainer<T>& operator ->() const { return *cptr; }
             inline explicit operator bool() const { return cptr != nullptr; }
             inline std::shared_ptr<T> GetShared() const { return (*cptr).ptr; }
+            inline const std::string& GetName() const { return (*cptr).name; }
         };
     }
 }

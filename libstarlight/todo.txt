@@ -2,40 +2,27 @@
 
 
 roadmap to first release, in no particular order {
-    - implement app:/ asset loading
     finish implementing OSK! {
-        - make backspace and enter actually do something
-        - abstract osk input actions into a separate object/class heirarchy
-        - preview where applicable
-        fix font glyph padding to eliminate slight "crosstalk" in bordered variants
-        fix lowercase j running into things
-        adjust monospace line height (and maybe offset) to closer match the vwf of the same size
-        add justification to TextConfig as a default
+        - MAKE IT NOT CRASH ON BEING CLOSED FROM INPUTHANDLER
+        enable scrolling preview (and scroll to cursor where applicable)
         polish!
         InputManager::OpenKeyboard
     }
-    textbox widget
-    - "draw proxy" UIElement (takes a std::function for draw operation)
+    - textbox widget
+    
+    add generic backdrop assets (and form)
+    
+    fix font glyph padding to eliminate slight "crosstalk" in bordered variants
+    fix lowercase j running into things
+    adjust monospace line height (and maybe offset) to closer match the vwf of the same size
     
     add license!! (MIT?)
     ADD README.MD PLS
-} and some lesser priority things {
-    add language config and atlas support
+} then consider these before 1.0 "gold" {
+    should form priority be a float?
+    language config and atlas support
     maybe implement some way of "knocking out" and replacing metrics during runtime for theme switching
 }
-
-form system { framework done apart from some small api changes
-    capabilities {
-        updates, recieves events etc. as if it were a stackable Application
-        priority level (modals etc.)
-        can be stacked, reordered etc. via order shown
-        can occlude independently on top and bottom screen, causing lower-ordered things on that screen to not even render
-        can tell if it's the focused (topmost) form and use that to determine whether to accept button input
-        
-    }
-    meaningful state change signals current Application to resort and rebuild draw list during next update
-}
-
 
 today's agenda {
     ...
@@ -53,18 +40,15 @@ unordered_roadmap {
         radio box
         tabs?
         auto-layout/list boxes
-        text/combo box
+        combo box
         slider
         progress bar
         
     }
     maybe switch drawoffset system from a stack to a pass-in
-    moar utility stuff in Vector2 and VRect {
-        -
-    }
+    moar utility stuff in basic types
+    make textbox scrollable when text is larger than container
     tween system
-    figure out theme layout and fallback system
-    maybe a few further refinements to bitmap fonts
     ...
     use ctrulib sync features for WorkerThread instead of spinlocks at some point
     - http://smealum.github.io/ctrulib/synchronization_8h.html#a9fe83ca3ec3c6ae269203acf367ad5a9
@@ -73,28 +57,6 @@ unordered_roadmap {
     ... tweenable drawable format?
     figure out the whole font y offset deal
 }
-
-theme layout {
-    sdmc:/.starlight/themes/<name>/ {
-        fonts {
-            default.12.json/png/border.png
-            default.16
-            mono.12/16
-        }
-        controls {
-            button.idle/pressed
-            ...
-        }
-    }
-}
-
-
-drawable, drawcontext, gfxmanager (pushContext, popContext) (done mostly)
-ThemeRef (done) {
-    theme-asset-specific reference so themes can be reloaded
-    -> operator overloaded etc.
-}
-T H E M E S
 
 configurator for ui elements? maybe crtp after all
 noap, macro/include shenanigans
@@ -109,4 +71,5 @@ maybe implement this: https://probablydance.com/2013/01/13/a-faster-implementati
 
 // notes {
     bitmap font converter - https://github.com/playcanvas/fonts/blob/master/fnt_to_json.py
+    pretty print - jsonprettyprint.com
 }

@@ -15,6 +15,7 @@
 #include "starlight/ui/ParallaxLayer.h"
 #include "starlight/ui/ScrollField.h"
 #include "starlight/ui/Button.h"
+#include "starlight/ui/TextBox.h"
 #include "starlight/ui/Label.h"
 
 #include "starlight/dialog/MessageBox.h"
@@ -72,9 +73,12 @@ void Core::Init() {
         tlbl->textConfig.borderColor = Color::black;
         tlbl->SetText("3DS:~# ");
         form->topScreen->Add(tlbl);
-        auto kb = sl::dialog::OSK::New(new sl::dialog::osk::InputHandlerDirectEdit(&(tlbl->text), true, 7, [tlbl](){tlbl->Refresh();}));
-            //&(tlbl->text), [tlbl](){tlbl->Refresh();});
-        kb->Open();
+        //auto kb = sl::dialog::OSK::New(new sl::dialog::osk::InputHandlerDirectEdit(&(tlbl->text), true, 7, [tlbl](){tlbl->Refresh();}));
+        //kb->Open();
+        
+        auto tb = std::make_shared<sl::ui::TextBox>(VRect(0, 64, 320, 24).Expand(-16, 0));
+        tb->text = "TextBox testing in progress.";
+        form->touchScreen->Add(tb);
         
         /*label->SetFont("default.16");
         btn.SetText("I was pressed!");

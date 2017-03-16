@@ -18,6 +18,8 @@ namespace starlight {
                 bool showPreview = false;
                 ui::Form* parent;
                 
+                bool done = false;
+                
                 InputHandler() = default;
                 virtual ~InputHandler() = default;
                 

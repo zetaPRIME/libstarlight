@@ -112,6 +112,9 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
 }
 
 void OSK::Update(bool focused) {
+    if (handler->done) {
+        Close();
+    }
     if (focused) {
         if (InputManager::Pressed(Keys::B)) handler->Done();
         if (true || handler->showPreview) {
@@ -126,17 +129,17 @@ void OSK::Update(bool focused) {
             
             auto& tc = PreviewTC();
             if (InputManager::Pressed(Keys::DPadUp)) {
-                Vector2 pt = tc.font->GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
+                Vector2 pt = tc.GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
                 string msr = "|";
-                pt.y -= tc.font->Measure(msr).y * 0.5f;
-                handler->SetCursor(tc.font->GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
+                pt.y -= tc.Measure(msr).y * 0.5f;
+                handler->SetCursor(tc.GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
                 preview->Refresh();
             }
             if (InputManager::Pressed(Keys::DPadDown)) {
-                Vector2 pt = tc.font->GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
+                Vector2 pt = tc.GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
                 string msr = "|";
-                pt.y += tc.font->Measure(msr).y * 1.5f;
-                handler->SetCursor(tc.font->GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
+                pt.y += tc.Measure(msr).y * 1.5f;
+                handler->SetCursor(tc.GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
                 preview->Refresh();
             }
         }
@@ -162,7 +165,7 @@ void OSK::DrawPreview(DrawLayerProxy& layer) {
         auto& tc = PreviewTC();
         tc.Print(layer.rect, handler->GetPreviewText(), Vector2::zero);
         
-        Vector2 cp = tc.font->GetCursorPosition(layer.rect, handler->GetPreviewText(), handler->GetCursor());
+        Vector2 cp = tc.GetCursorPosition(layer.rect, handler->GetPreviewText(), handler->GetCursor());
         string cc = "|";
         tc.Print(cp, cc, Vector2::zero);
     }
@@ -171,6 +174,6 @@ void OSK::DrawPreview(DrawLayerProxy& layer) {
 void OSK::OnPreviewTap(DrawLayerProxy& layer) {
     Vector2 tpos = InputManager::TouchPos() - layer.ScreenRect().pos;
     auto& tc = PreviewTC();
-    handler->SetCursor(tc.font->GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos));
+    handler->SetCursor(tc.GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos));
     preview->Refresh();
 }

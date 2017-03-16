@@ -79,12 +79,18 @@ namespace starlight {
         gfx::ThemeRef<gfx::Font> font = ThemeManager::GetFont("default.12");
         Color textColor = Color::white;
         Color borderColor = Color::transparent;
+        Vector2 justification = Vector2::zero;
         
         TextConfig() = default;
         TextConfig(const std::string& fontName, Color text, Color border = Color::transparent);
         ~TextConfig() = default;
         
-        void Print(Vector2 position, std::string& text, Vector2 justification = Vector2::zero);
-        void Print(VRect rect, std::string& text, Vector2 justification = Vector2::zero);
+        void Print(Vector2 position, std::string& text, Vector2 justification = Vector2::invalid);
+        void Print(VRect rect, std::string& text, Vector2 justification = Vector2::invalid);
+        
+        Vector2 Measure(const std::string& text, float maxWidth = 65536*64);
+        
+        Vector2 GetCursorPosition(VRect rect, const std::string& text, unsigned int end);
+        unsigned int GetCursorFromPoint(VRect rect, const std::string& text, Vector2 pt);
     };
 }

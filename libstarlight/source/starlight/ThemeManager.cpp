@@ -347,10 +347,27 @@ TextConfig::TextConfig(const std::string& fontName, Color text, Color border) {
     textColor = text; borderColor = border;
 }
 
-void TextConfig::Print(Vector2 position, std::string& text, Vector2 justification)
-    { font->Print(position, text, 1, textColor, justification, borderColor); }
-void TextConfig::Print(VRect rect, std::string& text, Vector2 justification)
-    { font->Print(rect, text, 1, textColor, justification, borderColor); }
+void TextConfig::Print(Vector2 position, std::string& text, Vector2 justification) { 
+    if (!justification) justification = this->justification;
+    font->Print(position, text, 1, textColor, justification, borderColor);
+}
+void TextConfig::Print(VRect rect, std::string& text, Vector2 justification) {
+    if (!justification) justification = this->justification;
+    font->Print(rect, text, 1, textColor, justification, borderColor);
+}
+
+Vector2 TextConfig::Measure(const std::string& text, float maxWidth) {
+    return font->Measure(text, 1, maxWidth);
+}
+
+Vector2 TextConfig::GetCursorPosition(VRect rect, const std::string& text, unsigned int end) {
+    if (borderColor != Color::transparent) rect = rect.Expand(-1); // sync with drawing where bordered
+    return font->GetCursorPosition(rect, text, end);
+}
+unsigned int TextConfig::GetCursorFromPoint(VRect rect, const std::string& text, Vector2 pt) {
+    if (borderColor != Color::transparent) rect = rect.Expand(-1); // sync with drawing where bordered
+    return font->GetCursorFromPoint(rect, text, pt);
+}
 
 namespace starlight { // todo: expose these in the header
     void to_json(nlohmann::json& j, const TextConfig& tc) {
@@ -358,9 +375,14 @@ namespace starlight { // todo: expose these in the header
     }
     void from_json(const nlohmann::json& j, TextConfig& tc) {
         if (j.is_object()) {
-            tc.font = ThemeManager::GetFont(j.value("font", "default.12"));
-            tc.textColor = j.value("textColor", Color::white);
-            tc.borderColor = j.value("borderColor", Color::transparent);
+            std::string inh = j.value("_inherit", "");
+            if (inh != "") {
+                tc = ThemeManager::GetMetric<TextConfig>(inh);
+            }
+            tc.font = ThemeManager::GetFont(j.value("font", tc.font.GetName()));
+            tc.textColor = j.value("textColor", tc.textColor);
+            tc.borderColor = j.value("borderColor", tc.borderColor);
+            tc.justification = j.value("justification", tc.justification);
         }
         //
     }

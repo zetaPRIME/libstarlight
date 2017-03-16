@@ -16,12 +16,12 @@ using starlight::gfx::FontBMF;
 
 //#define err(nth, wat) *((unsigned int*)0x00100000+(nth))=wat;
 //#define ded(wat) err(0,wat)
-Vector2 FontBMF::Measure(std::string& text, float scale, float maxWidth) {
+Vector2 FontBMF::Measure(const std::string& text, float scale, float maxWidth) {
     if (text == "") return Vector2::zero;
     return font->MeasureTo(text, true, text.length(), maxWidth) * scale;
 }
 
-void FontBMF::Print(Vector2 position, std::string& text, float scale, Color color, Vector2 justification, OptRef<Color> borderColor) {
+void FontBMF::Print(Vector2 position, const std::string& text, float scale, Color color, Vector2 justification, OptRef<Color> borderColor) {
     if (text == "") return;
     if (GFXManager::PrepareForDrawing()) {
         DisplayList dl = DisplayList();
@@ -48,10 +48,10 @@ void FontBMF::Print(Vector2 position, std::string& text, float scale, Color colo
     }
 }
 
-void FontBMF::Print(VRect rect, std::string& text, float scale, Color color, Vector2 justification, OptRef<Color> borderColor) {
+void FontBMF::Print(VRect rect, const std::string& text, float scale, Color color, Vector2 justification, OptRef<Color> borderColor) {
     if (text == "") return;
     if (GFXManager::PrepareForDrawing()) {
-        if (borderColor && borderColor.get() != Color::transparent) rect = rect.Expand(-1, -1);
+        if (borderColor && borderColor.get() != Color::transparent) rect = rect.Expand(-1);
         Vector2 position = rect.pos + rect.size * justification;
         DisplayList dl = DisplayList();
         {
@@ -78,10 +78,10 @@ void FontBMF::Print(VRect rect, std::string& text, float scale, Color color, Vec
     }
 }
 
-Vector2 FontBMF::GetCursorPosition(VRect rect, std::string& text, unsigned int end, float scale) {
+Vector2 FontBMF::GetCursorPosition(VRect rect, const std::string& text, unsigned int end, float scale) {
     return rect.pos + (font->MeasureTo(text, false, end, rect.size.x / scale)* scale);
 }
 
-unsigned int FontBMF::GetCursorFromPoint(VRect rect, std::string& text, Vector2 pt, float scale) {
+unsigned int FontBMF::GetCursorFromPoint(VRect rect, const std::string& text, Vector2 pt, float scale) {
     return font->PointToIndex(text, pt*scale - rect.pos, rect.size.x / scale);
 }

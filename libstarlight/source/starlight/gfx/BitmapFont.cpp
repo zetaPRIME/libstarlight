@@ -63,7 +63,7 @@ BitmapFont::CharInfo& BitmapFont::Char(char c) {
     return cdefault;
 }
 
-Vector2 BitmapFont::MeasureTo(std::string& msg, bool total, unsigned int end, float maxWidth) {
+Vector2 BitmapFont::MeasureTo(const std::string& msg, bool total, unsigned int end, float maxWidth) {
     if (total) {
         Vector2 measure = Vector2::zero;
         
@@ -100,7 +100,7 @@ Vector2 BitmapFont::MeasureTo(std::string& msg, bool total, unsigned int end, fl
     return measure;
 }
 
-unsigned int BitmapFont::PointToIndex(std::string& msg, Vector2 pt, float maxWidth) {
+unsigned int BitmapFont::PointToIndex(const std::string& msg, Vector2 pt, float maxWidth) {
     //pt -= Vector2(padX, 0*padY);
     if (pt.y < 0) return 0;
     unsigned int tl = std::floor(pt.y / lineHeight);
