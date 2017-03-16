@@ -56,7 +56,7 @@ using starlight::ThemeManager;
 using starlight::TextConfig;
 
 namespace {
-    inline int NextPow2(unsigned int x) {
+    inline unsigned int NextPow2(unsigned int x) {
         --x;
         x |= x >> 1;
         x |= x >> 2;
@@ -87,8 +87,8 @@ namespace {
         
         if (isPremult) {
             // just convert endianness
-            for(unsigned iy = 0; iy<height; iy++) {
-                for (unsigned ix = 0; ix < height; ix++) {
+            for(unsigned iy = 0; iy < height; iy++) {
+                for (unsigned ix = 0; ix < width; ix++) {
                     int r = *src++;
                     int g = *src++;
                     int b = *src++;
@@ -103,8 +103,8 @@ namespace {
             }
         } else {
             // convert and premultiply
-            for(unsigned iy = 0; iy<height; iy++) {
-                for (unsigned ix = 0; ix < height; ix++) {
+            for(unsigned iy = 0; iy < height; iy++) {
+                for (unsigned ix = 0; ix < width; ix++) {
                     int r = *src++;
                     int g = *src++;
                     int b = *src++;
