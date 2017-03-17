@@ -82,7 +82,14 @@ void Application::_init() {
 void Application::_end() {
     End();
     
+    //for (auto& f : forms) f->Close();
     forms.clear(); // not sure why, but not doing this results in a data abort if any forms are active
+    
+    // force cleanup! let's not softlock, mmkay?
+    formTouchScreen = nullptr;
+    formTopScreen = nullptr;
+    touchScreen.reset();
+    topScreen.reset();
     
     ThemeManager::End();
     RenderCore::Close();

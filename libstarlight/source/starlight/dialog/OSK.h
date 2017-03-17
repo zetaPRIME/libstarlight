@@ -25,7 +25,7 @@ namespace starlight {
             std::unique_ptr<osk::InputHandler> handler;
             
             OSK(osk::InputHandler* handler);
-            ~OSK() override { };
+            //~OSK() override { };
             
             void Update(bool focused) override;
             

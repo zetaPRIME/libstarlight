@@ -62,6 +62,7 @@ void Form::Open(bool showImmediately) {
 }
 
 void Form::Close() {
+    volatile auto keepalive = shared_from_this(); // don't allow delete until Close() goes out of scope
     auto app = Application::Current();
     if (app == nullptr) return;
     app->forms.remove(shared_from_this());

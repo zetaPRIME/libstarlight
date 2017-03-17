@@ -18,6 +18,7 @@
 #include "starlight/ui/TextBox.h"
 #include "starlight/ui/Label.h"
 
+#include "starlight/dialog/Backdrop.h"
 #include "starlight/dialog/MessageBox.h"
 #include "starlight/dialog/OSK.h"
 
@@ -80,6 +81,8 @@ void Core::Init() {
         tb->text = "TextBox testing in progress. ij ji lj jl";
         tb->multiLine = true;
         form->touchScreen->Add(tb);
+        
+        sl::dialog::Backdrop::New()->Open();
         
         /*label->SetFont("default.16");
         btn.SetText("I was pressed!");

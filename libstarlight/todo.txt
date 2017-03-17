@@ -3,16 +3,13 @@
 
 roadmap to first release, in no particular order {
     finish implementing OSK! {
-        - fix cursor-down
         polish! {
-            - background
             actual cursor image?
         }
         InputManager::OpenKeyboard
     }
-    fix [ offset (-1 it)
     
-    add generic backdrop assets (and form)
+    - whee, fixed softlock/crash on exit, hopefully permanently!
     
     add license!! (MIT?)
     ADD README.MD PLS

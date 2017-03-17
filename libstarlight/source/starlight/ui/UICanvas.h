@@ -19,7 +19,7 @@ namespace starlight {
             bool needsRedraw = true;
             
             UICanvas(VRect rect);
-            ~UICanvas() { }
+            //~UICanvas() { }
             
             void MarkForRedraw() override;
             

@@ -121,6 +121,7 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
 void OSK::Update(bool focused) {
     if (handler->done) {
         Close();
+        return;
     }
     if (focused) {
         if (InputManager::Pressed(Keys::B)) handler->Done();

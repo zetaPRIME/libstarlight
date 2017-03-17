@@ -32,7 +32,7 @@ namespace starlight {
             inline VRect& Resize(float w, float h) { return Resize(Vector2(w, h)); }
             
             UIElement();
-            virtual ~UIElement();
+            virtual ~UIElement() = default;
             
             virtual void Update() { }
             virtual void PreDraw() { }

@@ -10,7 +10,6 @@ using starlight::ui::UIElement;
 using starlight::ui::UIContainer;
 
 UIContainer::UIContainer() { }
-UIContainer::~UIContainer() { }
 
 void UIContainer::Dive(std::function<bool(UIElement*)> check, std::function<bool(UIElement*)> func, bool consumable, bool frontFirst) {
     bool finished = false;

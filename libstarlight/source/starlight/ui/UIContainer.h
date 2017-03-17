@@ -29,7 +29,7 @@ namespace starlight {
             
             UIContainer();
             UIContainer(VRect rect) { this->rect = rect; }
-            ~UIContainer();
+            //~UIContainer();
             
             void Dive(std::function<bool(UIElement*)> check, std::function<bool(UIElement*)> func, bool consumable = true, bool frontFirst = true);
             void Dive(std::function<bool(UIElement*)> func, bool consumable = true, bool frontFirst = true);
