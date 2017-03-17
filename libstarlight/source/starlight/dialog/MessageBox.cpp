@@ -35,7 +35,7 @@ MessageBox::MessageBox(Mode m, const std::string& msg, std::function<void(int)> 
     touchScreen->Add(scroll);
     auto label = std::make_shared<Label>(VRect(0, 0, scroll->rect.size.x, 0));
     label->autoSizeV = true;
-    label->SetPreset("normal.16");
+    label->textConfig = ThemeManager::GetMetric<TextConfig>("/dialogs/messageBox/text");
     label->SetText(msg);
     scroll->Add(label);
     

@@ -38,7 +38,11 @@
     
     "dialogs" : {
         "messageBox" : {
-            "size" : [240, 160]
+            "size" : [240, 160],
+            "text" : {
+                "_inherit" : "/textPresets/normal.12",
+                "justification" : [0.5, 0]
+            }
         },
         "OSK" : {
             "preview" : {

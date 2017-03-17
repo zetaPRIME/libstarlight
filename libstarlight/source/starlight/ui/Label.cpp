@@ -48,7 +48,7 @@ void Label::PreDraw() {
         buffer = std::make_unique<gfx::DrawContextCanvas>(rect.size + Vector2(0, 8));
         buffer->Clear();
         GFXManager::PushContext(buffer.get());
-        textConfig.Print(buffer->rect, text, justification);
+        textConfig.Print(buffer->rect, text);
         GFXManager::PopContext();
     }
 }
@@ -58,6 +58,6 @@ void Label::Draw() {
     if (buffer) {
         buffer->Draw(VRect(rect.pos, buffer->rect.size));
     } else {
-        textConfig.Print(rect, text, justification);
+        textConfig.Print(rect, text);
     }
 }

@@ -24,7 +24,6 @@ namespace starlight {
             std::unique_ptr<gfx::DrawContextCanvas> buffer;
             
             bool autoSizeV = false;
-            Vector2 justification = Vector2::half;
             
             Label(VRect rect);
             ~Label() override { }
