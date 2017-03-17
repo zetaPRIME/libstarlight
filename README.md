@@ -31,7 +31,7 @@ Additionally, libstarlight contains versions of the following bundled within:
 ## Okay, so how do I use this?
 (section WIP, take a look at the testbed for a slightly scattered example)
 
-To ensure your application runs properly without themes installed to the SD card, it is recommended to include a copy of the default theme (or any theme with no fallback) at `romfs:/.fallback_theme`.
+To ensure your application runs properly without themes installed to the SD card, it is recommended to include a copy of the default theme (or any theme with no fallback) at `romfs:/.fallback_theme/`.
 
 (Themes on SD go in `sdmc:/.starlight/themes/`)
  
