@@ -42,76 +42,53 @@ void Core::Init() {
     touchScreen->Add(container);
     
     auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
+    label->textConfig.justification = Vector2::half;
     label->autoSizeV = true;
-    //label->justification = Vector2::zero;
-    //label->SetText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     label->SetText("~libstardust UI test~\n\nHello. I'm a label.\nI have multiple lines and can resize to fit my content. Did you know that miles per gallon is actually a measure of volume?");
-    //label->SetFont("default.16");
-    //label->SetFont("default.12");
     container->Add(label);
     
     auto button = std::make_shared<sl::ui::Button>(VRect(64,80,128,32));
     button->SetText("I'm a button.");
     button->eOnTap = [](auto& btn){
+        // assemble and open a basic form
         auto form = std::make_shared<sl::ui::Form>(true);
+        
         auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
+        label->textConfig.justification = Vector2::half;
         label->autoSizeV = true;
         label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
         form->touchScreen->Add(label);
-        auto xbtn = std::make_shared<sl::ui::Button>(VRect(4,24,32,32));
-        //xbtn->SetText(" ");
+        
+        auto xbtn = std::make_shared<sl::ui::Button>(VRect(320-96,28,32,24));
         xbtn->eOnTap = [](auto& btn){
             Application::Quit();
         };
+        xbtn->SetText("(exit)");
         form->touchScreen->Add(xbtn);
-        form->Open();
-        //auto msg = sl::dialog::MessageBox::New(sl::dialog::MessageBox::OkCancel, "This is a modal dialog!\n\n\n\nScrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscroll!");
-        //msg->Open();
+        
         auto tlbl = std::make_shared<sl::ui::Label>(VRect(2, 2, 396, 0));
         tlbl->autoSizeV = true;
         tlbl->SetPreset("normal.16");
-        tlbl->justification = Vector2::zero;
+        tlbl->textConfig.justification = Vector2::zero;
         tlbl->textConfig.borderColor = Color::black;
-        tlbl->SetText("3DS:~# ");
+        tlbl->SetText("3DS:~# sudo make me a sandwich_");
         form->topScreen->Add(tlbl);
-        //auto kb = sl::dialog::OSK::New(new sl::dialog::osk::InputHandlerDirectEdit(&(tlbl->text), true, 7, [tlbl](){tlbl->Refresh();}));
-        //kb->Open();
         
         auto tb = std::make_shared<sl::ui::TextBox>(VRect(0, 64, 320, 24).Expand(-16, 0));
-        tb->text = "TextBox testing in progress. ij ji lj jl";
+        tb->text = "Single-line TextBox widget example. Tap me!";
+        form->touchScreen->Add(tb);
+        
+        tb = std::make_shared<sl::ui::TextBox>(VRect(0, 64+24+4, 320, 24*6).Expand(-16, 0));
+        tb->text = "Multi-line TextBox widget example.\nSee? Multiple lines!\nTry it for yourself;\njust tap right here...\n\n(Drag the OSK preview to scroll, tap to place cursor, and use the + Control Pad to move the cursor manually; L/R is shift, B to exit)";
         tb->multiLine = true;
         form->touchScreen->Add(tb);
         
+        form->Open();
+        
+        // open a backdrop with the default asset
         sl::dialog::Backdrop::New()->Open();
         
-        /*label->SetFont("default.16");
-        btn.SetText("I was pressed!");
-        btn.eOnTap = [label](auto& btn){
-            label->borderColor = Color::black;
-            btn.SetText("Event swap!");
-            btn.eOnTap = [label](auto& btn){
-                label->SetFont("default.12");
-                btn.SetText("Clicked again!\nBunch of lines!\nNow testing scrollarea fling with some extra size!\n\n\nPotato.\nCalamari sandwich on rye with a side of octagonal pimento; a jar of butter?");
-                btn.rect.size.y = 573;
-                
-                auto form = std::make_shared<sl::ui::Form>(true);
-                auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
-                label->autoSizeV = true;
-                label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
-                form->touchScreen->Add(label);
-                form->Open();
-                
-                form = std::make_shared<sl::ui::Form>(true);
-                auto xbtn = std::make_shared<sl::ui::Button>(VRect(32,32,128,32));
-                form->touchScreen->Add(xbtn);
-                form->Open();
-                xbtn->eOnTap = [form](auto& btn){
-                    //form->Close();
-                    auto msg = sl::dialog::MessageBox::New(sl::dialog::MessageBox::Ok, "This is a modal dialog!\n\n\n\nScrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscrolly\n\n\n\nscroll!");
-                    msg->Open();
-                };
-            };
-        };*/
+        //
     };
     container->Add(button);
     
@@ -122,19 +99,15 @@ void Core::Init() {
     topScreen->Add(parallax);
     
     auto pipf = std::make_shared<sl::ui::Label>(VRect(0,0,400,240));
-    pipf->SetPreset("normal.16"); pipf->textConfig.borderColor = Color::black;
-    //pipf->SetText("I am the very model of something on the top screen. :D\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-    std::stringstream st;
-    //st << "dir: " << Path("sdmc:/.starlight").IsDirectory() << "\nfile: " << Path("sdmc:/arm9loaderhax.bin").IsFile();
-    st << "dir: " << Path("sdmc:/arm9loaderhax.bin").IsDirectory() << "\nfile: " << Path("sdmc:/arm9loaderhax.bin").IsFile() << "\nroot: " << Path("sdmc:/").IsDirectory();
-    pipf->SetText(st.str());
+    pipf->SetPreset("normal.16");
+    pipf->textConfig.borderColor = Color::black;
+    pipf->textConfig.justification = Vector2::half;
+    pipf->SetText("This label is on a parallax layer. Try moving the 3D slider.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     parallax->Add(pipf);
-    
-    Path("sdmc:/all/your/base").CreateDirectory();
     
     clearColor = Color(0.0f, 0.5f, 0.5f);
     
-    // test config
+    // basic config example
     auto& cc = Application::GetConfig("test");
     cc.Json()["panini"] = "yes please!";
     cc.Save();
@@ -147,5 +120,5 @@ void Core::End() {
 }
 
 void Core::Update() {
-    if (InputManager::Held(Keys::Y) || InputManager::Pressed(Keys::Start)) Application::Quit();
+    //if (InputManager::Held(Keys::Y) || InputManager::Pressed(Keys::Start)) Application::Quit();
 }
