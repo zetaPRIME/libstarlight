@@ -38,6 +38,18 @@ void ScrollField::Update() {
     scrollOffset.y = std::max(0.0f, std::min(scrollOffset.y, scrollMax.y));
 }
 
+void ScrollField::ScrollIntoView(Vector2 pt) {
+    Vector2 sm = pt - rect.size;
+    
+    scrollOffset.x = std::max(sm.x, std::min(scrollOffset.x, pt.x));
+    scrollOffset.y = std::max(sm.y, std::min(scrollOffset.y, pt.y));
+    
+    // hmm. doesn't play well with pending resizes
+    //scrollOffset.x = std::max(0.0f, std::min(scrollOffset.x, scrollMax.x));
+    //scrollOffset.y = std::max(0.0f, std::min(scrollOffset.y, scrollMax.y));
+}
+void ScrollField::ScrollIntoView(VRect box) { ScrollIntoView(box.BottomRight()); ScrollIntoView(box.pos); }
+
 void ScrollField::OnProcessTouchEvent() { // stop when child element touched
     if (InputManager::Pressed(Keys::Touch)) scrollVel = Vector2::zero;
 }

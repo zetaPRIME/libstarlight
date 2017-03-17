@@ -36,13 +36,15 @@ namespace {
         static auto tc = ThemeManager::GetMetric<starlight::TextConfig>("/dialogs/OSK/preview");
         return tc;
     }
+    
+    const constexpr float textHang = 4;
 }
 
 OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     priority = 1000; // probably don't want all that much displaying above the keyboard
     handler->parent = this;
     
-    auto cover = std::make_shared<Image>(touchScreen->rect.Expand(4), "decorations/dialog.modal-cover");
+    auto cover = std::make_shared<Image>(touchScreen->rect, "decorations/osk.background");
     cover->blockTouch = true;
     touchScreen->Add(cover);
     
@@ -58,7 +60,7 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     
     Vector2 bs(24, 32);
     Vector2 bpen;
-    Vector2 bpstart(160-bs.x*(12.5/2), 68);
+    Vector2 bpstart(160-bs.x*(12.5/2), 68+5);
     int line = -1;
     float linestart [] = {0, .5, .75, 1.25, 2.75-1};
     string chr = "\n1234567890-=\nqwertyuiop[]\nasdfghjkl;\'\nzxcvbnm,./\n` \\";
@@ -106,9 +108,14 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     key->eOnTap = [this](auto& btn){ this->handler->Enter(); this->OnKey(); };
     touchScreen->Add(key);
     
-    preview = std::make_shared<DrawLayerProxy>(VRect::touchScreen.TopEdge(68).Expand(-2), [this](auto& layer){ this->DrawPreview(layer); }, true);
+    previewSc = std::make_shared<ScrollField>(VRect(VRect::touchScreen.TopEdge(66)));
+    touchScreen->Add(previewSc);
+    
+    preview = std::make_shared<DrawLayerProxy>(VRect::touchScreen.TopEdge(66).Expand(-2, 0), [this](auto& layer){ this->DrawPreview(layer); }, true);
     preview->eOnTap = [this](auto& layer){ this->OnPreviewTap(layer); };
-    touchScreen->Add(preview);
+    previewSc->Add(preview);
+    
+    RefreshPreview();
 }
 
 void OSK::Update(bool focused) {
@@ -117,30 +124,29 @@ void OSK::Update(bool focused) {
     }
     if (focused) {
         if (InputManager::Pressed(Keys::B)) handler->Done();
-        if (true || handler->showPreview) {
+        if (handler->showPreview) {
             if (InputManager::Pressed(Keys::DPadLeft)) {
-                handler->SetCursor(handler->GetCursor() - 1);
-                preview->Refresh();
+                auto c = handler->GetCursor();
+                if (c > 0) handler->SetCursor(c - 1);
+                RefreshPreview();
             }
             if (InputManager::Pressed(Keys::DPadRight)) {
                 handler->SetCursor(handler->GetCursor() + 1);
-                preview->Refresh();
+                RefreshPreview();
             }
             
             auto& tc = PreviewTC();
             if (InputManager::Pressed(Keys::DPadUp)) {
                 Vector2 pt = tc.GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
-                string msr = "|";
-                pt.y -= tc.Measure(msr).y * 0.5f;
+                pt.y -= tc.Measure("|").y * 0.5f;
                 handler->SetCursor(tc.GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
-                preview->Refresh();
+                RefreshPreview();
             }
             if (InputManager::Pressed(Keys::DPadDown)) {
                 Vector2 pt = tc.GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
-                string msr = "|";
-                pt.y += tc.Measure(msr).y * 1.5f;
+                pt.y += tc.Measure("|").y * 1.5f;
                 handler->SetCursor(tc.GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
-                preview->Refresh();
+                RefreshPreview();
             }
         }
         
@@ -157,23 +163,47 @@ void OSK::Update(bool focused) {
 }
 
 void OSK::OnKey() {
+    RefreshPreview();
+}
+
+void OSK::RefreshPreview() {
+    auto& tc = PreviewTC();
+    if (handler->showPreview) {
+        Vector2 sz = tc.Measure(handler->GetPreviewText(), preview->rect.size.x);
+        preview->Resize(Vector2(preview->rect.size.x, std::max(sz.y + textHang, previewSc->rect.size.y))); // I guess a magic four will do
+        
+        Vector2 cp = tc.GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
+        Vector2 cs = tc.Measure("|") + Vector2(0, textHang);
+        previewSc->ScrollIntoView(VRect(cp, cs));//*/
+        
+    } else {
+        preview->Resize(Vector2(preview->rect.size.x, 66));
+    }
     preview->Refresh();
 }
 
 void OSK::DrawPreview(DrawLayerProxy& layer) {
-    if (true || handler->showPreview) {
+    if (handler->showPreview) {
         auto& tc = PreviewTC();
         tc.Print(layer.rect, handler->GetPreviewText(), Vector2::zero);
         
         Vector2 cp = tc.GetCursorPosition(layer.rect, handler->GetPreviewText(), handler->GetCursor());
         string cc = "|";
-        tc.Print(cp, cc, Vector2::zero);
+        tc.Print(cp, cc);
+        
+        //Vector2 cs = tc.Measure("|") + Vector2(0, textHang);
+        //previewSc->ScrollIntoView(VRect(cp, cs));
+    } else {
+        static auto tc = ThemeManager::GetMetric<starlight::TextConfig>("/dialogs/OSK/noPreview");
+        tc.Print(layer.rect, "(no preview available)");
     }
 }
 
 void OSK::OnPreviewTap(DrawLayerProxy& layer) {
-    Vector2 tpos = InputManager::TouchPos() - layer.ScreenRect().pos;
-    auto& tc = PreviewTC();
-    handler->SetCursor(tc.GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos));
-    preview->Refresh();
+    if (handler->showPreview) {
+        Vector2 tpos = InputManager::TouchPos() - layer.ScreenRect().pos;
+        auto& tc = PreviewTC();
+        handler->SetCursor(tc.GetCursorFromPoint(layer.rect, handler->GetPreviewText(), tpos));
+        RefreshPreview();
+    }
 }

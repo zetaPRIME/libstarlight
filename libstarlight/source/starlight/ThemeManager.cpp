@@ -347,11 +347,11 @@ TextConfig::TextConfig(const std::string& fontName, Color text, Color border) {
     textColor = text; borderColor = border;
 }
 
-void TextConfig::Print(Vector2 position, std::string& text, Vector2 justification) { 
+void TextConfig::Print(Vector2 position, const std::string& text, Vector2 justification) { 
     if (!justification) justification = this->justification;
     font->Print(position, text, 1, textColor, justification, borderColor);
 }
-void TextConfig::Print(VRect rect, std::string& text, Vector2 justification) {
+void TextConfig::Print(VRect rect, const std::string& text, Vector2 justification) {
     if (!justification) justification = this->justification;
     font->Print(rect, text, 1, textColor, justification, borderColor);
 }

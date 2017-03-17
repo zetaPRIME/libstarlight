@@ -78,6 +78,7 @@ void Core::Init() {
         
         auto tb = std::make_shared<sl::ui::TextBox>(VRect(0, 64, 320, 24).Expand(-16, 0));
         tb->text = "TextBox testing in progress. ij ji lj jl";
+        tb->multiLine = true;
         form->touchScreen->Add(tb);
         
         /*label->SetFont("default.16");

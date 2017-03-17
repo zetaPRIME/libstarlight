@@ -85,8 +85,8 @@ namespace starlight {
         TextConfig(const std::string& fontName, Color text, Color border = Color::transparent);
         ~TextConfig() = default;
         
-        void Print(Vector2 position, std::string& text, Vector2 justification = Vector2::invalid);
-        void Print(VRect rect, std::string& text, Vector2 justification = Vector2::invalid);
+        void Print(Vector2 position, const std::string& text, Vector2 justification = Vector2::invalid);
+        void Print(VRect rect, const std::string& text, Vector2 justification = Vector2::invalid);
         
         Vector2 Measure(const std::string& text, float maxWidth = 65536*64);
         

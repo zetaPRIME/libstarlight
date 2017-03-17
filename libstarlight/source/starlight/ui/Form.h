@@ -58,7 +58,7 @@ namespace starlight {
             //
             
         public:
-            int priority = 0;
+            float priority = 0;
             unsigned int flags = 0;
             
             std::shared_ptr<UIContainer> touchScreen = nullptr;

@@ -64,7 +64,9 @@ BitmapFont::CharInfo& BitmapFont::Char(char c) {
 }
 
 Vector2 BitmapFont::MeasureTo(const std::string& msg, bool total, unsigned int end, float maxWidth) {
+    if (msg == "") return Vector2::zero;
     if (total) {
+        if (end == 0) return Vector2(0, lineHeight);
         Vector2 measure = Vector2::zero;
         
         ForChar(msg, [&, this](auto& s){
@@ -81,11 +83,14 @@ Vector2 BitmapFont::MeasureTo(const std::string& msg, bool total, unsigned int e
     Vector2 measure;
     bool found = false;
     
-    ForChar(msg, [&, this, total, end](auto& s){
+    unsigned int et = end - 1;
+    if (end == 0) et = 0;
+    ForChar(msg, [&, this, total, end, et](auto& s){
         measure = Vector2(s.lineAcc + s.cc->advX, lineHeight * s.lineNum);
-        if (s.i == end-1) { 
+        if (s.i >= et) { 
             found = true;
             if (s.i == s.lineEnd) measure = Vector2(0, lineHeight * (s.lineNum + 1)); // linebreak == next line
+            if (end == 0) measure = Vector2(0, lineHeight * s.lineNum);
             return true;
         }
         

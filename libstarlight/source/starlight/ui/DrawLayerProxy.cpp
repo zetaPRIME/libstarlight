@@ -29,6 +29,7 @@ void DrawLayerProxy::PreDraw() {
 
 void DrawLayerProxy::Draw() {
     if (canvas) {
+        auto rect = (this->rect + GFXManager::GetOffset()).IntSnap();
         canvas->Draw(VRect(rect.pos, canvas->rect.size));
     } else {
         if (eDraw) eDraw(*this);

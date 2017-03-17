@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "starlight/ui/Form.h"
+#include "starlight/ui/ScrollField.h"
 #include "starlight/ui/DrawLayerProxy.h"
 
 #include "starlight/dialog/osk/InputHandler.h"
@@ -15,7 +16,10 @@ namespace starlight {
         class OSK : public ui::Form, public ui::FormCreator<OSK> {
         private:
             std::shared_ptr<ui::UIContainer> setContainer;
+            std::shared_ptr<ui::ScrollField> previewSc;
             std::shared_ptr<ui::DrawLayerProxy> preview;
+            
+            //Vector2 cursorPos;
         
         public:
             std::unique_ptr<osk::InputHandler> handler;
@@ -27,6 +31,7 @@ namespace starlight {
             
             void OnKey();
             
+            void RefreshPreview();
             void DrawPreview(ui::DrawLayerProxy& layer);
             void OnPreviewTap(ui::DrawLayerProxy& layer);
         };

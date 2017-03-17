@@ -45,6 +45,12 @@
                 "font" : "default.16",
                 "textColor" : "white",
                 "borderColor" : "black"
+            },
+            "noPreview" : {
+                "font" : "default.16",
+                "textColor" : "midGray",
+                "borderColor" : "darkGray",
+                "justification" : [0.5, 0.5]
             }
         }
     },

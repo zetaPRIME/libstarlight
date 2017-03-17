@@ -16,6 +16,9 @@ namespace starlight {
             
             void Update() override;
             
+            void ScrollIntoView(Vector2 pt);
+            void ScrollIntoView(VRect box);
+            
             // events
             void OnTouchOn() override;
             void OnTouchOff() override { }
@@ -33,4 +36,3 @@ namespace starlight {
         };
     }
 }
-
