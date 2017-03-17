@@ -2,10 +2,7 @@
 
 
 roadmap to first release, in no particular order {
-    knock out some low-hanging fruit from \V/
-    
-    add license!! (MIT?)
-    ADD README.MD PLS
+    - ding!
 } then consider these before 1.0 "gold" {
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
     add customization for Button (alternate idle/press images, optional glyph drawable)
