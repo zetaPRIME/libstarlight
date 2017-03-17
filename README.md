@@ -29,9 +29,11 @@ Additionally, libstarlight contains versions of the following bundled within:
 * [nlohmann::json (JSON For Modern C++)](https://github.com/nlohmann/json)
 
 ## Okay, so how do I use this?
-(section WIP, take a look at the testbed for a somewhat messy example)
+(section WIP, take a look at the testbed for a slightly scattered example)
 
 To ensure your application runs properly without themes installed to the SD card, it is recommended to include a copy of the default theme (or any theme with no fallback) at `romfs:/.fallback_theme`.
+
+(Themes on SD go in `sdmc:/.starlight/themes/`)
  
 ## License
 * MIT (see [license.md](license.md))
