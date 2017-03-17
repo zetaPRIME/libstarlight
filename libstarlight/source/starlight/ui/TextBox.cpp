@@ -97,7 +97,7 @@ void TextBox::OnDragHold() {
 void TextBox::OnDragRelease() {
     if (InputManager::Released(Keys::Touch)) {
         // pop up osk
-        OSK::New(new InputHandlerBuffered(text, multiLine, [this](auto& str){ this->SetText(str); }))->Open();
+        InputManager::OpenKeyboard(new InputHandlerBuffered(text, multiLine, [this](auto& str){ this->SetText(str); }));
     }
     MarkForRedraw();
 }

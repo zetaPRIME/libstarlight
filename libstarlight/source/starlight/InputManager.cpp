@@ -6,12 +6,18 @@
 #include <math.h>
 #include <3ds.h>
 
-#include "datatypes/Vector2.h"
+#include "starlight/datatypes/Vector2.h"
+
+#include "starlight/dialog/OSK.h"
 
 #include "InputManager.h"
 
 using starlight::Vector2;
 using starlight::ui::UIElement;
+
+using starlight::dialog::OSK;
+using starlight::dialog::osk::InputHandler;
+
 using starlight::DragHandle;
 using starlight::InputManager;
 
@@ -119,4 +125,9 @@ void DragHandle::Release() {
     rptr = nullptr;
     wptr = std::shared_ptr<UIElement>(nullptr);
     e->OnDragRelease();
+}
+
+void InputManager::OpenKeyboard(InputHandler* handler) {
+    // todo: open different keyboard type depending on user settings
+    OSK::New(handler)->Open();
 }

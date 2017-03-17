@@ -2,23 +2,17 @@
 
 
 roadmap to first release, in no particular order {
-    finish implementing OSK! {
-        polish! {
-            actual cursor image?
-        }
-        InputManager::OpenKeyboard
-    }
-    
-    - whee, fixed softlock/crash on exit, hopefully permanently!
+    knock out some low-hanging fruit from \V/
     
     add license!! (MIT?)
     ADD README.MD PLS
 } then consider these before 1.0 "gold" {
-    - should form priority be a float?
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
     add customization for Button (alternate idle/press images, optional glyph drawable)
     ^ use that to spice up the OSK
+    actual cursor image for OSK instead of just using a | glypyh
     input prompt dialog
+    "shortcut" overloads for InputManager::OpenKeyboard
     language config and atlas support
     maybe implement some way of "knocking out" and replacing metrics during runtime for theme switching
     fix font glyph padding to eliminate slight "crosstalk" in bordered variants

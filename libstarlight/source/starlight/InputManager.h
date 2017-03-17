@@ -44,6 +44,13 @@ enum class Keys : unsigned int {
 };
 
 namespace starlight {
+    // forward declare this for OpenKeyboard
+    namespace dialog {
+        namespace osk {
+            class InputHandler;
+        }
+    }
+    
     class InputManager;
     class DragHandle {
         friend class starlight::InputManager;
@@ -100,6 +107,8 @@ namespace starlight {
         static int TouchTime();
         
         static DragHandle& GetDragHandle() { return InputManager::drag; }
+        
+        static void OpenKeyboard(dialog::osk::InputHandler* handler);
         
     private:
         InputManager() {}
