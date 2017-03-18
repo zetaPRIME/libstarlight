@@ -248,7 +248,7 @@ CRenderTarget::CRenderTarget(int width, int height, bool forceExact) {
     auto w = forceExact ? width : NextPow2(width),
          h = forceExact ? height : NextPow2(height);
     txSize = Vector2(w, h);
-    tgt = C3D_RenderTargetCreate(w, h, GPU_RB_RGBA8, -1/*GPU_RB_DEPTH24_STENCIL8/**/); // I don't think we need a depth buffer >.>
+    tgt = C3D_RenderTargetCreate(w, h, GPU_RB_RGBA8, -1/*GPU_RB_DEPTH24_STENCIL8*/); // I don't think we need a depth buffer >.>
     Mtx_Ortho(&projection, 0.0f, w, 0.0f, h, 0.0f, 1.0f, true);
     //Mtx_OrthoTilt(&projection, 0.0f, h, 0.0f, w, 0.0f, 1.0f, true);
 }
