@@ -51,14 +51,14 @@ namespace { // internals
         return b;
     }
     
-    inline int NextPow2(unsigned int x) {
+    inline unsigned int NextPow2(unsigned int x) {
         --x;
         x |= x >> 1;
         x |= x >> 2;
         x |= x >> 4;
         x |= x >> 8;
         x |= x >> 16;
-        return ++x >= 64 ? x : 64; // min size to keep gpu from locking
+        return std::min(std::max(++x, 64U), 1024U); // clamp size to keep gpu from locking
     }
     
     class CRawTexture : public CTexture {
@@ -248,7 +248,7 @@ CRenderTarget::CRenderTarget(int width, int height, bool forceExact) {
     auto w = forceExact ? width : NextPow2(width),
          h = forceExact ? height : NextPow2(height);
     txSize = Vector2(w, h);
-    tgt = C3D_RenderTargetCreate(w, h, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8); // though actually, do we really need stenciling? could drop to 16 if we don't
+    tgt = C3D_RenderTargetCreate(w, h, GPU_RB_RGBA8, -1/*GPU_RB_DEPTH24_STENCIL8/**/); // I don't think we need a depth buffer >.>
     Mtx_Ortho(&projection, 0.0f, w, 0.0f, h, 0.0f, 1.0f, true);
     //Mtx_OrthoTilt(&projection, 0.0f, h, 0.0f, w, 0.0f, 1.0f, true);
 }
