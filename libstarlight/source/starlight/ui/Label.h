@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 
+#include "starlight/datatypes/Optional.h"
+
 #include "starlight/ThemeManager.h"
 #include "starlight/gfx/ThemeRef.h"
 
@@ -15,11 +17,13 @@ namespace starlight {
     namespace ui {
         class Label : public UIElement {
         private:
+            static std::function<TextConfig&()> defCfg;
+            
             void AutoSize();
             
         public:
             std::string text = "";
-            TextConfig textConfig;
+            Optional<TextConfig> textConfig = &defCfg;
             
             std::unique_ptr<gfx::DrawContextCanvas> buffer;
             

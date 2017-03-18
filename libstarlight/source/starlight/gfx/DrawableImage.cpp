@@ -19,7 +19,7 @@ void DrawableImage::Draw(const Vector2& position, const Vector2& origin, OptRef<
     if (GFXManager::PrepareForDrawing()) {
         texture->Bind(color ? color.get() : Color(1,1,1,1));
         const VRect& sr = sampleRect ? sampleRect.get() : VRect(Vector2::zero, texture->size);
-        VRect rect(position - origin * scale, sr.size * scale);
+        VRect rect(position - (texture->size * origin) * scale, sr.size * scale);
         RenderCore::DrawQuad(rect, position, rotation, sr / texture->txSize);
     }
 }

@@ -1,12 +1,29 @@
 
 
 
-roadmap to first release, in no particular order {
-    - ding!
+roadmap to v0.5.1 {
+    - add customization for Button (alternate idle/press images, optional glyph drawable) {
+        - also add (optional) TextConfig
+        - use that to spice up the OSK
+    }
+    figure out what to put on the left side of the keyboard (opposite backspace and enter)
+    temporary drawable loading, local themeref, discard etc.
+    ^ both png and raw load
+    maybe rgb565 for smdh icon loading?
+    some examples (minesweeper?)
+    proper thread dispatch?
 } then consider these before 1.0 "gold" {
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
-    add customization for Button (alternate idle/press images, optional glyph drawable)
-    ^ use that to spice up the OSK
+    garbage collection for not-recently-used theme assets {
+        keep track of last-use in ThemeRefContainer
+        have ThemeManager sweep gc every so often
+        rework redirects (proxy drawable I guess...?)
+    }
+    HANDLE CANVAS OVERRUNS FOR LABELS AND OSK PREVIEW {
+        - well, it doesn't actually *crash* anymore... or at least nowhere near as fast
+        use a "windowed" approach; only cache a bit more than is visible and redraw when the viewport changes enough
+        have a way for text rendering to skip lines that won't be visible, and use that with windowing to cut down render times further
+    }
     actual cursor image for OSK instead of just using a | glypyh
     input prompt dialog
     "shortcut" overloads for InputManager::OpenKeyboard

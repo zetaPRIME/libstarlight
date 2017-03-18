@@ -47,9 +47,9 @@ void UIContainer::_Dive(std::function<bool(UIElement*)>& func, bool consumable, 
 }
 
 void UIContainer::Add(std::shared_ptr<UIElement> elem, bool front) {
-    if (front) children.push_front(elem);
-    else children.push_back(elem);
     elem->parent = std::weak_ptr<UIContainer>(std::static_pointer_cast<UIContainer>(this->shared_from_this()));
+    if (front) children.push_front(std::move(elem));
+    else children.push_back(std::move(elem));
     MarkForRedraw();
 }
 //void UIContainer::Add(UIElement* elem) {

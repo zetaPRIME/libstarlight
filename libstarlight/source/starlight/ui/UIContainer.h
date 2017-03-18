@@ -35,6 +35,11 @@ namespace starlight {
             void Dive(std::function<bool(UIElement*)> func, bool consumable = true, bool frontFirst = true);
             
             void Add(std::shared_ptr<UIElement> elem, bool front = false);
+            template<class E, typename ... Args>
+            inline std::shared_ptr<E> AddNew(Args... args) {
+                auto n = std::make_shared<E>(args...);
+                Add(n); return n;
+            }
             //void Add(UIElement* elem);
             void Remove(std::shared_ptr<UIElement> elem);
             void RemoveAll();

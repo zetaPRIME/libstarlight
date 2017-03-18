@@ -42,9 +42,9 @@ void Core::Init() {
     touchScreen->Add(container);
     
     auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
-    label->textConfig.justification = Vector2::half;
+    label->textConfig->justification = Vector2::half;
     label->autoSizeV = true;
-    label->SetText("~libstarlight UI test~\n\nHello. I'm a label.\nI have multiple lines and can resize to fit my content. Did you know that miles per gallon is actually a measure of volume?");
+    label->SetText("~libstarlight UI test~\n\nHello. I'm a label.\nI have multiple lines and can resize to fit my content. Did you know that miles per gallon is actually a measure of volume? " + std::to_string(sizeof(std::unique_ptr<sl::ui::Label>)));
     container->Add(label);
     
     auto button = std::make_shared<sl::ui::Button>(VRect(64,80,128,32));
@@ -54,7 +54,7 @@ void Core::Init() {
         auto form = std::make_shared<sl::ui::Form>(true);
         
         auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
-        label->textConfig.justification = Vector2::half;
+        label->textConfig->justification = Vector2::half;
         label->autoSizeV = true;
         label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
         form->touchScreen->Add(label);
@@ -69,8 +69,8 @@ void Core::Init() {
         auto tlbl = std::make_shared<sl::ui::Label>(VRect(2, 2, 396, 0));
         tlbl->autoSizeV = true;
         tlbl->SetPreset("normal.16");
-        tlbl->textConfig.justification = Vector2::zero;
-        tlbl->textConfig.borderColor = Color::black;
+        tlbl->textConfig->justification = Vector2::zero;
+        tlbl->textConfig->borderColor = Color::black;
         tlbl->SetText("3DS:~# sudo make me a sandwich_");
         form->topScreen->Add(tlbl);
         
@@ -100,8 +100,8 @@ void Core::Init() {
     
     auto pipf = std::make_shared<sl::ui::Label>(VRect(0,0,400,240));
     pipf->SetPreset("normal.16");
-    pipf->textConfig.borderColor = Color::black;
-    pipf->textConfig.justification = Vector2::half;
+    pipf->textConfig->borderColor = Color::black;
+    pipf->textConfig->justification = Vector2::half;
     pipf->SetText("This label is on a parallax layer. Try moving the 3D slider.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     parallax->Add(pipf);
     

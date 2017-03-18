@@ -96,7 +96,8 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     bpen = bpstart + bs * Vector2(linestart[3] + 10, 3);
     auto key = std::make_shared<Button>(VRect(bpen, bs));
     key->rect.size.x *= 1.25;
-    key->SetText("< <");
+    //key->SetText("< <");
+    key->style.glyph = ThemeManager::GetAsset("glyphs/backspace.small");
     key->eOnTap = [this](auto& btn){ this->handler->Backspace(); this->OnKey(); };
     touchScreen->Add(key);
     
@@ -104,7 +105,8 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     bpen = bpstart + bs * Vector2(linestart[4] + 8, 4);
     key = std::make_shared<Button>(VRect(bpen, bs));
     key->rect.size.x *= 2.5;
-    key->SetText("Enter");
+    //key->SetText("Enter");
+    key->style.glyph = ThemeManager::GetAsset("glyphs/enter.large");
     key->eOnTap = [this](auto& btn){ this->handler->Enter(); this->OnKey(); };
     touchScreen->Add(key);
     

@@ -4,15 +4,30 @@
 #include <string>
 #include <functional>
 
+#include "starlight/datatypes/Optional.h"
+
+#include "starlight/ThemeManager.h"
+#include "starlight/gfx/ThemeRef.h"
+
 #include "starlight/ui/UIElement.h"
 
 namespace starlight {
     namespace ui {
         class Button : public UIElement {
+        public:
+            struct Style {
+                gfx::ThemeRef<gfx::Drawable>
+                    idle = nullptr,
+                    press = nullptr,
+                    glyph = nullptr;
+                    Optional<TextConfig> textConfig = &Button::defCfg;
+            };
         private:
-            //
+            static std::function<TextConfig&()> defCfg;
             
         public:
+            Style style;
+            
             std::string label = "";
             std::function<void(Button&)> eOnTap;
             

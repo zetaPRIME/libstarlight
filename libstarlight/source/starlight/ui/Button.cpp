@@ -15,7 +15,14 @@ using starlight::InputManager;
 using starlight::GFXManager;
 using starlight::ThemeManager;
 
+using starlight::TextConfig;
+
 using starlight::ui::Button;
+
+std::function<TextConfig&()> Button::defCfg = []() -> TextConfig& {
+    static TextConfig _tc = ThemeManager::GetMetric("/controls/button/text", TextConfig());
+    return _tc;
+};
 
 void Button::SetText(const std::string& text) {
     label = text;
@@ -28,18 +35,18 @@ void Button::Draw() {
     static auto idle = ThemeManager::GetAsset("controls/button.idle");
     static auto press = ThemeManager::GetAsset("controls/button.press");
     
-    static TextConfig tc = ThemeManager::GetMetric("/controls/button/text", TextConfig());
+    TextConfig& tc = style.textConfig.ROGet();
     
     auto rect = (this->rect + GFXManager::GetOffset()).IntSnap();
     
     if (InputManager::GetDragHandle() == this) {
-        press->Draw(rect);
+        (style.press ? style.press : press)->Draw(rect);
     } else {
-        idle->Draw(rect);
+        (style.idle ? style.idle : idle)->Draw(rect);
     }
     
-    //font->Print(rect, label, 1, cl/*Color::white*/, Vector2(0.5f, 0.5f), Color::black);
     tc.Print(rect, label);
+    if (style.glyph) style.glyph->Draw(rect.Center(), Vector2::half, nullptr, tc.textColor);
 }
 
 void Button::OnTouchOn() {
