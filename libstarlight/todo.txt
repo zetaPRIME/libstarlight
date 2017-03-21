@@ -2,22 +2,26 @@
 
 
 roadmap to v0.5.1 {
-    - add customization for Button (alternate idle/press images, optional glyph drawable) {
-        - also add (optional) TextConfig
-        - use that to spice up the OSK
-    }
-    figure out what to put on the left side of the keyboard (opposite backspace and enter)
+    - fix the hang on osk when pressing (L|R)+up+left
+    figure out what (else) to put on the left side of the keyboard (opposite backspace and enter)
     temporary drawable loading, local themeref, discard etc.
     ^ both png and raw load
     maybe rgb565 for smdh icon loading?
     some examples (minesweeper?)
-    proper thread dispatch?
+    fix `, ' and " glyph spacing/offset
+    adjust /\ some?
+    proper thread dispatch? {
+        Application main loop keeps a libctru TickCounter and keeps track of frame time;
+        thread objects are held in a std::list, Application dispatches resume events and splice()s them to the end until frame time reaches some proportion of 1/60s
+        thread gets a yield function that calls svcWaitSynchronization on its resume event
+        ...and some mechanism for allowing it to opt out of the rest of the cycle
+    }
 } then consider these before 1.0 "gold" {
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
     garbage collection for not-recently-used theme assets {
-        keep track of last-use in ThemeRefContainer
+        - keep track of last-use in ThemeRefContainer
         have ThemeManager sweep gc every so often
-        rework redirects (proxy drawable I guess...?)
+        - rework redirects (proxy drawable I guess...?) or a pointer to another container
     }
     HANDLE CANVAS OVERRUNS FOR LABELS AND OSK PREVIEW {
         - well, it doesn't actually *crash* anymore... or at least nowhere near as fast
@@ -26,6 +30,7 @@ roadmap to v0.5.1 {
     }
     actual cursor image for OSK instead of just using a | glypyh
     input prompt dialog
+    make the panel background not just the button image
     "shortcut" overloads for InputManager::OpenKeyboard
     language config and atlas support
     maybe implement some way of "knocking out" and replacing metrics during runtime for theme switching

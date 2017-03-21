@@ -44,7 +44,7 @@ void Core::Init() {
     auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
     label->textConfig->justification = Vector2::half;
     label->autoSizeV = true;
-    label->SetText("~libstarlight UI test~\n\nHello. I'm a label.\nI have multiple lines and can resize to fit my content. Did you know that miles per gallon is actually a measure of volume? " + std::to_string(sizeof(std::unique_ptr<sl::ui::Label>)));
+    label->SetText("~libstarlight UI test~\n\nHello. I'm a label.\nI have multiple lines and can resize to fit my content. Did you know that miles per gallon is actually a measure of volume? " + std::to_string(sizeof(unsigned long long)));
     container->Add(label);
     
     auto button = std::make_shared<sl::ui::Button>(VRect(64,80,128,32));

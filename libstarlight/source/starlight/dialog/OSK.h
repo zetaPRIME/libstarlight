@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "starlight/ui/Form.h"
+#include "starlight/ui/Button.h"
 #include "starlight/ui/ScrollField.h"
 #include "starlight/ui/DrawLayerProxy.h"
 
@@ -19,7 +20,10 @@ namespace starlight {
             std::shared_ptr<ui::ScrollField> previewSc;
             std::shared_ptr<ui::DrawLayerProxy> preview;
             
+            std::shared_ptr<ui::Button> shiftKey;
+            
             //Vector2 cursorPos;
+            bool shiftLock = false;
         
         public:
             std::unique_ptr<osk::InputHandler> handler;

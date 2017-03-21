@@ -30,6 +30,7 @@ using starlight::Application;
 ////////////////////
 
 Application* Application::_currentApp = nullptr;
+unsigned long long Application::ftime = 0;
 
 bool Application::Quit() {
     if (_currentApp == nullptr) return false;
@@ -124,6 +125,8 @@ void Application::_mainLoop() {
     }
     
     // update step
+    ftime = osGetTime();
+    
     InputManager::Update();
     Update();
     { // update loop for forms, guarded from snap-outs

@@ -37,6 +37,10 @@ namespace {
         return tc;
     }
     
+    inline bool ShiftScroll(Keys k) {
+        return InputManager::Pressed(k) || (InputManager::Held(Keys::L | Keys::R) && InputManager::Held(k));
+    }
+    
     const constexpr float textHang = 4;
 }
 
@@ -44,14 +48,13 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     priority = 1000; // probably don't want all that much displaying above the keyboard
     handler->parent = this;
     
-    auto cover = std::make_shared<Image>(touchScreen->rect, "decorations/osk.background");
+    auto cover = touchScreen->AddNew<Image>(touchScreen->rect, "decorations/osk.background");
     cover->blockTouch = true;
-    touchScreen->Add(cover);
     
-    // wip
+    // build keyboard
     
-    setContainer = std::make_shared<ui::UIContainer>(VRect::touchScreen);
-    touchScreen->Add(setContainer);
+    //setContainer = touchScreen->AddNew<ui::UIContainer>(VRect::touchScreen); // kept as a test case
+    setContainer = touchScreen->AddNew<ui::UICanvas>(VRect::touchScreen); // but this is much more efficient
     
     auto actSym = [this](Button& key){
         this->handler->InputSymbol(key.label);
@@ -74,18 +77,16 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
             bpen = bpstart + Vector2(linestart[line] * bs.x, bs.y * line);
         } else {
             // lower
-            auto key = std::make_shared<Button>(VRect(bpen, bs));
+            auto key = setContainer->AddNew<Button>(VRect(bpen, bs));
             if (c == ' ') key->rect.size.x *= 6;
             key->SetText(string(1, c));
             key->eOnTap = actSym;
-            setContainer->Add(key);
             
             // upper
-            key = std::make_shared<Button>(VRect(bpen + Vector2(0, 1000), bs));
+            key = setContainer->AddNew<Button>(VRect(bpen + Vector2(0, 1000), bs));
             if (C == ' ') key->rect.size.x *= 6;
             key->SetText(string(1, C));
             key->eOnTap = actSym;
-            setContainer->Add(key);
             
             // and after
             bpen.x += key->rect.size.x;
@@ -94,28 +95,30 @@ OSK::OSK(osk::InputHandler* handler) : Form(true), handler(handler) {
     
     // backspace
     bpen = bpstart + bs * Vector2(linestart[3] + 10, 3);
-    auto key = std::make_shared<Button>(VRect(bpen, bs));
+    auto key = touchScreen->AddNew<Button>(VRect(bpen, bs));
     key->rect.size.x *= 1.25;
-    //key->SetText("< <");
     key->style.glyph = ThemeManager::GetAsset("glyphs/backspace.small");
     key->eOnTap = [this](auto& btn){ this->handler->Backspace(); this->OnKey(); };
-    touchScreen->Add(key);
     
     // enter
     bpen = bpstart + bs * Vector2(linestart[4] + 8, 4);
-    key = std::make_shared<Button>(VRect(bpen, bs));
+    key = touchScreen->AddNew<Button>(VRect(bpen, bs));
     key->rect.size.x *= 2.5;
-    //key->SetText("Enter");
     key->style.glyph = ThemeManager::GetAsset("glyphs/enter.large");
     key->eOnTap = [this](auto& btn){ this->handler->Enter(); this->OnKey(); };
-    touchScreen->Add(key);
     
-    previewSc = std::make_shared<ScrollField>(VRect(VRect::touchScreen.TopEdge(66)));
-    touchScreen->Add(previewSc);
+    // shift
+    bpen = bpstart + bs * Vector2(linestart[0] + .25, 4);
+    key = touchScreen->AddNew<Button>(VRect(bpen, bs));
+    key->rect.size.x = bs.x * (linestart[4] - linestart[0] - .25);
+    key->style.glyph = ThemeManager::GetAsset("glyphs/shift.large");
+    key->eOnTap = [this](auto& btn){ this->shiftLock ^= true; };
+    shiftKey = key;
     
-    preview = std::make_shared<DrawLayerProxy>(VRect::touchScreen.TopEdge(66).Expand(-2, 0), [this](auto& layer){ this->DrawPreview(layer); }, true);
+    previewSc = touchScreen->AddNew<ScrollField>(VRect(VRect::touchScreen.TopEdge(66)));
+    
+    preview = previewSc->AddNew<DrawLayerProxy>(VRect::touchScreen.TopEdge(66).Expand(-2, 0), [this](auto& layer){ this->DrawPreview(layer); }, true);
     preview->eOnTap = [this](auto& layer){ this->OnPreviewTap(layer); };
-    previewSc->Add(preview);
     
     RefreshPreview();
 }
@@ -126,46 +129,57 @@ void OSK::Update(bool focused) {
         return;
     }
     if (focused) {
-        if (InputManager::Pressed(Keys::B)) handler->Done();
+        if (InputManager::Pressed(Keys::B | Keys::Start)) handler->Done();
         if (handler->showPreview) {
-            if (InputManager::Pressed(Keys::DPadLeft)) {
+            auto& tc = PreviewTC();
+            bool refresh = false;
+            
+            if (ShiftScroll(Keys::DPadLeft)) {
                 auto c = handler->GetCursor();
                 if (c > 0) handler->SetCursor(c - 1);
-                RefreshPreview();
+                refresh = true;
             }
-            if (InputManager::Pressed(Keys::DPadRight)) {
+            if (ShiftScroll(Keys::DPadRight)) {
                 handler->SetCursor(handler->GetCursor() + 1);
-                RefreshPreview();
+                refresh = true;
             }
-            
-            auto& tc = PreviewTC();
-            if (InputManager::Pressed(Keys::DPadUp)) {
+            if (ShiftScroll(Keys::DPadUp)) {
                 Vector2 pt = tc.GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
                 pt.y -= tc.Measure("|").y * 0.5f;
                 handler->SetCursor(tc.GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
-                RefreshPreview();
+                refresh = true;
             }
-            if (InputManager::Pressed(Keys::DPadDown)) {
+            if (ShiftScroll(Keys::DPadDown)) {
                 Vector2 pt = tc.GetCursorPosition(preview->rect, handler->GetPreviewText(), handler->GetCursor());
                 pt.y += tc.Measure("|").y * 1.5f;
                 handler->SetCursor(tc.GetCursorFromPoint(preview->rect, handler->GetPreviewText(), pt));
-                RefreshPreview();
+                refresh = true;
             }
+            if (refresh) RefreshPreview();
         }
         
         float& s = setContainer->scrollOffset.y;
         float ts = 0;
         if (InputManager::Held(Keys::L) || InputManager::Held(Keys::R)) {
             ts = 1000;
-        }
+            shiftLock = false;
+        } else if (shiftLock) ts = 1000;
         if (s != ts) {
             s = ts;
             setContainer->MarkForRedraw();
+            
+            if (ts > 0) {
+                static TextConfig stc = ThemeManager::GetMetric<starlight::TextConfig>("/dialogs/OSK/keyHighlight");
+                shiftKey->style.textConfig = stc;
+            } else {
+                shiftKey->style.textConfig = nullptr;
+            }
         }
     }
 }
 
 void OSK::OnKey() {
+    shiftLock = false;
     RefreshPreview();
 }
 

@@ -43,6 +43,9 @@ enum class Keys : unsigned int {
     Right = DPadRight   | CPadRight,    ///< D-Pad Right or Circle Pad Right
 };
 
+inline constexpr unsigned int operator*(Keys k) { return static_cast<unsigned int>(k); }
+inline constexpr Keys operator|(Keys k1, Keys k2) { return static_cast<Keys>(*k1 | *k2); }
+
 namespace starlight {
     // forward declare this for OpenKeyboard
     namespace dialog {
@@ -94,11 +97,11 @@ namespace starlight {
         static Vector2 CStick();
         
         static bool Held(unsigned int mask);
-        static inline bool Held(Keys mask) { return Held(static_cast<unsigned int>(mask)); }
+        static inline bool Held(Keys mask) { return Held(*mask); }
         static bool Pressed(unsigned int mask);
-        static inline bool Pressed(Keys mask) { return Pressed(static_cast<unsigned int>(mask)); }
+        static inline bool Pressed(Keys mask) { return Pressed(*mask); }
         static bool Released(unsigned int mask);
-        static inline bool Released(Keys mask) { return Released(static_cast<unsigned int>(mask)); }
+        static inline bool Released(Keys mask) { return Released(*mask); }
         
         static Vector2 TouchPos();
         static Vector2 TouchDelta();

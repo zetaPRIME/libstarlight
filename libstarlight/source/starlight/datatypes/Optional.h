@@ -29,7 +29,7 @@ namespace starlight {
             getdef = o.getdef;
         }
         
-        Optional<T>& operator=(const nullptr_t&) { p.reset(); }
+        Optional<T>& operator=(const nullptr_t&) { p.reset(); return *this; }
         Optional<T>& operator=(const T& o) { // assign by type's assignment operator if passed a "value"
             if (!p) p = std::make_unique<T>();
             *p = o;

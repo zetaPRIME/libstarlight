@@ -179,6 +179,14 @@ void ThemeManager::End() {
     
 }
 
+void ThemeManager::GC() {
+    constexpr const int keepCycles = 5; // how many gc sweeps a drawable gets to stay loaded without being used
+    // WIP
+    for (auto& d : drawables) {
+        if (++d.second.lastAccess > keepCycles) d.second.Unload();
+    }
+}
+
 ThemeRef<Drawable> ThemeManager::GetAsset(const std::string& name) {
     auto const& itr = drawables.find(name);
     if (itr == drawables.end()) {
@@ -195,10 +203,10 @@ ThemeRef<Font> ThemeManager::GetFont(const std::string& name) {
 
 void ThemeManager::Fulfill(ThemeRefContainer<Drawable>& ref) {
     string path = ResolveAssetPath(ref.name);
-    ref.ptr = LoadAsset(path);
+    ref.ptr = LoadAsset(path, ref);
 }
 
-shared_ptr<Drawable> ThemeManager::LoadAsset(string& path) {
+shared_ptr<Drawable> ThemeManager::LoadAsset(string& path, ThemeRefContainer<Drawable>& ref) {
     static shared_ptr<Drawable> nulldrw = make_shared<starlight::gfx::DrawableTest>();
     
     string ext = FindExtension(path);
@@ -225,9 +233,8 @@ shared_ptr<Drawable> ThemeManager::LoadAsset(string& path) {
         // else if (type == "") { }
         else if (type == "link") {
             string npath = ResolveAssetPath(j["path"]);
-            //return LoadAsset(npath);
-            return GetAsset(npath).GetShared(); // I guess this works; may need to be altered for asynchronity if I do that later
-            // (perhaps by--wait no, making it the same ThemeRefContainer would require a full rearchitecture of this part @.@)
+            ref.redir = const_cast<ThemeRefContainer<Drawable>*>(GetAsset(npath).cptr); // link containers directly
+            return nulldrw; // doesn't really matter what's inside, it'll never get used
         }
         return nulldrw;
     }
