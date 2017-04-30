@@ -87,6 +87,17 @@ namespace starlight {
         TextConfig(const std::string& fontName, Color text, Color border = Color::transparent);
         ~TextConfig() = default;
         
+        TextConfig(const TextConfig& o) : textColor(o.textColor), borderColor(o.borderColor), justification(o.justification) { font = o.font; }
+        TextConfig(const TextConfig&& o) : textColor(o.textColor), borderColor(o.borderColor), justification(o.justification) { font = o.font; }
+        TextConfig& operator =(const TextConfig& o) {
+            font = o.font; textColor = o.textColor; borderColor = o.borderColor; justification = o.justification;
+            return *this;
+        }
+        TextConfig& operator =(const TextConfig&& o) {
+            font = o.font; textColor = o.textColor; borderColor = o.borderColor; justification = o.justification;
+            return *this;
+        }
+        
         void Print(Vector2 position, const std::string& text, Vector2 justification = Vector2::invalid);
         void Print(VRect rect, const std::string& text, Vector2 justification = Vector2::invalid);
         

@@ -181,10 +181,16 @@ void ThemeManager::End() {
 
 void ThemeManager::GC() {
     constexpr const int keepCycles = 5; // how many gc sweeps a drawable gets to stay loaded without being used
+    std::vector<string> rem;
     // WIP
     for (auto& d : drawables) {
-        if (++d.second.lastAccess > keepCycles) d.second.Unload();
+        if (++d.second.lastAccess > keepCycles) {
+            d.second.Unload();
+            if (d.second.refCount <= 0) rem.push_back(d.first); // mark for full removal when no references exist
+        }
     }
+    
+    for (auto& s : rem) drawables.erase(s); // and remove everything queued
 }
 
 ThemeRef<Drawable> ThemeManager::GetAsset(const std::string& name) {
@@ -268,28 +274,50 @@ string ThemeManager::ResolveAssetPath(const string& id) {
     //struct stat buf;
     //string path(id.length() + 64, ' '); // preallocate buffer space
     
-    static const string pfxLocal = "app:/";
-    if (id.compare(0, pfxLocal.length(), pfxLocal) == 0) {
+    string pfx = "";
+    
+    size_t cpos = id.find(":/");
+    if (cpos != string::npos) {
+        pfx = id.substr(0, cpos);
+        cpos += 2;
+    } else cpos = 0;
+    
+    if (pfx == "app") {
+        string sid = id.substr(cpos); // strip off the "app:/"
         // app-local asset
         // check if present in theme/app/[appname]/, else check in romfs
         for (auto thm : themeData) {
             Path bp = thm.basePath.Combine("app").Combine(Application::AppName());
-            Path p = bp.Combine(id+".json");
+            Path p = bp.Combine(sid);
             if (p.IsFile()) return p;
-            p = bp.Combine(id+".png");
+            p = bp.Combine(sid+".json");
+            if (p.IsFile()) return p;
+            p = bp.Combine(sid+".png");
             if (p.IsFile()) return p;
         }
         // TBD - directly in romfs, or in an assets folder?
         Path bp = Path("romfs:");
-        Path p = bp.Combine(id+".json");
+        Path p = bp.Combine(sid);
         if (p.IsFile()) return p;
-        p = bp.Combine(id+".png");
+        p = bp.Combine(sid+".json");
+        if (p.IsFile()) return p;
+        p = bp.Combine(sid+".png");
+        if (p.IsFile()) return p;
+    }
+    else if (pfx == "sdmc" || pfx == "romfs") {
+        Path p = Path(id);
+        if (p.IsFile()) return p;
+        p = Path(id + ".json");
+        if (p.IsFile()) return p;
+        p = Path(id + ".png");
         if (p.IsFile()) return p;
     }
     else {
         // theme asset; check in each theme from selected to most-fallback
         for (auto thm : themeData) {
-            Path p = thm.basePath.Combine(id+".json");
+            Path p = thm.basePath.Combine(id);
+            if (p.IsFile()) return p;
+            p = thm.basePath.Combine(id+".json");
             if (p.IsFile()) return p;
             p = thm.basePath.Combine(id+".png");
             if (p.IsFile()) return p;

@@ -18,6 +18,7 @@ namespace starlight {
             std::shared_ptr<T> ptr = nullptr;
             ThemeRefContainer* redir = nullptr;
             unsigned int lastAccess = 0; // how many gc sweeps since last use
+            volatile int refCount = 0;
             void Unload(bool full = false) {
                 ptr.reset();
                 if (full) redir = nullptr;
@@ -54,12 +55,28 @@ namespace starlight {
         class ThemeRef {
             friend class starlight::ThemeManager;
         protected:
-            const ThemeRefContainer<T>* cptr;
+            ThemeRefContainer<T>* cptr;
         public:
             ThemeRef() : cptr(nullptr) { }
-            ThemeRef(ThemeRefContainer<T>* c) : cptr(c) { }
-            ~ThemeRef() { }
-            inline const ThemeRefContainer<T>& operator ->() const { return *cptr; }
+            ThemeRef(ThemeRefContainer<T>* c) : cptr(c) { if (cptr) cptr->refCount++; }
+            ThemeRef(ThemeRef<T>& o) : cptr(o.cptr) { if (cptr) cptr->refCount++; }
+            ThemeRef(ThemeRef<T>&& o) : cptr(o.cptr) { if (cptr) cptr->refCount++; }
+            ~ThemeRef() { if (cptr) cptr->refCount--; }
+            
+            ThemeRef<T>& operator =(const ThemeRef<T>& o) {
+                if (cptr) cptr->refCount--;
+                cptr = o.cptr;
+                if (cptr) cptr->refCount++;
+                return *this;
+            }
+            ThemeRef<T>& operator =(const ThemeRef<T>&& o) {
+                if (cptr) cptr->refCount--;
+                cptr = o.cptr;
+                if (cptr) cptr->refCount++;
+                return *this;
+            }
+            
+            inline const ThemeRefContainer<T>& operator ->() const { return const_cast<const ThemeRefContainer<T>&>(*cptr); }
             inline explicit operator bool() const { return cptr != nullptr; }
             inline std::shared_ptr<T> GetShared() const { return (*cptr).getptr(); }
             inline const std::string& GetName() const { return (*cptr).name; }
