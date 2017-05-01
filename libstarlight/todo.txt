@@ -13,7 +13,7 @@ roadmap to v0.5.1 {
     proper thread dispatch? {
         Application main loop keeps a libctru TickCounter and keeps track of frame time;
         thread objects are held in a std::list, Application dispatches resume events and splice()s them to the end until frame time reaches some proportion of 1/60s
-        thread gets a yield function that calls svcWaitSynchronization on its resume event
+        - thread gets a yield function that calls svcWaitSynchronization on its resume event
         ...and some mechanism for allowing it to opt out of the rest of the cycle
     }
 } then consider these before 1.0 "gold" {
