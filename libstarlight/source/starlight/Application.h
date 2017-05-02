@@ -3,10 +3,15 @@
 
 #include <string>
 #include <memory>
+#include <list>
 
 #include "starlight/datatypes/Vector2.h"
 #include "starlight/datatypes/VRect.h"
 #include "starlight/datatypes/Color.h"
+
+#include "starlight/util/FrameTimer.h"
+
+#include "starlight/threading/Thread.h"
 
 #include "starlight/ui/TouchScreenCanvas.h"
 #include "starlight/ui/TopScreenCanvas.h"
@@ -41,6 +46,9 @@ namespace starlight {
         void _mainLoop();
         void _end();
         
+        std::list<std::shared_ptr<threading::Thread>> threads;
+        util::FrameTimer frameTimer;
+        
     public:
         const std::string appId;
         
@@ -59,13 +67,14 @@ namespace starlight {
         
         void Run();
         
+        void EnqueueThread(std::shared_ptr<threading::Thread> thread);
+        inline void SignalFormState() { _sFormState = true; }
+        
         virtual void Init() { }
         virtual void Update() { }
         virtual void PostUpdate() { }
         virtual void Draw() { }
         virtual void PostDraw() { }
         virtual void End() { }
-        
-        inline void SignalFormState() { _sFormState = true; }
     };
 }

@@ -2,6 +2,7 @@
 
 
 roadmap to v0.5.1 {
+    figure out how to fix the clear bug
     - fix the hang on osk when pressing (L|R)+up+left
     figure out what (else) to put on the left side of the keyboard (opposite backspace and enter)
     temporary drawable loading, local themeref, discard etc.
@@ -11,11 +12,18 @@ roadmap to v0.5.1 {
     fix `, ' and " glyph spacing/offset
     adjust /\ some?
     proper thread dispatch? {
-        Application main loop keeps a libctru TickCounter and keeps track of frame time;
+        probably part of Application, actually
+        
+        Application main loop keeps a(n abstracted) libctru TickCounter and keeps track of frame time
         thread objects are held in a std::list, Application dispatches resume events and splice()s them to the end until frame time reaches some proportion of 1/60s
+            x.splice( x.end(), x, iter );
         - thread gets a yield function that calls svcWaitSynchronization on its resume event
         ...and some mechanism for allowing it to opt out of the rest of the cycle
+        
+        Trackable sideclass for threads; float progress 0..1, etc.
     }
+} then by v0.5.5 {
+    event propagation system of some sort; threadsafe to whatever extent is needed on 3DS
 } then consider these before 1.0 "gold" {
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
     garbage collection for not-recently-used theme assets {

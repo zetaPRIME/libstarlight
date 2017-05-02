@@ -31,6 +31,8 @@ namespace starlight {
             friend class starlight::gfx::RenderCore;
         protected:
             C3D_RenderTarget* tgt;
+            C3D_Tex tex;
+            Color clearColor = Color::transparent;
             
         public:
             C3D_Mtx projection;

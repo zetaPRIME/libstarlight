@@ -248,9 +248,22 @@ CRenderTarget::CRenderTarget(int width, int height, bool forceExact) {
     auto w = forceExact ? width : NextPow2(width),
          h = forceExact ? height : NextPow2(height);
     txSize = Vector2(w, h);
+    
     tgt = C3D_RenderTargetCreate(w, h, GPU_RB_RGBA8, -1/*GPU_RB_DEPTH24_STENCIL8*/); // I don't think we need a depth buffer >.>
+    //tgt = C3D_RenderTargetCreateFromTex(&tex, GPU_TEXFACE_2D, -1, -1); // create target from texture, actually
+    
+    C3D_TexInit(&tex, w, h, GPU_RGBA8);
+    //memset(tex.data, 0, w*h*4); // manually zero out; TODO: optimize this
+    C3D_TexDelete(&tex); tex.data = tgt->frameBuf.colorBuf; // replace stuff...
+    
     Mtx_Ortho(&projection, 0.0f, w, 0.0f, h, 0.0f, 1.0f, true);
     //Mtx_OrthoTilt(&projection, 0.0f, h, 0.0f, w, 0.0f, 1.0f, true);
+    
+    //C3D_FrameBufClear(&(tgt->frameBuf), C3D_CLEAR_ALL, 0, 0);
+    //Clear(Color::transparent);
+    //RenderCore::BindTexture(&tex, Color::white);
+    //C3D_FrameBufClear(&(tgt->frameBuf), C3D_CLEAR_COLOR, 0, 0);
+    //C3D_RenderTargetSetClear(tgt, static_cast<C3D_ClearBits>(0), 0, 0);
 }
 
 CRenderTarget::~CRenderTarget() {
@@ -258,17 +271,26 @@ CRenderTarget::~CRenderTarget() {
 }
 
 void CRenderTarget::Clear(Color color) {
-    unsigned int c = color;
-    c = ((c>>24)&0x000000FF) | ((c>>8)&0x0000FF00) | ((c<<8)&0x00FF0000) | ((c<<24)&0xFF000000); // reverse endianness
-    C3D_RenderTargetSetClear(tgt, C3D_CLEAR_ALL, c, 0);
+    //unsigned int c = color;
+    //c = ((c>>24)&0x000000FF) | ((c>>8)&0x0000FF00) | ((c<<8)&0x00FF0000) | ((c<<24)&0xFF000000); // reverse endianness
+    //C3D_RenderTargetSetClear(tgt, C3D_CLEAR_ALL, c, 0);
+    //C3D_FrameBufClear(&(tgt->frameBuf), C3D_CLEAR_COLOR, c, 0);
+    clearColor = color;
 }
 
 void CRenderTarget::BindTarget() {
+    if (true || clearColor) { // clear if color valid
+        unsigned int c = clearColor;
+        c = ((c>>24)&0x000000FF) | ((c>>8)&0x0000FF00) | ((c<<8)&0x00FF0000) | ((c<<24)&0xFF000000); // reverse endianness
+        //C3D_RenderTargetSetClear(tgt, static_cast<C3D_ClearBits>(0), c, 0);
+        //C3D_RenderTargetSetClear(tgt, C3D_CLEAR_ALL, c, 0);
+        C3D_FrameBufClear(&(tgt->frameBuf), C3D_CLEAR_COLOR, c, 0);
+    }
     C3D_FrameDrawOn(tgt);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, sLocProjection, &projection);
 }
 
 void CRenderTarget::Bind(Color color) {
-    C3D_RenderTargetSetClear(tgt, 0, 0, 0); // don't clear again until marked to
-    RenderCore::BindTexture(&(tgt->renderBuf.colorBuf), color);
+    //C3D_RenderTargetSetClear(tgt, static_cast<C3D_ClearBits>(0), 0, 0); // don't clear again until marked to
+    RenderCore::BindTexture(&tex, color);
 }

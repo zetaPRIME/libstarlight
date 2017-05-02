@@ -98,6 +98,8 @@ void Application::_end() {
 }
 
 void Application::_mainLoop() {
+    frameTimer.FrameStart();
+    
     if (!forms.empty()) {
         if (_sFormState) {
             _sFormState = false;
@@ -154,4 +156,14 @@ void Application::_mainLoop() {
     topScreen->Draw();
     PostDraw();
     RenderCore::EndFrame();
+    
+    while (!threads.empty() && frameTimer.GetSubframe() < 0.9) {
+        threads.front()->Resume();
+        threads.splice(threads.end(), threads, threads.begin()); // move to back of queue
+    }
+}
+
+void Application::EnqueueThread(std::shared_ptr<starlight::threading::Thread> thread) {
+    threads.push_back(thread);
+    thread->Start();
 }
