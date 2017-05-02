@@ -2,7 +2,13 @@
 
 
 roadmap to v0.5.1 {
-    figure out how to fix the clear bug
+    - clear bug workaround implemented
+    ^ maybe replace clearing with the workaround entirely?
+    implement more blend modes {
+        - flat replace
+        masking
+    }
+    
     - fix the hang on osk when pressing (L|R)+up+left
     figure out what (else) to put on the left side of the keyboard (opposite backspace and enter)
     temporary drawable loading, local themeref, discard etc.
@@ -24,6 +30,7 @@ roadmap to v0.5.1 {
     }
 } then by v0.5.5 {
     event propagation system of some sort; threadsafe to whatever extent is needed on 3DS
+    figure out how to *actually* fix the clear bug...?
 } then consider these before 1.0 "gold" {
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
     garbage collection for not-recently-used theme assets {

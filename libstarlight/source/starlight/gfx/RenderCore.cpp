@@ -16,6 +16,7 @@ using starlight::Vector2;
 using starlight::VRect;
 using starlight::Color;
 using starlight::util::WorkerThread;
+using starlight::gfx::BlendMode;
 using starlight::gfx::CTexture;
 using starlight::gfx::CRenderTarget;
 using starlight::gfx::RenderCore;
@@ -144,25 +145,49 @@ void RenderCore::EndFrame() {
     C3D_FrameEnd(0);
 }
 
-void RenderCore::BindTexture(C3D_Tex* tex, const Color& color) {
+namespace {
+    void ApplyBlendMode(C3D_TexEnv* env, BlendMode mode) {
+        switch(mode) {
+            case BlendMode::Mask: // TODO: actually implement masking! this is just a copy of Blend right now
+                C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0);
+                C3D_TexEnvOp(env, C3D_Alpha, GPU_TEVOP_A_SRC_ALPHA, GPU_TEVOP_A_SRC_ALPHA, 0);
+                C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);
+                C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
+                break;
+            
+            case BlendMode::Replace:
+                C3D_AlphaBlend(GPU_BLEND_MAX, GPU_BLEND_MAX, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO); // flat replace
+                C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0);
+                C3D_TexEnvOp(env, C3D_Alpha, GPU_TEVOP_A_SRC_ALPHA, GPU_TEVOP_A_SRC_ALPHA, 0);
+                C3D_TexEnvFunc(env, C3D_RGB, GPU_REPLACE);
+                C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+                break;
+            
+            default:
+            case BlendMode::Blend:
+                C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA); // premult
+                C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0);
+                C3D_TexEnvOp(env, C3D_Alpha, GPU_TEVOP_A_SRC_ALPHA, GPU_TEVOP_A_SRC_ALPHA, 0); // for color, the second op was 0... but that's the same value so whatever
+                C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE); // and for color, this was REPLACE, not sure if that actually matters
+                C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
+                break;
+        }
+    }
+}
+
+void RenderCore::BindTexture(C3D_Tex* tex, const Color& color, BlendMode mode) {
     C3D_TexBind(0, tex); // 0 should be correct
     
     C3D_TexEnv* env = C3D_GetTexEnv(0);
     C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_CONSTANT, 0);
-    C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0);
-    C3D_TexEnvOp(env, C3D_Alpha, GPU_TEVOP_A_SRC_ALPHA, GPU_TEVOP_A_SRC_ALPHA, 0);
-    C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);//REPLACE); // let's see...
-    C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
+    ApplyBlendMode(env, mode);
     C3D_TexEnvColor(env, color.Premultiplied());
 }
 
-void RenderCore::BindColor(const Color& color) {
+void RenderCore::BindColor(const Color& color, BlendMode mode) {
     C3D_TexEnv* env = C3D_GetTexEnv(0);
     C3D_TexEnvSrc(env, C3D_Both, GPU_CONSTANT, 0, 0);
-    C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0);
-    C3D_TexEnvOp(env, C3D_Alpha, GPU_TEVOP_A_SRC_ALPHA, 0, 0);
-    C3D_TexEnvFunc(env, C3D_RGB, GPU_REPLACE);//REPLACE); // let's see...
-    C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+    ApplyBlendMode(env, mode);
     C3D_TexEnvColor(env, color.Premultiplied());
 }
 
@@ -263,7 +288,7 @@ CRenderTarget::CRenderTarget(int width, int height, bool forceExact) {
     //Clear(Color::transparent);
     //RenderCore::BindTexture(&tex, Color::white);
     //C3D_FrameBufClear(&(tgt->frameBuf), C3D_CLEAR_COLOR, 0, 0);
-    //C3D_RenderTargetSetClear(tgt, static_cast<C3D_ClearBits>(0), 0, 0);
+    C3D_RenderTargetSetClear(tgt, static_cast<C3D_ClearBits>(0), 0, 0);
 }
 
 CRenderTarget::~CRenderTarget() {
@@ -279,7 +304,7 @@ void CRenderTarget::Clear(Color color) {
 }
 
 void CRenderTarget::BindTarget() {
-    if (true || clearColor) { // clear if color valid
+    if (clearColor.Valid()) { // clear if color valid
         unsigned int c = clearColor;
         c = ((c>>24)&0x000000FF) | ((c>>8)&0x0000FF00) | ((c<<8)&0x00FF0000) | ((c<<24)&0xFF000000); // reverse endianness
         //C3D_RenderTargetSetClear(tgt, static_cast<C3D_ClearBits>(0), c, 0);
@@ -288,6 +313,13 @@ void CRenderTarget::BindTarget() {
     }
     C3D_FrameDrawOn(tgt);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, sLocProjection, &projection);
+    
+    if (!firstClearDone) { firstClearDone = true; // workaround for faulty clearing; just draw a quad in replace mode to force the matter!
+        if (clearColor.Valid()) {
+            RenderCore::BindColor(clearColor, BlendMode::Replace);
+            RenderCore::DrawQuad(VRect(Vector2::zero, txSize), VRect::zero, false);
+        }
+    }
 }
 
 void CRenderTarget::Bind(Color color) {

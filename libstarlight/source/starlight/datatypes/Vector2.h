@@ -47,7 +47,8 @@ namespace starlight {
         inline Vector2 & operator += (const Vector2 & o) { x += o.x; y += o.y; return *this; }
         inline Vector2 & operator -= (const Vector2 & o) { x -= o.x; y -= o.y; return *this; }
         inline Vector2 & operator *= (const Vector2 & o) { x *= o.x; y *= o.y; return *this; }
-        
+
+        inline bool Valid() const { return x == x && y == y; }
         inline explicit operator bool() const { return x == x && y == y; }
         
         static const Vector2 invalid;

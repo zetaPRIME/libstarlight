@@ -1,8 +1,12 @@
 #include "Color.h"
 
+#include <limits>
+
 #include "starlight/_incLib/json.hpp"
 
 using starlight::Color;
+
+const Color Color::invalid = Color(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 
 const Color Color::transparent = Color(0.0f, 0.0f, 0.0f, 0.0f);
 const Color Color::white = Color(1.0f, 1.0f, 1.0f);

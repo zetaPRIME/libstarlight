@@ -14,6 +14,13 @@
 namespace starlight {
     namespace gfx {
         class RenderCore;
+        enum class BlendMode {
+            Blend,
+            Mask,
+            Replace,
+            
+            Normal = Blend
+        };
         
         class CTexture {
         protected:
@@ -33,6 +40,7 @@ namespace starlight {
             C3D_RenderTarget* tgt;
             C3D_Tex tex;
             Color clearColor = Color::transparent;
+            bool firstClearDone = false;
             
         public:
             C3D_Mtx projection;
@@ -62,8 +70,8 @@ namespace starlight {
             static void BeginFrame();
             static void EndFrame();
             
-            static void BindTexture(C3D_Tex* tex, const Color& color);
-            static void BindColor(const Color& color);
+            static void BindTexture(C3D_Tex* tex, const Color& color, BlendMode mode = BlendMode::Normal);
+            static void BindColor(const Color& color, BlendMode mode = BlendMode::Normal);
             static void DrawQuad(const VRect& rect, const VRect& src, bool noSnap = false);
             static void DrawQuad(const VRect& rect, const Vector2& anchor, float angle, const VRect& src);
             
