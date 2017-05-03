@@ -15,9 +15,9 @@ using starlight::gfx::DrawableNinePatch;
 using starlight::gfx::RenderCore;
 using starlight::gfx::CRenderTarget;
 
-void DrawableNinePatch::Draw(const VRect& rect, OptRef<VRect> sampleRect, OptRef<Color> color) {
+void DrawableNinePatch::Draw(const VRect& rect, OptRef<VRect> sampleRect, OptRef<Color> color, BlendMode mode) {
     if (GFXManager::PrepareForDrawing()) {
-        texture->Bind(color ? color.get() : Color(1,1,1,1));
+        texture->Bind(color ? color.get() : Color(1,1,1,1), mode);
         VRect rr = rect.IntSnap();
         const VRect& sr = (sampleRect ? sampleRect.get() : VRect(Vector2::zero, texture->size)).IntSnap();
         

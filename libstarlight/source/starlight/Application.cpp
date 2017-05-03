@@ -98,6 +98,7 @@ void Application::_end() {
 }
 
 void Application::_mainLoop() {
+    RenderCore::SyncFrame(); // sync to vblank here for more accurate timing
     frameTimer.FrameStart();
     
     if (!forms.empty()) {
@@ -159,7 +160,7 @@ void Application::_mainLoop() {
     
     while (!threads.empty() && frameTimer.GetSubframe() < 0.9) {
         threads.front()->Resume();
-        threads.splice(threads.end(), threads, threads.begin()); // move to back of queue
+        if (threads.size() > 1) threads.splice(threads.end(), threads, threads.begin()); // move to back of queue
     }
 }
 

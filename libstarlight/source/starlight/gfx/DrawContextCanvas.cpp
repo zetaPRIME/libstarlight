@@ -45,7 +45,7 @@ void DrawContextCanvas::Clear(Color color) {
 void DrawContextCanvas::Clear() { Clear(Color(0,0,0,0)); }
 
 // drawable stuff
-void DrawContextCanvas::Draw(const Vector2& position, const Vector2& origin, OptRef<VRect> sampleRect, OptRef<Color> color, float rotation, const Vector2& scale) {
+void DrawContextCanvas::Draw(const Vector2& position, const Vector2& origin, OptRef<VRect> sampleRect, OptRef<Color> color, float rotation, const Vector2& scale, BlendMode mode) {
     if (GFXManager::PrepareForDrawing()) {
         target->Bind(color ? color.get() : Color(1,1,1,1));
         const VRect& sr = sampleRect ? sampleRect.get() : this->rect;
@@ -54,7 +54,7 @@ void DrawContextCanvas::Draw(const Vector2& position, const Vector2& origin, Opt
     }
 }
 
-void DrawContextCanvas::Draw(const VRect& rect, OptRef<VRect> sampleRect, OptRef<Color> color) {
+void DrawContextCanvas::Draw(const VRect& rect, OptRef<VRect> sampleRect, OptRef<Color> color, BlendMode mode) {
     if (GFXManager::PrepareForDrawing()) {
         target->Bind(color ? color.get() : Color(1,1,1,1));
         const VRect& sr = sampleRect ? sampleRect.get() : this->rect;

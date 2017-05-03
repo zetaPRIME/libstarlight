@@ -9,19 +9,13 @@
 #include "starlight/datatypes/VRect.h"
 #include "starlight/datatypes/Color.h"
 
+#include "starlight/gfx/Enums.h"
+
 #include "starlight/util/WorkerThread.h"
 
 namespace starlight {
     namespace gfx {
         class RenderCore;
-        enum class BlendMode {
-            Blend,
-            Mask,
-            Replace,
-            
-            Normal = Blend
-        };
-        
         class CTexture {
         protected:
             CTexture() = default;
@@ -31,7 +25,7 @@ namespace starlight {
             Vector2 txSize;
             
             virtual ~CTexture() = default;
-            virtual void Bind(Color color = Color::white) = 0;
+            virtual void Bind(Color color = Color::white, BlendMode mode = BlendMode::Normal) = 0;
         };
         
         class CRenderTarget : public CTexture {
@@ -51,7 +45,7 @@ namespace starlight {
             void Clear(Color color);
             void BindTarget();
             
-            void Bind(Color color = Color::white) override;
+            void Bind(Color color = Color::white, BlendMode mode = BlendMode::Normal) override;
         };
         
         class RenderCore {
@@ -67,6 +61,7 @@ namespace starlight {
             static void Open();
             static void Close();
             
+            static void SyncFrame();
             static void BeginFrame();
             static void EndFrame();
             

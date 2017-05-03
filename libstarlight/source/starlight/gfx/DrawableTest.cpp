@@ -11,17 +11,16 @@ using starlight::gfx::DrawableTest;
 
 using starlight::gfx::RenderCore;
 
-void DrawableTest::Draw(const Vector2& position, const Vector2& origin, OptRef<VRect> sampleRect, OptRef<Color> color, float rotation, const Vector2& scale) {
+void DrawableTest::Draw(const Vector2& position, const Vector2& origin, OptRef<VRect> sampleRect, OptRef<Color> color, float rotation, const Vector2& scale, BlendMode mode) {
     if (GFXManager::PrepareForDrawing()) {
         //static u32 col = Color(0, 0.5f, 1);
         //sf2d_draw_rectangle_rotate(position.x, position.y, 16, 16, col, rotation);
     }
 }
 
-void DrawableTest::Draw(const VRect& rect, OptRef<VRect> sampleRect, OptRef<Color> color) {
+void DrawableTest::Draw(const VRect& rect, OptRef<VRect> sampleRect, OptRef<Color> color, BlendMode mode) {
     if (GFXManager::PrepareForDrawing()) {
-        RenderCore::BindColor(color ? color.get() : Color(1,1,1,1));
+        RenderCore::BindColor(color ? color.get() : Color(1,1,1,1), mode);
         RenderCore::DrawQuad(rect, VRect());
     }
 }
-

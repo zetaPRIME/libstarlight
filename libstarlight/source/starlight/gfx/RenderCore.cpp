@@ -78,8 +78,8 @@ namespace { // internals
             C3D_TexDelete(texture);
             delete texture;
         }
-        void Bind(Color color = Color::white) override {
-            RenderCore::BindTexture(texture, color);
+        void Bind(Color color = Color::white, BlendMode mode = BlendMode::Normal) override {
+            RenderCore::BindTexture(texture, color, mode);
         }
     };
 }
@@ -136,9 +136,13 @@ void RenderCore::Close() {
     gfxExit();
 }
 
+void RenderCore::SyncFrame() {
+    C3D_FrameSync();
+}
+
 void RenderCore::BeginFrame() {
     ResetBuffer();
-    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+    C3D_FrameBegin(0/*C3D_FRAME_SYNCDRAW*/);
 }
 
 void RenderCore::EndFrame() {
@@ -322,7 +326,7 @@ void CRenderTarget::BindTarget() {
     }
 }
 
-void CRenderTarget::Bind(Color color) {
+void CRenderTarget::Bind(Color color, BlendMode mode) {
     //C3D_RenderTargetSetClear(tgt, static_cast<C3D_ClearBits>(0), 0, 0); // don't clear again until marked to
-    RenderCore::BindTexture(&tex, color);
+    RenderCore::BindTexture(&tex, color, mode);
 }

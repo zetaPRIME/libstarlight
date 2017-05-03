@@ -22,6 +22,8 @@
 #include "starlight/dialog/MessageBox.h"
 #include "starlight/dialog/OSK.h"
 
+#include "ThreadTest.h"
+
 using starlight::Vector2;
 using starlight::VRect;
 using starlight::Color;
@@ -87,6 +89,9 @@ void Core::Init() {
         
         // open a backdrop with the default asset
         sl::dialog::Backdrop::New()->Open();
+        
+        // make a test thread
+        std::make_shared<ThreadTest>()->Enqueue();
         
         //
     };

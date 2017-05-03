@@ -4,6 +4,7 @@
 roadmap to v0.5.1 {
     - clear bug workaround implemented
     ^ maybe replace clearing with the workaround entirely?
+    try to figure out why the workaround doesn't work in citra
     implement more blend modes {
         - flat replace
         masking
@@ -18,20 +19,19 @@ roadmap to v0.5.1 {
     fix `, ' and " glyph spacing/offset
     adjust /\ some?
     proper thread dispatch? {
-        probably part of Application, actually
-        
-        Application main loop keeps a(n abstracted) libctru TickCounter and keeps track of frame time
-        thread objects are held in a std::list, Application dispatches resume events and splice()s them to the end until frame time reaches some proportion of 1/60s
-            x.splice( x.end(), x, iter );
+        - Application main loop keeps a(n abstracted) libctru TickCounter and keeps track of frame time
+        - thread objects are held in a std::list, Application dispatches resume events and splice()s them to the end until frame time reaches some proportion of 1/60s
         - thread gets a yield function that calls svcWaitSynchronization on its resume event
         ...and some mechanism for allowing it to opt out of the rest of the cycle
         
         Trackable sideclass for threads; float progress 0..1, etc.
+        MAKE THREADS END CLEANLY
     }
 } then by v0.5.5 {
     event propagation system of some sort; threadsafe to whatever extent is needed on 3DS
     figure out how to *actually* fix the clear bug...?
 } then consider these before 1.0 "gold" {
+    replace some of the OptRef stuffs on invalidatable types with invalid checks; add implicit conversions from nullptr to invalid
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
     garbage collection for not-recently-used theme assets {
         - keep track of last-use in ThemeRefContainer

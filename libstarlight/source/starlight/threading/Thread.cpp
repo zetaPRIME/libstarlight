@@ -41,8 +41,11 @@ void Thread::_FinishStart() {
 
 void Thread::Yield() {
     if (state != ThreadState::Running) return; // not executing this right now, this would just futz it up
+    state = ThreadState::Idle;
     svcWaitSynchronization(event, -1 /*U64_MAX*/);
+    //svcWaitSynchronization(event, 65536);
 	svcClearEvent(event);
+    state = ThreadState::Running;
 }
 
 void Thread::Resume() {
