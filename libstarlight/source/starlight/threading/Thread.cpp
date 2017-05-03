@@ -37,6 +37,9 @@ void Thread::_FinishStart() {
     state = ThreadState::Running;
     Yield();
     Body();
+    state = ThreadState::Finished;
+    OnExit();
+    threadExit(0);
 }
 
 void Thread::Yield() {
@@ -45,12 +48,30 @@ void Thread::Yield() {
     svcWaitSynchronization(event, -1 /*U64_MAX*/);
     //svcWaitSynchronization(event, 65536);
 	svcClearEvent(event);
+    if (state == ThreadState::Finished && OnExit()) {
+        threadExit(0);
+    }
     state = ThreadState::Running;
 }
 
+void Thread::Exit() {
+    if (state == ThreadState::Idle) { // exited from outside
+        state = ThreadState::Finished;
+        Resume();
+        threadJoin(static_cast<SysThread>(sthread), -1);
+    } else if (state == ThreadState::Running) { // exited self
+        state = ThreadState::Finished;
+        OnExit();
+        threadExit(0);
+    }
+    
+}
+
 void Thread::Resume() {
-    if (state != ThreadState::Idle) return; // not applicable
+    if (state != ThreadState::Idle && state != ThreadState::Finished) return; // not applicable
     svcSignalEvent(event);
 }
+
+bool Thread::OnExit() { return true; } // default to "trivial" (no cleanup necessary)
 
 //

@@ -25,7 +25,8 @@ roadmap to v0.5.1 {
         ...and some mechanism for allowing it to opt out of the rest of the cycle
         
         Trackable sideclass for threads; float progress 0..1, etc.
-        MAKE THREADS END CLEANLY
+        - MAKE THREADS END CLEANLY
+        ^ observed a single instance of being stalled on redscreen, not really sure what that was about
     }
 } then by v0.5.5 {
     event propagation system of some sort; threadsafe to whatever extent is needed on 3DS

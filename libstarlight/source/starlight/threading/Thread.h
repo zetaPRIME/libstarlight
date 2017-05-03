@@ -30,8 +30,10 @@ namespace starlight {
             void Enqueue();
             void Yield();
             void Resume();
+            void Exit();
             
             virtual void Body() = 0;
+            virtual bool OnExit();
         };
     }
 }

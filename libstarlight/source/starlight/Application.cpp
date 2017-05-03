@@ -17,6 +17,9 @@ using starlight::ThemeManager;
 using starlight::InputManager;
 using starlight::gfx::RenderCore;
 
+using starlight::threading::Thread;
+using starlight::threading::ThreadState;
+
 using starlight::ui::TouchScreenCanvas;
 using starlight::ui::TopScreenCanvas;
 
@@ -82,6 +85,9 @@ void Application::_init() {
 
 void Application::_end() {
     End();
+    
+    for (auto& thread : threads) thread->Exit();
+    threads.clear();
     
     //for (auto& f : forms) f->Close();
     forms.clear(); // not sure why, but not doing this results in a data abort if any forms are active
@@ -159,8 +165,10 @@ void Application::_mainLoop() {
     RenderCore::EndFrame();
     
     while (!threads.empty() && frameTimer.GetSubframe() < 0.9) {
-        threads.front()->Resume();
-        if (threads.size() > 1) threads.splice(threads.end(), threads, threads.begin()); // move to back of queue
+        auto thread = threads.front();
+        thread->Resume();
+        if (thread->state != ThreadState::Finished) threads.splice(threads.end(), threads, threads.begin()); // move to back of queue
+        else threads.pop_front(); // or just discard if already exited
     }
 }
 
