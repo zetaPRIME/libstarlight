@@ -4,7 +4,8 @@
 roadmap to v0.5.1 {
     - clear bug workaround implemented
     ^ maybe replace clearing with the workaround entirely?
-    try to figure out why the workaround doesn't work in citra
+    - try to figure out why the workaround doesn't work in citra (it was a difference between openGL and PICA blend operations!)
+        https://github.com/citra-emu/citra/issues/2684
     implement more blend modes {
         - flat replace
         masking

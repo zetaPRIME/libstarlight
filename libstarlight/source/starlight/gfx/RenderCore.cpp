@@ -120,7 +120,7 @@ void RenderCore::Open() {
     
     // set up mode defaults
     C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA); // premult
-    C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL); // hmm.
+    C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_ALL); // hmm.
     C3D_CullFace(GPU_CULL_NONE);
     
 }
@@ -160,7 +160,7 @@ namespace {
                 break;
             
             case BlendMode::Replace:
-                C3D_AlphaBlend(GPU_BLEND_MAX, GPU_BLEND_MAX, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO); // flat replace
+                C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO); // flat replace
                 C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0);
                 C3D_TexEnvOp(env, C3D_Alpha, GPU_TEVOP_A_SRC_ALPHA, GPU_TEVOP_A_SRC_ALPHA, 0);
                 C3D_TexEnvFunc(env, C3D_RGB, GPU_REPLACE);
