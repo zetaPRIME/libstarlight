@@ -54,6 +54,10 @@ void Label::PreDraw() {
         buffer->Clear();
         GFXManager::PushContext(buffer.get());
         textConfig.ROGet().Print(buffer->rect, text);
+        static auto testmask = 
+            //ThemeManager::GetAsset("controls/button.idle");
+            ThemeManager::GetAsset("decorations/testmask");
+        testmask->Draw(buffer->rect, nullptr, nullptr, gfx::BlendMode::Mask);
         GFXManager::PopContext();
     }
 }

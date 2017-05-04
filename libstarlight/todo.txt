@@ -8,7 +8,7 @@ roadmap to v0.5.1 {
         https://github.com/citra-emu/citra/issues/2684
     implement more blend modes {
         - flat replace
-        masking
+        - masking
     }
     
     - fix the hang on osk when pressing (L|R)+up+left
@@ -28,6 +28,7 @@ roadmap to v0.5.1 {
         Trackable sideclass for threads; float progress 0..1, etc.
         - MAKE THREADS END CLEANLY
         ^ observed a single instance of being stalled on redscreen, not really sure what that was about
+        lambda task thread
     }
 } then by v0.5.5 {
     event propagation system of some sort; threadsafe to whatever extent is needed on 3DS

@@ -152,8 +152,9 @@ void RenderCore::EndFrame() {
 namespace {
     void ApplyBlendMode(C3D_TexEnv* env, BlendMode mode) {
         switch(mode) {
-            case BlendMode::Mask: // TODO: actually implement masking! this is just a copy of Blend right now
-                C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0);
+            case BlendMode::Mask: // multiplies the buffer contents by the mask texture
+                C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ZERO, GPU_SRC_COLOR, GPU_ZERO, GPU_SRC_ALPHA); // zero + (buffer * texel)
+                C3D_TexEnvOp(env, C3D_RGB, 0, 0, 0); // and the rest is the same as blend
                 C3D_TexEnvOp(env, C3D_Alpha, GPU_TEVOP_A_SRC_ALPHA, GPU_TEVOP_A_SRC_ALPHA, 0);
                 C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);
                 C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
