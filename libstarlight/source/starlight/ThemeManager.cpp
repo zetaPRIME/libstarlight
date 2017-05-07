@@ -296,7 +296,7 @@ string ThemeManager::ResolveAssetPath(const string& id) {
             if (p.IsFile()) return p;
         }
         // TBD - directly in romfs, or in an assets folder?
-        Path bp = Path("romfs:");
+        Path bp = Path("romfs:/");
         Path p = bp.Combine(sid);
         if (p.IsFile()) return p;
         p = bp.Combine(sid+".json");

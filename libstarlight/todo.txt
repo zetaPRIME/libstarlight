@@ -53,6 +53,10 @@ roadmap to v0.5.1 {
     language config and atlas support
     maybe implement some way of "knocking out" and replacing metrics during runtime for theme switching
     fix font glyph padding to eliminate slight "crosstalk" in bordered variants
+    
+    SOUND.
+    
+    quick includes for all UI elements, etc.
 }
 
 today's agenda {
