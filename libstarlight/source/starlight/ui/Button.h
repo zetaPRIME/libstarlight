@@ -20,7 +20,7 @@ namespace starlight {
                     idle = nullptr,
                     press = nullptr,
                     glyph = nullptr;
-                    Optional<TextConfig> textConfig = &Button::defCfg;
+                Optional<TextConfig> textConfig = &Button::defCfg;
             };
         private:
             static std::function<TextConfig&()> defCfg;
