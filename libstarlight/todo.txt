@@ -11,6 +11,8 @@ roadmap to v0.5.1 {
         - masking
     }
     
+    libctru console as ui element (label subclass? container with a label?)
+    
     - fix the hang on osk when pressing (L|R)+up+left
     figure out what (else) to put on the left side of the keyboard (opposite backspace and enter)
     temporary drawable loading, local themeref, discard etc.
@@ -55,6 +57,8 @@ roadmap to v0.5.1 {
     fix font glyph padding to eliminate slight "crosstalk" in bordered variants
     
     SOUND.
+    
+    UI heirarchy from json
     
     quick includes for all UI elements, etc.
 }

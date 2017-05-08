@@ -17,6 +17,8 @@
 #include "starlight/ui/Button.h"
 #include "starlight/ui/TextBox.h"
 #include "starlight/ui/Label.h"
+#include "starlight/ui/Image.h"
+#include "starlight/ui/DebugConsole.h"
 
 #include "starlight/dialog/Backdrop.h"
 #include "starlight/dialog/MessageBox.h"
@@ -38,7 +40,11 @@ using starlight::util::Path;
 using starlight::Application;
 
 void Core::Init() {
-    //consoleInit(GFX_TOP, consoleGetDefault());
+    /*clearColor = Color(0,0,0.5);
+    auto img = touchScreen->AddNew<sl::ui::Image>(Vector2(32, 32), "sdmc:/snes9x_3ds_top.png");
+    auto lbl = touchScreen->AddNew<sl::ui::Label>(VRect(0,0,320,240));
+    lbl->SetText("text go here\ntest test test\nnickelpickle");
+    return;*/
     
     auto container = std::make_shared<sl::ui::ScrollField>(VRect(0,0,320-0,240-0));
     touchScreen->Add(container);
@@ -55,11 +61,20 @@ void Core::Init() {
         // assemble and open a basic form
         auto form = std::make_shared<sl::ui::Form>(true);
         
-        auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
+        auto tbtn = form->touchScreen->AddNew<sl::ui::Button>(VRect(4, 28, 80, 24));
+        tbtn->SetText("print something");
+        tbtn->eOnTap = [](auto& btn){
+            printf("pickles!\n");
+        };
+        
+        /*auto label = std::make_shared<sl::ui::Label>(VRect(0,0,320,0));
         label->textConfig->justification = Vector2::half;
         label->autoSizeV = true;
         label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
-        form->touchScreen->Add(label);
+        form->touchScreen->Add(label);*/
+        
+        //auto console = form->topScreen->AddNew<sl::ui::DebugConsole>(VRect::topScreen);
+        //console->Start();
         
         auto xbtn = std::make_shared<sl::ui::Button>(VRect(320-96,28,32,24));
         xbtn->eOnTap = [](auto& btn){
@@ -68,13 +83,13 @@ void Core::Init() {
         xbtn->SetText("(exit)");
         form->touchScreen->Add(xbtn);
         
-        auto tlbl = std::make_shared<sl::ui::Label>(VRect(2, 2, 396, 0));
+        /*auto tlbl = std::make_shared<sl::ui::Label>(VRect(2, 2, 396, 0));
         tlbl->autoSizeV = true;
         tlbl->SetPreset("normal.16");
         tlbl->textConfig->justification = Vector2::zero;
         tlbl->textConfig->borderColor = Color::black;
         tlbl->SetText("3DS:~# sudo make me a sandwich_");
-        form->topScreen->Add(tlbl);
+        form->topScreen->Add(tlbl);*/
         
         auto tb = std::make_shared<sl::ui::TextBox>(VRect(0, 64, 320, 24).Expand(-16, 0));
         tb->text = "Single-line TextBox widget example. Tap me!";
@@ -118,7 +133,7 @@ void Core::Init() {
     cc.Json()["panini"] = "yes please!";
     cc.Save();
     
-    //
+    //*/
 }
 
 void Core::End() {

@@ -44,6 +44,8 @@ APP_TITLE		:= Starlight Testbed
 APP_DESCRIPTION	:= Test application for libstarlight
 APP_AUTHOR		:= zetaPRIME
 
+3DSIP			:= 10.0.0.5
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -167,6 +169,10 @@ cia: $(TARGET)-strip.elf
 #---------------------------------------------------------------------------------
 send: $(BUILD)
 	@3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx
+#---------------------------------------------------------------------------------
+send-cia: $(TARGET)-strip.elf
+	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -icon resources/icon.icn -banner resources/banner.bnr -exefslogo -target t
+	@sockme $(TARGET).cia $(3DSIP)
 #---------------------------------------------------------------------------------
 run: $(BUILD)
 	@citra $(TARGET).3dsx

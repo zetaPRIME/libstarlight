@@ -4,7 +4,9 @@ function abort {
     exit
 }
 mode=send
-if [ "$1" = "c" ]; then
+if [ "$1" = "sc" ]; then
+    mode=send-cia
+elif [ "$1" = "c" ]; then
     mode=run
 fi
 cd libstarlight
