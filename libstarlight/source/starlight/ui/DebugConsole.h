@@ -23,6 +23,7 @@ namespace starlight {
             std::string text = "";
             
             std::unique_ptr<gfx::DrawContextCanvas> buffer;
+            bool dirty = false;
             
             DebugConsole(VRect rect);
             ~DebugConsole() override;

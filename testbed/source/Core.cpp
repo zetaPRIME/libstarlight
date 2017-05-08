@@ -73,8 +73,8 @@ void Core::Init() {
         label->SetText("This is a form, coming in and nuking the non-form UI elements. Whoops.");
         form->touchScreen->Add(label);*/
         
-        //auto console = form->topScreen->AddNew<sl::ui::DebugConsole>(VRect::topScreen);
-        //console->Start();
+        auto console = form->topScreen->AddNew<sl::ui::DebugConsole>(VRect::topScreen);
+        console->Start();
         
         auto xbtn = std::make_shared<sl::ui::Button>(VRect(320-96,28,32,24));
         xbtn->eOnTap = [](auto& btn){
