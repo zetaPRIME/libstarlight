@@ -7,7 +7,7 @@ BasicInfo:
 
 RomFs:
   # Specifies the root path of the file system to include in the ROM.
-  RootPath                : "$(ROMFS_ROOT)"
+  RootPath                : "../themes/default"
 
 
 TitleInfo:

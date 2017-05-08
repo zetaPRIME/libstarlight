@@ -11,7 +11,7 @@ roadmap to v0.5.1 {
         - masking
     }
     
-    libctru console as ui element (label subclass? container with a label?)
+    - libctru console as ui element
     
     - fix the hang on osk when pressing (L|R)+up+left
     figure out what (else) to put on the left side of the keyboard (opposite backspace and enter)
@@ -35,6 +35,7 @@ roadmap to v0.5.1 {
 } then by v0.5.5 {
     event propagation system of some sort; threadsafe to whatever extent is needed on 3DS
     figure out how to *actually* fix the clear bug...?
+    some sort of tagging for longer retention for large drawables such as backgrounds (particularly for the OSK)
 } then consider these before 1.0 "gold" {
     replace some of the OptRef stuffs on invalidatable types with invalid checks; add implicit conversions from nullptr to invalid
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
