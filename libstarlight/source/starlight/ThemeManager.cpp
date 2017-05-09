@@ -25,6 +25,10 @@
 
 #include "starlight/util/JsonConversions.h"
 
+#include "starlight/util/Profiler.h"
+using starlight::util::Profiler;
+#include <sstream>
+
 using std::string;
 using std::shared_ptr;
 using std::make_shared;
@@ -75,40 +79,48 @@ namespace {
     }
     
     CTexture* LoadPNG(const std::string& path, bool isPremult = false) {
+        //Profiler::TaskStart();
         unsigned char* imgbuf;
         unsigned width, height;
+        lodepng::State state;
         lodepng_decode32_file(&imgbuf, &width, &height, path.c_str());
+        if (state.info_png.color.colortype != 6) isPremult = true; // expect no alpha if not rgba
+        /*{
+            std::stringstream ss; ss << "loaded png, ";
+            ss << width; ss << "x"; ss << height;
+            Profiler::TaskFinish(ss.str());
+        }*/
         
         unsigned bw = NextPow2(width), bh = NextPow2(height);
         
         u8* gpubuf = static_cast<u8*>(linearAlloc(bw*bh*4));
+        //Profiler::TaskStart();
+        //memset(gpubuf, 0, bw*bh*4);
+        //Profiler::TaskFinish("cleared canvas");
         
-        u8* src = static_cast<u8*>(imgbuf); u8* dst = static_cast<u8*>(gpubuf);
         
+        //Profiler::TaskStart();
         if (isPremult) {
+            u32* src = reinterpret_cast<u32*>(imgbuf); u32* dst = reinterpret_cast<u32*>(gpubuf);
             // just convert endianness
             for(unsigned iy = 0; iy < height; iy++) {
                 for (unsigned ix = 0; ix < width; ix++) {
-                    int r = *src++;
-                    int g = *src++;
-                    int b = *src++;
-                    int a = *src++;
+                    u32 clr = *src;
+                    *dst = __builtin_bswap32(clr);
                     
-                    *dst++ = a;
-                    *dst++ = b;
-                    *dst++ = g;
-                    *dst++ = r;
+                    src+=4; dst+=4;
                 }
                 dst += (bw - width) * 4; // skip the difference
             }
         } else {
+            u8* src = static_cast<u8*>(imgbuf); u8* dst = static_cast<u8*>(gpubuf);
             // convert and premultiply
             for(unsigned iy = 0; iy < height; iy++) {
                 for (unsigned ix = 0; ix < width; ix++) {
-                    int r = *src++;
-                    int g = *src++;
-                    int b = *src++;
-                    int a = *src++;
+                    u8 r = *src++;
+                    u8 g = *src++;
+                    u8 b = *src++;
+                    u8 a = *src++;
                     
                     float aa = (1.0f / 255.0f) * a;
                     
@@ -120,11 +132,14 @@ namespace {
                 dst += (bw - width) * 4; // skip the difference
             }
         }
+        //Profiler::TaskFinish("made into canvas, flipped and premult");
         // completely skipping over the difference instead of erasing might eventually lead to garbage outside of frame,
         // but meh; that'll only be visible if you intentionally push the UVs outside the image proper
         
+        //Profiler::TaskStart();
         CTexture* tx = RenderCore::LoadTexture(static_cast<void*>(gpubuf), bw, bh);
         tx->size = Vector2(width, height); // and for now just fix the size after the fact
+        //Profiler::TaskFinish("copied into linear");
         
         std::free(imgbuf);
         linearFree(gpubuf);
@@ -216,7 +231,7 @@ shared_ptr<Drawable> ThemeManager::LoadAsset(string& path, ThemeRefContainer<Dra
     static shared_ptr<Drawable> nulldrw = make_shared<starlight::gfx::DrawableTest>();
     
     string ext = FindExtension(path);
-    printf("load: %s (%s)\n", path.c_str(), ext.c_str());
+    //printf("load: %s (%s)\n", path.c_str(), ext.c_str());
     /**/ if (ext == "png") {
         return make_shared<DrawableImage>(LoadPNG(path));
     }
@@ -227,7 +242,7 @@ shared_ptr<Drawable> ThemeManager::LoadAsset(string& path, ThemeRefContainer<Dra
             fs >> j;
         }
         auto st = j.dump();
-        printf("file contents: %s\n", st.c_str());
+        //printf("file contents: %s\n", st.c_str());
         
         string type = j["assetType"];
         /**/ if (type == "ninepatch") {

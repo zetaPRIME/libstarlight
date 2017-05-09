@@ -91,6 +91,12 @@ AccessControlInfo:
   Priority                      : 16
 
   MaxCpu                        : 0x9E # Default
+  
+  # New3DS Exclusive Process Settings
+  SystemModeExt                 : Legacy # Legacy(Default)/124MB/178MB  Legacy:Use Old3DS SystemMode
+  CpuSpeed                      : 804MHz # 268MHz(Default)/804MHz
+  EnableL2Cache                 : true # false(default)/true
+  CanAccessCore2                : true 
 
   DisableDebug                  : true
   EnableForceDebug              : false

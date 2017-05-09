@@ -173,7 +173,7 @@ send: $(BUILD)
 #---------------------------------------------------------------------------------
 send-cia: $(TARGET)-strip.elf
 	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -icon resources/icon.icn -banner resources/banner.bnr -exefslogo -target t
-	@sockme $(TARGET).cia $(3DSIP)
+	@sockme $(TARGET).cia $(3DSIP) || sockme $(TARGET).cia $(3DSIP) || sockme $(TARGET).cia $(3DSIP)
 #---------------------------------------------------------------------------------
 run: $(BUILD)
 	@citra $(TARGET).3dsx

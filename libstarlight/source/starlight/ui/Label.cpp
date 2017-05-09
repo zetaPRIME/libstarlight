@@ -53,6 +53,7 @@ void Label::PreDraw() {
         buffer = std::make_unique<gfx::DrawContextCanvas>(rect.size + Vector2(0, 8));
         buffer->Clear();
         GFXManager::PushContext(buffer.get());
+        GFXManager::PrepareForDrawing(); // force clear even if nothing to write
         textConfig.ROGet().Print(buffer->rect, text);
         GFXManager::PopContext();
     }

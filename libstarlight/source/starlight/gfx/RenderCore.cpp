@@ -264,7 +264,7 @@ CTexture* RenderCore::LoadTexture(void* src, int width, int height) {
     
     C3D_TexBind(0, tex->texture);
     
-    printf("loaded image w %i (%i) h %i (%i)\n", width, owidth, height, oheight);
+    //printf("loaded image w %i (%i) h %i (%i)\n", width, owidth, height, oheight);
     
     return tex;
 }

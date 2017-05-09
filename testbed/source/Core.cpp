@@ -11,6 +11,7 @@
 #include "starlight/gfx/RenderCore.h"
 
 #include "starlight/util/Path.h"
+#include "starlight/util/Profiler.h"
 
 #include "starlight/ui/ParallaxLayer.h"
 #include "starlight/ui/ScrollField.h"
@@ -36,6 +37,7 @@ using starlight::GFXManager;
 using starlight::gfx::RenderCore;
 
 using starlight::util::Path;
+using starlight::util::Profiler;
 
 using starlight::Application;
 
