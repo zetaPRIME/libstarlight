@@ -165,14 +165,14 @@ cci: $(TARGET)-strip.elf
 	@echo "built ... sf2d_sample.3ds"
 #---------------------------------------------------------------------------------
 cia: $(TARGET)-strip.elf
-	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -icon $(TARGET).smdh -banner resources/banner.bnr -exefslogo -target t
+	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -icon $(TARGET).smdh -banner resources/banner.bnr -logo resources/logo.bcma.lz -exefslogo -target t
 	@echo "built ... $(TARGET).cia"
 #---------------------------------------------------------------------------------
 send: $(BUILD)
 	@3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx
 #---------------------------------------------------------------------------------
 send-cia: $(TARGET)-strip.elf
-	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -icon $(TARGET).smdh -banner resources/banner.bnr -exefslogo -target t
+	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -icon $(TARGET).smdh -banner resources/banner.bnr -logo resources/logo.bcma.lz -exefslogo -target t
 	@sockme $(TARGET).cia $(3DSIP) || sockme $(TARGET).cia $(3DSIP) || sockme $(TARGET).cia $(3DSIP)
 #---------------------------------------------------------------------------------
 run: $(BUILD)
