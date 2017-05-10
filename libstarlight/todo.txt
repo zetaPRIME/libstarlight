@@ -13,7 +13,7 @@ roadmap to v0.5.1 {
     
     - libctru console as ui element
     
-    pngcrush the biggest assets (default and osk backdrops etc.)
+    - pngcrush the biggest assets (default and osk backdrops etc.)
     - profile image loading (for large images, loading the png and spanned copy/premult take about the same time; memset to preclear is only ~2ms with a 512x512)
     
     - fix the hang on osk when pressing (L|R)+up+left
@@ -66,6 +66,12 @@ roadmap to v0.5.1 {
     UI heirarchy from json
     
     quick includes for all UI elements, etc.
+    
+    cross-app integrations {
+        app icon and manifest.json in romfs, copied into .starlight on launch
+        settings pane data for each app, contained in manifest.json and used by Starlight Settings to provide centralized configuration, iOS-style
+        some standard means of passing parameters into another application, which works on a cia (probably a json file)
+    }
 }
 
 today's agenda {
