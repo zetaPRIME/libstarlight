@@ -2,7 +2,7 @@
 
 
 roadmap to v0.5.1 {
-    make font-not-found not outright crash the app
+    - make font-not-found not outright crash the app (hopefully)
     make asset gc actually sweep every 5sec
     maybe entirely replace clearing with transparent knockout on bind?
     implement more blend modes??

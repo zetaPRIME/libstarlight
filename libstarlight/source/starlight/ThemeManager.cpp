@@ -19,6 +19,7 @@
 #include "starlight/gfx/DrawableNinePatch.h"
 #include "starlight/gfx/DrawableTest.h"
 #include "starlight/gfx/FontBMF.h"
+#include "starlight/gfx/FontNull.h"
 
 #include "starlight/gfx/RenderCore.h"
 #include "starlight/gfx/BitmapFont.h"
@@ -264,6 +265,10 @@ shared_ptr<Drawable> ThemeManager::LoadAsset(string& path, ThemeRefContainer<Dra
 
 void ThemeManager::Fulfill(ThemeRefContainer<Font>& ref) {
     string path = ResolveFontPath(ref.name);
+    if (path == "") { // no fonts found, emergency fallback
+        ref.ptr = make_shared<starlight::gfx::FontNull>();
+        return;
+    }
     auto font = make_shared<starlight::gfx::FontBMF>();
     { // using:
         json j;

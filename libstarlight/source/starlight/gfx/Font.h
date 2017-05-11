@@ -14,8 +14,6 @@ namespace starlight {
     namespace gfx {
         class Font {
         public:
-            static constexpr const int defaultSize = 16;
-            
             Font() { }
             virtual ~Font() { }
             
