@@ -35,6 +35,7 @@ void UICanvas::PreDraw() {
     drawContext->Clear();
     GFXManager::PushContext(drawContext.get());
     GFXManager::PushOffsetAdd(-scrollOffset);
+    GFXManager::PrepareForDrawing(); // force clear to take so you don't get garbage if nothing renders
     
     VRect vr = ViewportRect();
     
@@ -51,4 +52,3 @@ void UICanvas::PreDraw() {
 void UICanvas::Draw() {
     static_cast<DrawContextCanvas*>(drawContext.get())->Draw(rect + GFXManager::GetOffset());
 }
-
