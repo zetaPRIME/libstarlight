@@ -2,14 +2,10 @@
 
 
 roadmap to v0.5.1 {
-    - clear bug workaround implemented
-    ^ maybe replace clearing with the workaround entirely?
-    - try to figure out why the workaround doesn't work in citra (it was a difference between openGL and PICA blend operations!)
-        https://github.com/citra-emu/citra/issues/2684
-    implement more blend modes {
-        - flat replace
-        - masking
-    }
+    make font-not-found not outright crash the app
+    make asset gc actually sweep every 5sec
+    maybe entirely replace clearing with transparent knockout on bind?
+    implement more blend modes??
     
     - libctru console as ui element
     
@@ -37,9 +33,11 @@ roadmap to v0.5.1 {
         lambda task thread
     }
 } then by v0.5.5 {
+    refactor ResolveAsset/FontPath to use Path objects for cleaner code
     event propagation system of some sort; threadsafe to whatever extent is needed on 3DS
     figure out how to *actually* fix the clear bug...?
     some sort of tagging for longer retention for large drawables such as backgrounds (particularly for the OSK)
+    convert the profiler from "single static thing" to "here, have an instance on the stack"
 } then consider these before 1.0 "gold" {
     replace some of the OptRef stuffs on invalidatable types with invalid checks; add implicit conversions from nullptr to invalid
     make closing forms a bit less finicky (add them to a separate list and let the Application remove them from the list)
@@ -68,7 +66,10 @@ roadmap to v0.5.1 {
     quick includes for all UI elements, etc.
     
     cross-app integrations {
-        app icon and manifest.json in romfs, copied into .starlight on launch
+        app icon and manifest.json in romfs, copied into .starlight on launch {
+            app name, description etc.
+            themeLevel: 0 (default) as fallback only, 1 or 2 to override user theme unless opted out, 1 for "just by default", 2 for "this doesn't look so good otherwise"
+        }
         settings pane data for each app, contained in manifest.json and used by Starlight Settings to provide centralized configuration, iOS-style
         some standard means of passing parameters into another application, which works on a cia (probably a json file)
     }

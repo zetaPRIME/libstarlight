@@ -286,9 +286,6 @@ void ThemeManager::LoadProc() {
 }
 
 string ThemeManager::ResolveAssetPath(const string& id) {
-    //struct stat buf;
-    //string path(id.length() + 64, ' '); // preallocate buffer space
-    
     string pfx = "";
     
     size_t cpos = id.find(":/");
@@ -339,23 +336,50 @@ string ThemeManager::ResolveAssetPath(const string& id) {
         }
     }
     
-    /*path.clear(); path.append("romfs:/"); path.append(id); path.append(".json");
-    printf("attempt: %s\n", path.c_str());
-    if (stat(path.c_str(), &buf) == 0) return path;
-    path.erase(path.end()-5, path.end()); path.append(".png");
-    printf("attempt: %s\n", path.c_str());
-    if (stat(path.c_str(), &buf) == 0) return path;//*/
-    
     return string();
 }
 
 string ThemeManager::ResolveFontPath(const string& id) { // there we go, nice and simple
-    for (auto thm : themeData) {
-        Path p = thm.basePath.Combine("fonts").Combine(id+".json");
+    string pfx = "";
+    
+    size_t cpos = id.find(":/");
+    if (cpos != string::npos) {
+        pfx = id.substr(0, cpos);
+        cpos += 2;
+    } else cpos = 0;
+    
+    if (pfx == "app") {
+        string sid = id.substr(cpos); // strip off the "app:/"
+        // app-local asset
+        // check if present in theme/app/[appname]/fonts/, else check in romfs
+        for (auto thm : themeData) {
+            Path bp = thm.basePath.Combine("app").Combine(Application::AppName()).Combine("fonts");
+            Path p = bp.Combine(sid+".json");
+            if (p.IsFile()) return p;
+        }
+        // TBD - directly in romfs, or in an assets folder?
+        Path bp = Path("romfs:/fonts/");
+        Path p = bp.Combine(sid+".json");
         if (p.IsFile()) return p;
     }
+    else if (pfx == "sdmc" || pfx == "romfs") {
+        // no forced "fonts" here, of course; this is an actual path
+        Path p = Path(id + ".json");
+        if (p.IsFile()) return p;
+    }
+    else {
+        // theme asset; check in each theme from selected to most-fallback
+        
+        for (auto thm : themeData) {
+            Path p = thm.basePath.Combine("fonts").Combine(id+".json");
+            if (p.IsFile()) return p;
+        }
+    }
     
-    return string();
+    // I guess fall back to 12px monospace if it's just nowhere to be found
+    const string fallback = "mono.12";
+    if (id != fallback) return ResolveFontPath(fallback);
+    return string(); // fallback not found; no themes on sdmc or romfs, probably
 }
 
 json& ThemeManager::GetMetric(const string& path) {
