@@ -8,6 +8,9 @@ roadmap to v0.5.1 {
     maybe entirely replace clearing with transparent knockout on bind?
     implement more blend modes??
     
+    make button glyphs usable in conjunction with text (left edge, margin etc.)
+    give glyphs a color mode where they aren't set to text color
+    
     - libctru console as ui element
     
     - pngcrush the biggest assets (default and osk backdrops etc.)

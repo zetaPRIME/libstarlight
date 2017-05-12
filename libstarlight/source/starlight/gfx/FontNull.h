@@ -14,7 +14,7 @@ namespace starlight {
             Vector2 Measure(const std::string& text, float scale = 1, float maxWidth = 400) override { return Vector2::zero; }
             
             Vector2 GetCursorPosition(VRect rect, const std::string& text, unsigned int end, float scale = 1) override { return Vector2::zero; }
-            unsigned int GetCursorFromPoint(VRect rect, const std::string& text, Vector2 pt, float scale = 1) override { return Vector2::zero; }
+            unsigned int GetCursorFromPoint(VRect rect, const std::string& text, Vector2 pt, float scale = 1) override { return 0; }
         };
         
     }
