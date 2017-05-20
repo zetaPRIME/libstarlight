@@ -34,6 +34,7 @@ void Label::SetText(const std::string& text) {
 
 void Label::SetFont(const std::string& fontName) {
     textConfig->font = ThemeManager::GetFont(fontName);
+    textConfig->Measure(""); // force load
     AutoSize();
 }
 

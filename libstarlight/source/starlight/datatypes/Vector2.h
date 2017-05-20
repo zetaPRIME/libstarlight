@@ -19,6 +19,8 @@ namespace starlight {
         Vector2 Normalized() const;
         inline float Area() const { return x * y; }
         
+        Vector2 ClampLength(float max = 1) const;
+        
         Vector2 Reciprocal() const;
         Vector2 IntSnap() const;
         

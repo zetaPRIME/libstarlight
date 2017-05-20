@@ -71,6 +71,7 @@ void UIContainer::RemoveAll() {
         it->parent = std::weak_ptr<UIContainer>(); // clear parent
     }
     children.clear();
+    MarkForRedraw();
 }
 
 void UIContainer::Update() {

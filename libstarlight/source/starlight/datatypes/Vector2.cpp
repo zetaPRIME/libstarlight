@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cmath>
+#include <algorithm>
 #include <fastmath.h>
 #include <limits>
 
@@ -10,6 +11,11 @@ using starlight::Vector2;
 // maths
 float Vector2::Length() const { return sqrtf(x * x + y * y); }
 Vector2 Vector2::Normalized() const { float m = Length(); return m == 0.0f ? Vector2::zero : Vector2(x / m, y / m); }
+
+Vector2 Vector2::ClampLength(float max) const {
+    float len = Length();
+    return *this * (std::min(len, max) / len);
+}
 
 Vector2 Vector2::Reciprocal() const { return Vector2(y, x); }
 Vector2 Vector2::IntSnap() const { return Vector2(roundf(x), roundf(y)); }

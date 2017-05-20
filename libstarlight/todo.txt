@@ -11,6 +11,13 @@ roadmap to v0.5.1 {
     make button glyphs usable in conjunction with text (left edge, margin etc.)
     give glyphs a color mode where they aren't set to text color
     
+    predrawoffscreen on hidden forms
+    
+    paged field
+    
+    figure out why first-draw in a given font sometimes derps up?
+    ^ mitigate with a force-load-on-set for now
+    
     - libctru console as ui element
     
     - pngcrush the biggest assets (default and osk backdrops etc.)
