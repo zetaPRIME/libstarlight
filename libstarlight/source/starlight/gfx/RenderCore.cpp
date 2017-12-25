@@ -42,6 +42,9 @@ namespace { // internals
     shaderProgram_s shader;
     int sLocProjection = -1;
     
+    C3D_AttrInfo* attrInfo = nullptr;
+    C3D_BufInfo* bufInfo = nullptr;
+    
     void ResetBuffer() { bufferInd = 0; }
     
     void* AllocBuffer(size_t size, size_t align = 1) {
@@ -95,9 +98,19 @@ void RenderCore::Open() {
     gfxSet3D(true);
     C3D_Init(0x80000*8);
     
+    // allocate and init VBO
     bufferSize = 0x80000;
     bufferStart = linearAlloc(bufferSize);
     bufferInd = 0;
+    
+    bufInfo = C3D_GetBufInfo();
+    BufInfo_Init(bufInfo);
+    
+    // set up shader attribute passing
+    attrInfo = C3D_GetAttrInfo();
+    AttrInfo_Init(attrInfo);
+    AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3);
+    AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2);
     
     // set up screen targets
     targetTopLeft = std::make_unique<CRenderTarget>(240, 400, true);
@@ -213,13 +226,8 @@ void RenderCore::DrawQuad(const VRect& rect, const VRect& src, bool noSnap) {
     setXYZUV(verts[1], rr, rt, 0, srr, srt);
     setXYZUV(verts[2], rl, rb, 0, srl, srb);
     setXYZUV(verts[3], rr, rb, 0, srr, srb);
-    
-    C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
-    AttrInfo_Init(attrInfo);
-    AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3);
-    AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2);
 
-    C3D_BufInfo* bufInfo = C3D_GetBufInfo();
+    bufInfo = C3D_GetBufInfo();
     BufInfo_Init(bufInfo);
     BufInfo_Add(bufInfo, verts, sizeof(vbo_xyzuv), 2, 0x10);
 
@@ -233,13 +241,8 @@ void RenderCore::DrawQuad(const VRect& rect, const Vector2& anchor, float angle,
     setXYZUV(verts[1], rect.TopRight().RotateAround(anchor, angle), src.TopRight());
     setXYZUV(verts[2], rect.BottomLeft().RotateAround(anchor, angle), src.BottomLeft());
     setXYZUV(verts[3], rect.BottomRight().RotateAround(anchor, angle), src.BottomRight());
-    
-    C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
-    AttrInfo_Init(attrInfo);
-    AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3);
-    AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2);
 
-    C3D_BufInfo* bufInfo = C3D_GetBufInfo();
+    bufInfo = C3D_GetBufInfo();
     BufInfo_Init(bufInfo);
     BufInfo_Add(bufInfo, verts, sizeof(vbo_xyzuv), 2, 0x10);
 
