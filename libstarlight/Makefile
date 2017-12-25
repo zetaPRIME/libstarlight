@@ -38,7 +38,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
 
 # json requires exception support, nuke -fno-exceptions
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=gnu++14
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=c++17
 
 ASFLAGS	:=	-g $(ARCH)
 

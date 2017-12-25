@@ -44,7 +44,7 @@ APP_TITLE		:= Starlight Testbed
 APP_DESCRIPTION	:= Test application for libstarlight
 APP_AUTHOR		:= zetaPRIME
 
-3DSIP			:= 10.0.0.5
+3DSIP			:= 10.0.0.6
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -58,7 +58,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
 
 # was gnu++11; -fno-rtti -fno-exceptions (why no-exceptions???)
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=gnu++14
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=c++17
 # on second thought, let's not use -D_GLIBCXX_USE_C99
 #CXXFLAGS	:= $(CFLAGS) -std=gnu++14
 
@@ -169,7 +169,8 @@ cia: $(TARGET)-strip.elf
 	@echo "built ... $(TARGET).cia"
 #---------------------------------------------------------------------------------
 send: $(BUILD)
-	@3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx
+	#@3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx || 3dslink $(TARGET).3dsx
+	@while true; do 3dslink -a $(3DSIP) $(TARGET).3dsx && break; done
 #---------------------------------------------------------------------------------
 send-cia: $(TARGET)-strip.elf
 	@makerom -f cia -o $(TARGET).cia -elf $(TARGET)-strip.elf -rsf resources/$(TARGET).rsf -icon $(TARGET).smdh -banner resources/banner.bnr -logo resources/logo.bcma.lz -exefslogo -target t

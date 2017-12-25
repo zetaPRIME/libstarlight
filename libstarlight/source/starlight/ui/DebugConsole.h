@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <functional>
 
 #include "starlight/datatypes/Optional.h"
 
