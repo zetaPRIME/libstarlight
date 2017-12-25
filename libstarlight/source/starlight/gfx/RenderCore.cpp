@@ -25,35 +25,24 @@ namespace { // internals
     typedef struct {
         float x, y, z, u, v;
     } vbo_xyzuv;
-    void setXYZUV(vbo_xyzuv& vbo, float x, float y, float z, float u, float v) {
-        vbo.x = x;
-        vbo.y = y;
-        vbo.z = z;
-        vbo.u = u;
-        vbo.v = v;
-    }
-    void setXYZUV(vbo_xyzuv& vbo, Vector2 xy, Vector2 uv) { setXYZUV(vbo, xy.x, xy.y, 0, uv.x, uv.y); }
     
-    void* bufferStart = nullptr;
-    size_t bufferInd = 0;
-    size_t bufferSize = 0;
+    vbo_xyzuv* vboArray = nullptr;
+    size_t vboIndex = 0;
+    size_t vboSize = 0;
+    
+    void addVertXYZUV(float x, float y, float z, float u, float v) {
+        // TODO: maybe add bounds check
+        vbo_xyzuv* vert = &vboArray[vboIndex++];
+        vert->x = x; vert->y = y; vert->z = z;
+        vert->u = u; vert->v = v;
+    }
+    void addVertXYZUV(Vector2 xy, Vector2 uv) { addVertXYZUV(xy.x, xy.y, 0, uv.x, uv.y); }
     
     DVLB_s* dvlb = nullptr;
     shaderProgram_s shader;
     int sLocProjection = -1;
     
     C3D_AttrInfo* attrInfo = nullptr;
-    C3D_BufInfo* bufInfo = nullptr;
-    
-    void ResetBuffer() { bufferInd = 0; }
-    
-    void* AllocBuffer(size_t size, size_t align = 1) {
-        bufferInd += align - (bufferInd % align); // prealign
-        void* b = reinterpret_cast<void*>(reinterpret_cast<size_t>(bufferStart) + bufferInd);
-        bufferInd += size;
-        if (bufferInd > bufferSize) return nullptr;
-        return b;
-    }
     
     inline unsigned int NextPow2(unsigned int x) {
         --x;
@@ -98,13 +87,15 @@ void RenderCore::Open() {
     gfxSet3D(true);
     C3D_Init(0x80000*8);
     
-    // allocate and init VBO
-    bufferSize = 0x80000;
-    bufferStart = linearAlloc(bufferSize);
-    bufferInd = 0;
+    // allocate and initialize VBO
+    vboSize = 0x80000;
+    void* vboAddr = linearAlloc(vboSize);
+    vboArray = reinterpret_cast<vbo_xyzuv*>(vboAddr);
+    vboIndex = 0;
     
-    bufInfo = C3D_GetBufInfo();
+    C3D_BufInfo* bufInfo = C3D_GetBufInfo();
     BufInfo_Init(bufInfo);
+    BufInfo_Add(bufInfo, vboAddr, sizeof(vbo_xyzuv), 2, 0x10);
     
     // set up shader attribute passing
     attrInfo = C3D_GetAttrInfo();
@@ -143,7 +134,7 @@ void RenderCore::Close() {
     targetTopRight.reset(nullptr);
     targetBottom.reset(nullptr);
     
-    linearFree(bufferStart);
+    linearFree(reinterpret_cast<void*>(vboArray));
     
     C3D_Fini();
     gfxExit();
@@ -154,8 +145,9 @@ void RenderCore::SyncFrame() {
 }
 
 void RenderCore::BeginFrame() {
-    ResetBuffer();
     C3D_FrameBegin(0/*C3D_FRAME_SYNCDRAW*/);
+    
+    vboIndex = 0;
 }
 
 void RenderCore::EndFrame() {
@@ -210,7 +202,7 @@ void RenderCore::BindColor(const Color& color, BlendMode mode) {
 }
 
 void RenderCore::DrawQuad(const VRect& rect, const VRect& src, bool noSnap) {
-    vbo_xyzuv* verts = static_cast<vbo_xyzuv*>(AllocBuffer(4 * sizeof(vbo_xyzuv), 8));
+    size_t vboNum = vboIndex;
     
     VRect r = noSnap ? rect : rect.IntSnap(); // screen-space snap
     
@@ -222,31 +214,23 @@ void RenderCore::DrawQuad(const VRect& rect, const VRect& src, bool noSnap) {
     // let's make this recalculate things a bit less
     float rl = r.pos.x, rr = rl + r.size.x, rt = r.pos.y, rb = rt + r.size.y;
     float srl = src.pos.x, srr = srl + src.size.x, srt = src.pos.y, srb = srt + src.size.y;
-    setXYZUV(verts[0], rl, rt, 0, srl, srt);
-    setXYZUV(verts[1], rr, rt, 0, srr, srt);
-    setXYZUV(verts[2], rl, rb, 0, srl, srb);
-    setXYZUV(verts[3], rr, rb, 0, srr, srb);
-
-    bufInfo = C3D_GetBufInfo();
-    BufInfo_Init(bufInfo);
-    BufInfo_Add(bufInfo, verts, sizeof(vbo_xyzuv), 2, 0x10);
-
-    C3D_DrawArrays(GPU_TRIANGLE_STRIP, 0, 4);
+    addVertXYZUV(rl, rt, 0, srl, srt);
+    addVertXYZUV(rr, rt, 0, srr, srt);
+    addVertXYZUV(rl, rb, 0, srl, srb);
+    addVertXYZUV(rr, rb, 0, srr, srb);
+    
+    C3D_DrawArrays(GPU_TRIANGLE_STRIP, vboNum, 4);
 }
 
 void RenderCore::DrawQuad(const VRect& rect, const Vector2& anchor, float angle, const VRect& src) {
-    vbo_xyzuv* verts = static_cast<vbo_xyzuv*>(AllocBuffer(4 * sizeof(vbo_xyzuv), 8));
+    size_t vboNum = vboIndex;
     
-    setXYZUV(verts[0], rect.TopLeft().RotateAround(anchor, angle), src.TopLeft());
-    setXYZUV(verts[1], rect.TopRight().RotateAround(anchor, angle), src.TopRight());
-    setXYZUV(verts[2], rect.BottomLeft().RotateAround(anchor, angle), src.BottomLeft());
-    setXYZUV(verts[3], rect.BottomRight().RotateAround(anchor, angle), src.BottomRight());
-
-    bufInfo = C3D_GetBufInfo();
-    BufInfo_Init(bufInfo);
-    BufInfo_Add(bufInfo, verts, sizeof(vbo_xyzuv), 2, 0x10);
-
-    C3D_DrawArrays(GPU_TRIANGLE_STRIP, 0, 4);
+    addVertXYZUV(rect.TopLeft().RotateAround(anchor, angle), src.TopLeft());
+    addVertXYZUV(rect.TopRight().RotateAround(anchor, angle), src.TopRight());
+    addVertXYZUV(rect.BottomLeft().RotateAround(anchor, angle), src.BottomLeft());
+    addVertXYZUV(rect.BottomRight().RotateAround(anchor, angle), src.BottomRight());
+    
+    C3D_DrawArrays(GPU_TRIANGLE_STRIP, vboNum, 4);
 }
 
 // specifically RGBA
