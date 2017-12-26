@@ -177,7 +177,7 @@ send-cia: $(TARGET)-strip.elf
 	@sockme $(TARGET).cia $(3DSIP) || sockme $(TARGET).cia $(3DSIP) || sockme $(TARGET).cia $(3DSIP)
 #---------------------------------------------------------------------------------
 run: $(BUILD)
-	@citra $(TARGET).3dsx
+	@citra-qt $(TARGET).3dsx
 #---------------------------------------------------------------------------------
 copy_cia: $(TARGET).cia
 	@cp $(TARGET).cia /mnt/3DS

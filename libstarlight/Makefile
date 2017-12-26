@@ -30,7 +30,7 @@ INCLUDES	:=	include
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 # why was -Werror here?
-CFLAGS	:=	-g -Wall -O2 -mword-relocations \
+CFLAGS	:=	-g -Wall -Wno-psabi -O2 -mword-relocations \
 			-ffunction-sections \
 			-fomit-frame-pointer \
 			$(ARCH)

@@ -2,6 +2,7 @@
 #include "starlight/_global.h"
 
 #include <memory>
+#include <functional>
 
 namespace starlight {
     template<typename T>
