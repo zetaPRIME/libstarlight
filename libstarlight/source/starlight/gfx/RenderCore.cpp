@@ -189,14 +189,14 @@ void RenderCore::BindTexture(C3D_Tex* tex, const Color& color, BlendMode mode) {
     C3D_TexBind(0, tex); // 0 should be correct
     
     C3D_TexEnv* env = C3D_GetTexEnv(0);
-    C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_CONSTANT, 0);
+    C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_CONSTANT, GPU_PRIMARY_COLOR);
     ApplyBlendMode(env, mode);
     C3D_TexEnvColor(env, color.Premultiplied());
 }
 
 void RenderCore::BindColor(const Color& color, BlendMode mode) {
     C3D_TexEnv* env = C3D_GetTexEnv(0);
-    C3D_TexEnvSrc(env, C3D_Both, GPU_CONSTANT, 0, 0);
+    C3D_TexEnvSrc(env, C3D_Both, GPU_CONSTANT, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
     ApplyBlendMode(env, mode);
     C3D_TexEnvColor(env, color.Premultiplied());
 }
